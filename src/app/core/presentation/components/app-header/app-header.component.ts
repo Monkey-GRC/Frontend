@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeToggleButtonComponent } from '@core/presentation/components/app-header/theme-toggle/theme-toggle-button.component';
-import { SidebarService } from '@core/domain/services/sidebar.service';
+import { SidebarService } from '@core/services/sidebar.service';
 
 @Component({
   selector: 'app-header',

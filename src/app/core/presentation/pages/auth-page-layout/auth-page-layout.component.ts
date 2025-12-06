@@ -13,4 +13,6 @@ import { ThemeToggleTwoComponent } from '@core/presentation/components/theme-tog
 })
 export class AuthPageLayoutComponent {
 
+  currentYear: number = new Date().getFullYear();
+
 }

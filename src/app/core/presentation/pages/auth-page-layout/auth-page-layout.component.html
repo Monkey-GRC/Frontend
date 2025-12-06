@@ -1,27 +1,53 @@
-<div class="relative p-6 bg-white z-1 dark:bg-gray-900 sm:p-0">
+<div class="relative sm:p-0 bg-white z-1 dark:bg-gray-900">
+
+  <!-- Mobile top bar -->
+  <div class="flex lg:hidden items-center justify-center px-4 py-4">
+    <div class="flex items-center gap-2">
+      <img src="/images/logo/logo-light.svg" alt="Monkey" class="w-80 h-30 dark:hidden" />
+
+      <img src="/images/logo/logo-dark.svg" alt="Monkey" class="w-80 h-30 hidden dark:block" />
+    </div>
+  </div>
+
   <div class="relative flex flex-col justify-center w-full h-screen lg:flex-row dark:bg-gray-900 sm:p-0">
+
+    <!-- Login form -->
     <ng-content></ng-content>
-    <div class="items-center hidden w-full h-full lg:w-1/2 bg-brand-950 dark:bg-white/5 lg:grid relative">
+
+    <!-- Desktop right panel -->
+    <div class="items-center hidden w-full h-full lg:w-1/2 bg-primary-500 dark:bg-white/5 lg:grid relative">
+
       <div class="flex items-center justify-center z-1">
-        <!-- ===== Common Grid Shape Start ===== -->
+
+        <!-- Shapes desktop only -->
         <div class="absolute right-0 top-0 -z-1 w-full max-w-[250px] xl:max-w-[450px]">
           <img src="/images/shape/grid-01.svg" alt="grid" />
         </div>
+
         <div class="absolute bottom-0 left-0 -z-1 w-full max-w-[250px] rotate-180 xl:max-w-[450px]">
           <img src="/images/shape/grid-01.svg" alt="grid" />
         </div>
+
+        <!-- Brand content -->
         <div class="flex flex-col items-center max-w-xs">
           <a routerLink="/" class="block mb-4">
-            <img width="231" height="48" src="/images/logo/auth-logo.svg" alt="Logo" />
+            <img width="190" height="40" src="/images/logo/logo-blanco.svg" alt="Logo" />
           </a>
+
           <p class="text-center text-gray-400 dark:text-white/60">
-            Free and Open-Source Tailwind CSS Admin Dashboard Template
+            Monkey es una plataforma GRC que facilita el control de riesgos,
+            el cumplimiento normativo y la gestión de auditorías para empresas
+            de todos los tamaños.
           </p>
         </div>
       </div>
     </div>
-    <div class="fixed z-50 hidden bottom-6 right-6 sm:block">
-      <app-theme-toggle-two />
-    </div>
+
   </div>
+
+</div>
+
+<!-- Floating Theme Toggle (mobile + desktop) -->
+<div class="fixed bottom-6 right-6 z-9999">
+  <app-theme-toggle-two />
 </div>

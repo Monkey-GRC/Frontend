@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { SidebarService } from '@core/domain/services/sidebar.service';
+import { SidebarService } from '@core/services/sidebar.service';
 import { AppHeaderComponent } from '@core/presentation/components/app-header/app-header.component';
 import { AppSidebarComponent } from '@core/presentation/components/app-sidebar/app-sidebar.component';
 import { BackdropComponent } from '../../components/backdrop/backdrop.component';

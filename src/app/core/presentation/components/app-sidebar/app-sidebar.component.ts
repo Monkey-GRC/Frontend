@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, QueryList, ViewChildren, ChangeDetectorRef } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { combineLatest, Subscription } from 'rxjs';
-import { SidebarService } from '@core/domain/services/sidebar.service';
+import { SidebarService } from '@core/services/sidebar.service';
 import { NavItem, NAV_ITEMS, SECTION_ICONS, NavigationHelper, NavSubItem } from '@config/navigation.config';
 
 @Component({
