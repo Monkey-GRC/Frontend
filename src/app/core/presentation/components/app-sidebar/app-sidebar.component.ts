@@ -5,14 +5,16 @@ import { Component, ElementRef, QueryList, ViewChildren, ChangeDetectorRef } fro
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { combineLatest, Subscription } from 'rxjs';
 import { SidebarService } from '@core/services/sidebar.service';
-import { NavItem, NAV_ITEMS, SECTION_ICONS, NavigationHelper, NavSubItem } from '@config/navigation.config';
+import { NavItem, NAV_ITEMS, NavigationHelper, NavSubItem } from '@config/navigation.config';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    TranslateModule
   ],
   templateUrl: './app-sidebar.component.html',
 })
@@ -20,7 +22,6 @@ export class AppSidebarComponent {
 
   // Importar la configuración desde el archivo externo
   navItems: NavItem[] = NAV_ITEMS;
-  sectionIcons = SECTION_ICONS;
 
   openSubmenu: string | null = null;
   subMenuHeights: { [key: string]: number } = {};
@@ -79,11 +80,6 @@ export class AppSidebarComponent {
   // Obtener items por sección
   getItemsBySection(section: string): NavItem[] {
     return NavigationHelper.getItemsBySection(this.navItems, section);
-  }
-
-  // Obtener icono para sección cuando está colapsada
-  getSectionIcon(section: string): string {
-    return NavigationHelper.getSectionIcon(section, this.sectionIcons);
   }
 
   isActive(path: string): boolean {

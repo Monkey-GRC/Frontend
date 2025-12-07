@@ -25,29 +25,33 @@ export interface SectionIcon {
 export const NAV_ITEMS: NavItem[] = [
     // Sección "Menu"
     {
-        icon: 'dashboard',
-        name: "Dashboard",
-        section: "Menu",
+        icon: 'list_alt_check',
+        name: "GRC Framework",
+        section: "Parametrización",
         subItems: [
             {
-                name: "Ecommerce",
-                path: "/",
-                section: "Menu"
+                name: "SIDEBAR.GRC_FRAMEWORK.CAUSES",
+                path: "/causes",
+                section: "Parametrización"
+            },
+            {
+                name: "SIDEBAR.GRC_FRAMEWORK.RISKS",
+                path: "/risks",
+                section: "Parametrización"
+            },
+            {
+                name: "SIDEBAR.GRC_FRAMEWORK.CONTROLS",
+                path: "/controls",
+                section: "Parametrización"
+            },
+            {
+                name: "SIDEBAR.GRC_FRAMEWORK.TEMPLATES",
+                path: "/templates",
+                section: "Parametrización"
             },
         ],
     },
 ];
-
-// Mapeo de iconos para secciones cuando el sidebar está colapsado
-export const SECTION_ICONS: SectionIcon = {
-    'Menu': 'menu',
-    'Charts': 'bar_chart',
-    'UI Elements': 'widgets',
-    'Tables': 'table_chart',
-    'Authentication': 'lock',
-    'Settings': 'settings',
-    'Help': 'help'
-};
 
 // Funciones helper para trabajar con la navegación
 export class NavigationHelper {
@@ -57,9 +61,5 @@ export class NavigationHelper {
 
     static getItemsBySection(items: NavItem[], section: string): NavItem[] {
         return items.filter(item => item.section === section);
-    }
-
-    static getSectionIcon(section: string, sectionIcons: SectionIcon): string {
-        return sectionIcons[section] || 'more_horiz';
     }
 }

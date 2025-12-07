@@ -1,0 +1,11 @@
+{
+  "SIDEBAR": {
+    "GRC_FRAMEWORK": {
+        "CAUSES": "Causes",
+        "RISKS": "Risks",
+        "CONTROLS": "Controls",
+        "TEMPLATES": "Templates"
+    }
+  },
+  "HOME": "Test"
+}

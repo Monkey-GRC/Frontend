@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeToggleButtonComponent } from '@core/presentation/components/app-header/theme-toggle/theme-toggle-button.component';
 import { SidebarService } from '@core/services/sidebar.service';
+import { LanguageToggle } from './language-toggle/language-toggle';
 
 @Component({
   selector: 'app-header',
@@ -10,7 +11,8 @@ import { SidebarService } from '@core/services/sidebar.service';
   imports: [
     CommonModule,
     RouterModule,
-    ThemeToggleButtonComponent
+    ThemeToggleButtonComponent,
+    LanguageToggle
   ],
   templateUrl: './app-header.component.html',
 })

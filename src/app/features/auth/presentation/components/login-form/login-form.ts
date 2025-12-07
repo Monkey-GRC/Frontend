@@ -29,7 +29,6 @@ export class LoginForm {
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
     private auth: AuthService,
     private router: Router,
     private route: ActivatedRoute,
@@ -39,7 +38,7 @@ export class LoginForm {
     // lee returnUrl una sola vez
     this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
     this.form = this.fb.group({
-      identifier: ['', [Validators.required, Validators.email]], // si aceptas username, quita Validators.email
+      identifier: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       remember: [false],
     });

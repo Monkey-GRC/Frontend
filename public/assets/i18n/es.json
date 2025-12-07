@@ -1,0 +1,11 @@
+{
+  "SIDEBAR": {
+    "GRC_FRAMEWORK": {
+        "CAUSES": "Causas",
+        "RISKS": "Riesgos",
+        "CONTROLS": "Controles",
+        "TEMPLATES": "Plantillas"
+    }
+  },
+  "HOME": "Prueba"
+}
