@@ -1,0 +1,54 @@
+<ejs-dialog [width]="width" [visible]="visible" [showCloseIcon]="showCloseIcon" [isModal]="isModal"
+    [allowDragging]="allowDragging" (close)="onClose.emit()" [header]="header" [footerTemplate]="footerTemplate">
+
+    <!-- Header personalizado -->
+    <ng-template #header>
+        <div class="flex flex-row gap-3 items-center mb-4">
+            @if (icon) {
+            <span class="material-symbols-outlined text-primary!">
+                {{ icon }}
+            </span>
+            }
+            <div>
+                <h2 class="text-xl! font-semibold! text-white">{{ title }}</h2>
+                @if(subtitle) {
+                <p class="text-gray-500! text-sm! text-wrap mt-1.5">
+                    {{ subtitle }}
+                </p>
+                }
+            </div>
+        </div>
+    </ng-template>
+
+    <!-- Contenido (transcluded) -->
+    <ng-content></ng-content>
+
+    <!-- Footer por defecto -->
+    <ng-template #footerTemplate let-data>
+        <div class="flex flex-col sm:flex-row justify-end gap-3">
+            <!-- Botón Cancelar -->
+            <button (click)="onClose.emit()" class="px-4 py-2 text-gray-700 bg-transparent border border-gray-300 rounded-lg
+                   hover:bg-gray-100/80 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:text-white
+                   transition-all duration-200 font-medium">
+                {{ cancelText }}
+            </button>
+
+            <!-- Botón Submit -->
+            <button (click)="onSubmit.emit()" [disabled]="isSubmitting" class="flex items-center justify-center px-4 py-2 rounded-md
+                   bg-primary text-white hover:bg-secondary
+                   disabled:opacity-70 disabled:cursor-not-allowed
+                   transition-all duration-200">
+
+                <!-- Spinner -->
+                @if (isSubmitting) {
+                <span class="material-symbols-outlined animate-spin mr-2">
+                    progress_activity
+                </span>
+                }
+
+                {{ submitText }}
+            </button>
+        </div>
+    </ng-template>
+
+</ejs-dialog>

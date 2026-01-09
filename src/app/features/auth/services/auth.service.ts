@@ -1,16 +1,15 @@
+import { firstValueFrom } from 'rxjs';
 // src/app/core/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, map, of, tap } from 'rxjs';
 import { User } from '../models/user';
 import { environment } from '@environments/environment';
-import { ApiResponse } from '@core/models/api-response';
-import { LoginDto, LoginResponse } from '@features/auth/models/auth-reponse';
+import { LoginDto } from '@features/auth/models/auth-reponse';
+import { ApiResponse, SuccessResponse } from '@shared/models/api-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    private readonly TOKEN_KEY = 'access_token';
-    private readonly REFRESH_TOKEN_KEY = 'refresh_token';
     private readonly API = environment.apiUrl + '/auth';
 
     private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
@@ -20,48 +19,48 @@ export class AuthService {
     readonly isLoggedIn$ = this._isLoggedIn$.asObservable();
     readonly user$ = this._user$.asObservable();
 
-    constructor(
-        private http: HttpClient
-    ) { }
+    constructor(private http: HttpClient) { }
 
-    /** Llamar una vez al arrancar la app (APP_INITIALIZER o en AppComponent) */
+    /**
+     * Llamar al iniciar la app (APP_INITIALIZER o AppComponent)
+     * Consulta al backend si la cookie es válida
+     */
     init(): Promise<void> {
-        const token = this.getToken();
-        if (!token) {
-            this._isLoggedIn$.next(false);
-            this._user$.next(null);
-            return Promise.resolve();
-        }
-        return this.ensureValidToken().toPromise().then(() => void 0);
+        return firstValueFrom(this.validateSession()
+            .pipe(map(() => void 0)));
     }
 
-    /** Guarda token y propaga estado */
-    setToken(token: string | null, refresh_token: string | null) {
-        if (token && refresh_token) {
-            localStorage.setItem(this.TOKEN_KEY, token);
-            localStorage.setItem(this.REFRESH_TOKEN_KEY, refresh_token)
-            this._isLoggedIn$.next(true);
-        } else {
-            localStorage.removeItem(this.TOKEN_KEY);
-            this._isLoggedIn$.next(false);
-        }
+    /**
+     * Login
+     * El backend setea cookies httpOnly
+     */
+    login(dto: LoginDto) {
+        return this.http.post<ApiResponse>(
+            `${this.API}/login`,
+            dto,
+            { withCredentials: true } // 👈 CRÍTICO
+        ).pipe(
+            tap(() => {
+                this._isLoggedIn$.next(true);
+            })
+        );
     }
 
-    getToken(): string | null {
-        return localStorage.getItem(this.TOKEN_KEY);
-    }
-
-    /** Valida contra backend. Si es válido, setea user; si no, limpia. */
-    validateToken(): Observable<boolean> {
-        return this.http.get<ApiResponse>(`${this.API}/validate`).pipe(
-            tap((res) => {
-                // backend ya pasó por AuthGuard('jwt'), si llegamos aquí el token es válido
+    /**
+     * Valida la sesión actual contra backend
+     * (/auth/validate protegido con AuthGuard)
+     */
+    validateSession(): Observable<boolean> {
+        return this.http.get<ApiResponse>(
+            `${this.API}/validate`,
+            { withCredentials: true } // 👈 CRÍTICO
+        ).pipe(
+            tap((res: SuccessResponse) => {
                 this._user$.next(res?.data?.user ?? null);
                 this._isLoggedIn$.next(true);
             }),
             map(() => true),
-            catchError((_err) => {
-                // token inválido/expirado
+            catchError(() => {
                 this.clearSession();
                 return of(false);
             })
@@ -69,67 +68,43 @@ export class AuthService {
     }
 
     /**
-     * Asegura que el token actual es válido (consulta /auth/validate si hay token).
-     * Devuelve true/false sin lanzar error.
+     * Refresh token (cookie → cookie)
      */
-    ensureValidToken(): Observable<boolean> {
-        const token = this.getToken();
-        if (!token) {
-            this.clearSession();
-            return of(false);
-        }
-        // opcional: validación rápida por exp del JWT en cliente
-        if (!this.isJwtValidLocal(token)) {
-            this.clearSession();
-            return of(false);
-        }
-        // validación contra backend (la que manda)
-        return this.validateToken();
+    refresh(): Observable<boolean> {
+        return this.http.post<ApiResponse>(
+            `${this.API}/refresh`,
+            {},
+            { withCredentials: true }
+        ).pipe(
+            tap(() => this._isLoggedIn$.next(true)),
+            map(() => true),
+            catchError(() => {
+                this.clearSession();
+                return of(false);
+            })
+        );
     }
 
-    /** Cierra sesión en cliente y (opcionalmente) llama al backend */
-    logout(callBackend = true): Observable<boolean> {
-        if (!callBackend) {
-            this.clearSession();
-            return of(true);
-        }
-        return this.http.delete(`${this.API}/logout`).pipe(
+    /**
+     * Logout
+     */
+    logout(): Observable<boolean> {
+        return this.http.delete(
+            `${this.API}/logout`,
+            { withCredentials: true }
+        ).pipe(
             tap(() => this.clearSession()),
             map(() => true),
-            catchError((_err) => {
+            catchError(() => {
                 this.clearSession();
                 return of(true);
             })
         );
     }
 
-    /** Helpers */
-
-    /** Útil para guards sincrónicos (canActivate funciona con boolean | UrlTree | Observable | Promise) */
-    isAuthenticatedSync(): boolean {
-        const token = this.getToken();
-        return !!token && this.isJwtValidLocal(token);
-    }
-
-    /** Valida expiración local del JWT (sin llamar backend) */
-    private isJwtValidLocal(token: string): boolean {
-        try {
-            const payload = JSON.parse(atob(token.split('.')[1] || ''));
-            const exp = typeof payload?.exp === 'number' ? payload.exp : 0;
-            const now = Math.floor(Date.now() / 1000);
-            return exp > now;
-        } catch {
-            return false;
-        }
-    }
-
+    /** Limpia estado local */
     private clearSession() {
-        localStorage.removeItem(this.TOKEN_KEY);
         this._user$.next(null);
         this._isLoggedIn$.next(false);
-    }
-
-    login(dto: LoginDto) {
-        return this.http.post<LoginResponse>(`${this.API}/login`, dto)
     }
 }

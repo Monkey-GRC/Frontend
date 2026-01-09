@@ -66,22 +66,22 @@ export class LoginForm {
     const sub = this.auth.login(dto)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (resp: any) => {
-          if (resp) {
-            this.auth.setToken(resp.data.access_token, resp.data.refresh_token);
-            this.navigateAfterLogin();
-          } else {
-            this.errorMsg.set('No se pudo iniciar sesión. Verifica tus credenciales.');
-          }
+        next: () => {
+          // ✅ Si llegó aquí, las cookies ya están seteadas por el backend
+          this.navigateAfterLogin();
         },
         error: (err) => {
-          const msg = err?.error?.message || err?.message || 'No se pudo iniciar sesión. Verifica tus credenciales.';
+          const msg =
+            err?.error?.message ||
+            err?.message ||
+            'No se pudo iniciar sesión. Verifica tus credenciales.';
           this.errorMsg.set(msg);
-        }
+        },
       });
 
     this.subs.add(sub);
   }
+
 
 
   private navigateAfterLogin(): void {

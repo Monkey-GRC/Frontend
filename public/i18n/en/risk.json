@@ -1,0 +1,12 @@
+{
+    "RISK": {
+        "HEADER": {
+            "BTN-CREATE": "New risk",
+            "TITLE": "Risk management",
+            "SUBTITLE": "Create the risks used for GRC template creation"
+        },
+        "LIST": {},
+        "MATRIX": {},
+        "KPIS": {}
+    }
+}
