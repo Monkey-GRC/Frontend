@@ -16,6 +16,11 @@ export const routes: Routes = [
         component: Home,
         pathMatch: 'full',
       },
+      {
+        path: 'risks',
+        loadComponent:() => import('src/app/features/grc-framework/presentation/views/risks/risks').then(m => m.Risks ),
+        pathMatch: 'full',
+      },
     ]
   },
   // auth pages

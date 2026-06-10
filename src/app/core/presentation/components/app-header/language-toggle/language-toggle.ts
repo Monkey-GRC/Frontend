@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { changeSyncfusionLanguage } from '@config/syncfusion-locale.config';
 import { TranslateDirective, TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -25,5 +26,6 @@ export class LanguageToggle {
     this.currentLang = this.currentLang === 'es' ? 'en' : 'es';
     localStorage.setItem('lang', this.currentLang);
     this.translate.use(this.currentLang);
+    changeSyncfusionLanguage(this.currentLang as 'en' || 'es');
   }
 }

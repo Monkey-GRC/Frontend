@@ -1,11 +1,11 @@
 {
-  "SIDEBAR": {
     "GRC_FRAMEWORK": {
+        "MODULE_NAME": {
+            "PARAMETRIZATION": "Parameterization"
+        },
         "CAUSES": "Causes",
         "RISKS": "Risks",
         "CONTROLS": "Controls",
         "TEMPLATES": "Templates"
     }
-  },
-  "HOME": "Test"
 }

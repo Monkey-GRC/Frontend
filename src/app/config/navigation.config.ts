@@ -27,27 +27,27 @@ export const NAV_ITEMS: NavItem[] = [
     {
         icon: 'list_alt_check',
         name: "GRC Framework",
-        section: "Parametrización",
+        section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION",
         subItems: [
             {
-                name: "SIDEBAR.GRC_FRAMEWORK.CAUSES",
+                name: "GRC_FRAMEWORK.CAUSES",
                 path: "/causes",
-                section: "Parametrización"
+                section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION"
             },
             {
-                name: "SIDEBAR.GRC_FRAMEWORK.RISKS",
+                name: "GRC_FRAMEWORK.RISKS",
                 path: "/risks",
-                section: "Parametrización"
+                section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION"
             },
             {
-                name: "SIDEBAR.GRC_FRAMEWORK.CONTROLS",
+                name: "GRC_FRAMEWORK.CONTROLS",
                 path: "/controls",
-                section: "Parametrización"
+                section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION"
             },
             {
-                name: "SIDEBAR.GRC_FRAMEWORK.TEMPLATES",
+                name: "GRC_FRAMEWORK.TEMPLATES",
                 path: "/templates",
-                section: "Parametrización"
+                section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION"
             },
         ],
     },

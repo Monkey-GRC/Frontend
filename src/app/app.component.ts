@@ -7,7 +7,7 @@ import { TranslateDirective, TranslateModule, TranslatePipe, TranslateService } 
   standalone: true,
   imports: [
     RouterModule,
-    TranslateModule
+    TranslateModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

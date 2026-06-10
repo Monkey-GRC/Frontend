@@ -1,24 +1,20 @@
 import type { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AuthService } from '@features/auth/services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
-    // Obtener el token del Local Storage
-    const token = inject(AuthService).getToken();
+    const lang = localStorage.getItem('lang') || 'es';
 
-    if (token) {
-        if (req.url.includes('auth/login') || req.url.includes('auth/refresh-token')) {
-            return next(req);
-        } else {
-            req = req.clone({
-                setHeaders: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-        }
-        return next(req);
-    } else {
-        return next(req);
-    }
+    // Endpoints públicos (no requieren auth)
+    const isPublic =
+        req.url.includes('/auth/login') ||
+        req.url.includes('/auth/refresh');
+
+    const cloned = req.clone({
+        withCredentials: true, // ✅ ENVÍA COOKIES httpOnly
+        setHeaders: {
+            'Accept-Language': lang,
+        },
+    });
+
+    return next(cloned);
 };

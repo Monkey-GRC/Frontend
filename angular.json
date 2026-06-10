@@ -32,7 +32,7 @@
             ],
             "styles": [
               "src/styles.css",
-              "public/assets/monkey-app-theme.css"
+              "public/monkey-app-theme.css"
             ],
             "scripts": []
           },
@@ -91,7 +91,7 @@
             ],
             "styles": [
               "src/styles.css",
-              "public/assets/monkey-app-theme.css"
+              "public/monkey-app-theme.css"
             ],
             "scripts": []
           }

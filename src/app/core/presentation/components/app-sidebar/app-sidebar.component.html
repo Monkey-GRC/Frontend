@@ -13,7 +13,7 @@
     'xl:translate-x-0': true
   }" (mouseenter)="onSidebarMouseEnter()" (mouseleave)="sidebarService.setHovered(false)">
   <!-- Logo -->
-  <div class="py-6 sm:py-2 flex" [ngClass]="{
+  <div class="py-6 sm:py-2 hidden sm:flex" [ngClass]="{
       'xl:justify-center h-17': !((isExpanded$ | async) || (isHovered$ | async)),
       'justify-start': (isExpanded$ | async) || (isHovered$ | async)
     }">
@@ -29,7 +29,7 @@
   </div>
 
   <!-- Navigation -->
-  <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+  <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar mt-26 sm:mt-0">
     <nav class="mb-6">
       <div class="flex flex-col gap-4">
         <!-- Iterar sobre cada sección única -->
@@ -47,7 +47,7 @@
                   'justify-start': (isExpanded$ | async) || (isHovered$ | async)
                 }">
             @if ((isExpanded$ | async) || (isHovered$ | async) || (isMobileOpen$ | async)) {
-            {{ section }}
+            {{ section | translate }}
             }
           </h2>
 
