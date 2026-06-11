@@ -1,5 +1,5 @@
 // src/app/core/config/navigation.config.ts
-// Hello Janner
+// Hello Janner 2
 export interface NavSubItem {
     name: string;
     path: string;
