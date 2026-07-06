@@ -1,5 +1,4 @@
 // src/app/core/config/navigation.config.ts
-// Hello Janner 2
 export interface NavSubItem {
     name: string;
     path: string;
@@ -31,7 +30,7 @@ export const NAV_ITEMS: NavItem[] = [
         subItems: [
             {
                 name: "GRC_FRAMEWORK.CAUSES",
-                path: "/causes",
+                path: "/reasons",
                 section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION"
             },
             {

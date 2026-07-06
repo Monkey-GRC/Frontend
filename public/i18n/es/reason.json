@@ -1,0 +1,10 @@
+{
+    "REASON": {
+        "HEADER": {
+            "BTN-CREATE": "Nueva razón",
+            "TITLE": "Gestión de razones",
+            "SUBTITLE": "Crea las razones que se utilizan para la creación de las plantillas de GRC"
+        },
+        "LIST": {}
+    }
+}
