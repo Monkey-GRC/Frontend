@@ -18,9 +18,15 @@ export const routes: Routes = [
       },
       {
         path: 'risks',
-        loadComponent:() => import('src/app/features/grc-framework/presentation/views/risks/risks').then(m => m.Risks ),
+        loadComponent: () => import('src/app/features/grc-framework/presentation/views/risks/risks').then(m => m.Risks),
         pathMatch: 'full',
       },
+      {
+        path: 'controls',
+        loadComponent: () => import('src/app/features/grc-framework/presentation/views/controls/controls').then(m => m.Controls),
+        pathMatch: 'full',
+      },
+
     ]
   },
   // auth pages
