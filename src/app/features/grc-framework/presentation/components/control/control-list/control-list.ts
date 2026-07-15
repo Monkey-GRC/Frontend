@@ -18,10 +18,28 @@ export class ControlList {
   openModalEmit = output<Control>();
   refreshControl = output();
 
+  expandedControlIds = new Set<string>();
+
   constructor(
     private toast: ToastService,
     public controlService: ControlService
   ) {}
+
+  toggleChecksVisibility(controlId: string): void {
+    if (this.expandedControlIds.has(controlId)) {
+      this.expandedControlIds.delete(controlId);
+    } else {
+      this.expandedControlIds.add(controlId);
+    }
+  }
+
+  isChecksExpanded(controlId: string): boolean {
+    return this.expandedControlIds.has(controlId);
+  }
+
+  getOsLabel(os: string): string {
+    return os === 'UBUNTU' ? 'Ubuntu' : 'Windows';
+  }
 
   getTypeColor(type: string): string {
     switch (type) {

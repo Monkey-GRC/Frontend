@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ChecklistSelector } from '@features/grc-framework/presentation/components/control/checklist-selector/checklist-selector';
 import { ControlService } from '@features/grc-framework/services/control.service';
 import { ErrorResponse, SuccessResponse } from '@shared/models/api-response.model';
 import { ToastService } from '@shared/services/toast.service';
@@ -8,7 +9,7 @@ import { TextAreaModule, TextBoxModule } from '@syncfusion/ej2-angular-inputs';
 
 @Component({
   selector: 'app-control-form',
-  imports: [CommonModule, ReactiveFormsModule, TextAreaModule, TextBoxModule],
+  imports: [CommonModule, ReactiveFormsModule, TextAreaModule, TextBoxModule, ChecklistSelector],
   templateUrl: './control-form.html',
   styleUrl: './control-form.css',
   changeDetection: ChangeDetectionStrategy.Default,
@@ -33,6 +34,10 @@ export class ControlForm implements OnInit {
     this.controlService.initializeForm();
   }
 
+  get isAutomatic(): boolean {
+    return this.controlService.form.get('type')?.value === 'AUTOMATIC';
+  }
+
   async onSubmit(): Promise<void> {
     if (this.controlService.form.invalid) {
       this.sendingForm = false;
@@ -40,7 +45,7 @@ export class ControlForm implements OnInit {
     }
 
     this.sendingForm = true;
-    const body = this.controlService.form.value;
+    const body = this.buildRequestBody();
     const request = this.getRequestFunction(body);
 
     try {
@@ -49,6 +54,15 @@ export class ControlForm implements OnInit {
     } catch (err) {
       this.handleError(err as ErrorResponse);
     }
+  }
+
+  private buildRequestBody(): any {
+    const body = { ...this.controlService.form.value };
+    if (body.type !== 'AUTOMATIC' || !body.checklist?.length) {
+      delete body.os;
+      delete body.checklist;
+    }
+    return body;
   }
 
   private getRequestFunction(body: any) {
