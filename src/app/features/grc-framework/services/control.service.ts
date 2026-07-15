@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from '@environments/environment';
-import { Control, CreateControl, UpdateControl } from '@features/grc-framework/models/control.model';
+import { ChecklistCheck } from '@features/grc-framework/models/checklist.model';
+import { Control, ControlCheck, CreateControl, UpdateControl } from '@features/grc-framework/models/control.model';
 import { ApiResponse } from '@shared/models/api-response.model';
 
 @Injectable({
@@ -26,7 +27,13 @@ export class ControlService {
       description: [data?.description, [Validators.required]],
       objective: [data?.objective, [Validators.required]],
       type: [data?.type ?? 'MANUAL', [Validators.required]],
+      os: [data?.checks?.[0]?.os ?? null],
+      checklist: [this.mapChecksToChecklist(data?.checks)],
     })
+  }
+
+  private mapChecksToChecklist(checks?: ControlCheck[]): ChecklistCheck[] {
+    return checks?.map(c => ({ checkId: c.check_id, title: c.title })) ?? [];
   }
 
   createControl(body: CreateControl) {
