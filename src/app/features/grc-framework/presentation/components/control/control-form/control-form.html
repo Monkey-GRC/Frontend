@@ -1,0 +1,35 @@
+<form [formGroup]="controlService.form">
+    <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-1 w-full">
+            <label>Nombre del control <span class="text-red-500">*</span></label>
+            <ejs-textbox placeholder="Nombre del control" formControlName="name" floatLabelType="Never"
+                cssClass="e-outline shadow-input"></ejs-textbox>
+        </div>
+        <div class="flex flex-col gap-1">
+            <label>Descripción del control <span class="text-red-500">*</span></label>
+            <ejs-textarea placeholder="Descripción del control" formControlName="description" floatLabelType="Never"
+                cssClass="e-outline shadow-input"></ejs-textarea>
+        </div>
+        <div class="flex flex-col gap-1">
+            <label>Objetivo del control <span class="text-red-500">*</span></label>
+            <ejs-textarea placeholder="Objetivo del control" formControlName="objective" floatLabelType="Never"
+                cssClass="e-outline shadow-input"></ejs-textarea>
+        </div>
+        <div class="flex flex-col gap-1">
+            <label>Tipo de control <span class="text-red-500">*</span></label>
+            <select formControlName="type" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600
+            bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+            focus:outline-none focus:ring-2 focus:ring-primary-500
+            transition-colors duration-200">
+                <option value="MANUAL">Manual</option>
+                <option value="AUTOMATIC">Automático</option>
+                <option value="HYBRID">Híbrido</option>
+            </select>
+        </div>
+
+        @if (isAutomatic) {
+        <app-checklist-selector />
+        }
+
+    </div>
+</form>
