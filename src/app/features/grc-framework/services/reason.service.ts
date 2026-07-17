@@ -22,8 +22,8 @@ export class ReasonService {
 
   initializeForm(data?: Reason) {
     this.form = this.fb.group({
-      name: [data?.name, [Validators.required]],
-      description: [data?.description],
+      name: [data?.name, [Validators.required, Validators.maxLength(150)]],
+      description: [data?.description, [Validators.maxLength(500)]],
     })
   }
 

@@ -22,6 +22,11 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        path: 'reasons',
+        loadComponent:() => import('src/app/features/grc-framework/presentation/views/reasons/reasons').then(m => m.Reasons ),
+        pathMatch: 'full',
+      },
+      {
         path: 'controls',
         loadComponent: () => import('src/app/features/grc-framework/presentation/views/controls/controls').then(m => m.Controls),
         pathMatch: 'full',
