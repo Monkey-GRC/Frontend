@@ -1,0 +1,130 @@
+<div class="rounded-md bg-gray-50 dark:bg-gray-800/50">
+    <div class="flex items-center justify-between gap-2 px-3 py-2 text-sm">
+        <button type="button" (click)="toggleExpand()" class="flex items-center gap-2 min-w-0 text-left">
+            <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-base">
+                {{ expanded ? 'expand_less' : 'expand_more' }}
+            </span>
+            <span class="text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded">
+                {{ reason.code }}
+            </span>
+            <span class="truncate text-gray-800 dark:text-gray-200">{{ reason.name }}</span>
+        </button>
+        <button type="button" (click)="onRemoveFromRisk()" class="shrink-0 p-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400
+            rounded-md hover:bg-red-200 dark:hover:bg-red-800/50 transition-colors duration-150" title="Quitar causa de este riesgo">
+            <span class="material-symbols-outlined text-md!">link_off</span>
+        </button>
+    </div>
+
+    @if (expanded) {
+    <div class="px-3 pb-3 pl-9 flex flex-col gap-3 border-t border-gray-200 dark:border-gray-700 pt-3">
+        @if (loadingControls) {
+        <p class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+            <span class="material-symbols-outlined animate-spin text-base">progress_activity</span>
+            Cargando controles...
+        </p>
+        } @else {
+        <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Controles de esta causa</span>
+            <button type="button" (click)="onToggleAddControl()" class="inline-flex items-center gap-1 text-xs font-medium
+                text-primary-600 dark:text-primary-400 hover:underline">
+                <span class="material-symbols-outlined text-sm!">{{ addingControl ? 'close' : 'add' }}</span>
+                {{ addingControl ? 'Cancelar' : 'Nuevo control' }}
+            </button>
+        </div>
+
+        @if (addingControl) {
+        <div class="border border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-white dark:bg-gray-900/40">
+            <app-control-form (sendedForm)="onControlFormSaved($event)" />
+            <button type="button" (click)="controlForm?.onSubmit()" [disabled]="controlForm?.sendingForm" class="mt-3 inline-flex items-center gap-1 rounded-lg bg-primary
+                px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-500 dark:hover:bg-primary-600 transition-colors duration-200
+                disabled:opacity-70 disabled:cursor-not-allowed">
+                <span class="material-symbols-outlined text-base!" [class.animate-spin]="controlForm?.sendingForm">
+                    {{ controlForm?.sendingForm ? 'progress_activity' : 'save' }}
+                </span>
+                Guardar control
+            </button>
+        </div>
+        }
+
+        <!-- Vincular control existente -->
+        <div class="flex flex-col gap-1">
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2
+                    text-gray-400 dark:text-gray-500 text-sm">search</span>
+                <input type="text" [value]="controlSearchTerm" (input)="onSearchControlInput($event)" placeholder="Buscar control existente..."
+                    class="w-full pl-10 pr-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
+                    text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-200" />
+            </div>
+            <div class="flex flex-col gap-1 max-h-40 overflow-y-auto pr-1 mt-1
+                scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                @for (control of availableControls; track control.id) {
+                <button type="button" (click)="onLinkControl(control)" [disabled]="linkingControlId === control.id"
+                    class="flex items-center justify-between text-left px-3 py-1.5 rounded-md text-sm
+                    bg-white dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors duration-150
+                    disabled:opacity-50">
+                    <span class="truncate">{{ control.code }} · {{ control.name }}</span>
+                    <span class="material-symbols-outlined text-base text-primary-600 dark:text-primary-400"
+                        [class.animate-spin]="linkingControlId === control.id">
+                        {{ linkingControlId === control.id ? 'progress_activity' : 'add_link' }}
+                    </span>
+                </button>
+                } @empty {
+                <p class="text-sm text-gray-500 dark:text-gray-400 py-2">
+                    {{ controlSearchTerm.trim() ? 'No hay controles disponibles con ese nombre.' : 'No hay más controles disponibles para vincular.' }}
+                </p>
+                }
+            </div>
+        </div>
+
+        <!-- Controles ya vinculados -->
+        <div class="flex flex-col gap-2">
+            @for (item of reasonDetail?.controls; track item.control.id) {
+            <div class="rounded-md bg-white dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 p-2.5">
+                <div class="flex items-start justify-between gap-2">
+                    <div class="flex flex-col gap-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
+                                {{ item.control.code }}
+                            </span>
+                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ getTypeColor(item.control.type) }}">
+                                {{ getTypeLabel(item.control.type) }}
+                            </span>
+                        </div>
+                        <span class="text-sm text-gray-800 dark:text-gray-200 truncate">{{ item.control.name }}</span>
+                    </div>
+                    <button type="button" (click)="onUnlinkControl(item.control)" class="shrink-0 p-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400
+                        rounded-md hover:bg-red-200 dark:hover:bg-red-800/50 transition-colors duration-150" title="Quitar control de esta causa">
+                        <span class="material-symbols-outlined text-md!">link_off</span>
+                    </button>
+                </div>
+
+                @if (item.control.type === 'AUTOMATIC' && item.control.checks?.length) {
+                <div class="mt-2">
+                    <button type="button" (click)="toggleChecksVisibility(item.control.id)" class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full
+                        bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300
+                        hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors duration-150">
+                        <span class="material-symbols-outlined text-sm!">
+                            {{ isChecksExpanded(item.control.id) ? 'expand_less' : 'expand_more' }}
+                        </span>
+                        {{ item.control.checks!.length }} checks CIS · {{ getOsLabel(item.control.checks![0].os) }}
+                    </button>
+
+                    @if (isChecksExpanded(item.control.id)) {
+                    <ul class="mt-2 flex flex-col gap-1 max-h-40 overflow-y-auto pr-1 text-xs text-gray-600 dark:text-gray-300
+                        scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent">
+                        @for (check of item.control.checks; track check.id) {
+                        <li class="px-2 py-1 rounded bg-gray-50 dark:bg-gray-800/50">{{ check.title }}</li>
+                        }
+                    </ul>
+                    }
+                </div>
+                }
+            </div>
+            } @empty {
+            <p class="text-sm text-gray-500 dark:text-gray-400 py-1">Esta causa no tiene controles asignados todavía.</p>
+            }
+        </div>
+        }
+    </div>
+    }
+</div>

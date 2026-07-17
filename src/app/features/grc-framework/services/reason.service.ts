@@ -20,7 +20,6 @@ export class ReasonService {
     private fb: FormBuilder
   ) { }
 
-
   initializeForm(data?: Reason) {
     this.form = this.fb.group({
       name: [data?.name, [Validators.required, Validators.maxLength(150)]],
@@ -29,19 +28,39 @@ export class ReasonService {
   }
 
   createReason(body: CreateReason) {
-    return this.http.post<ApiResponse>(`${this.apiUrl}`, body)
+    return this.http.post<ApiResponse<Reason>>(`${this.apiUrl}`, body);
   }
 
   updateReason(id: string, body: UpdateReason) {
-    return this.http.patch<ApiResponse>(`${this.apiUrl}/${id}`, body)
+    return this.http.patch<ApiResponse>(`${this.apiUrl}/${id}`, body);
   }
 
   deleteReason(id: string) {
-    return this.http.delete<ApiResponse>(`${this.apiUrl}/${id}`)
+    return this.http.delete<ApiResponse>(`${this.apiUrl}/${id}`);
   }
 
   readAllReason() {
-    return this.http.get<ApiResponse>(`${this.apiUrl}`)
+    return this.http.get<ApiResponse>(`${this.apiUrl}`);
+  }
+
+  readReason(id: string) {
+    return this.http.get<ApiResponse<Reason>>(`${this.apiUrl}/${id}`);
+  }
+
+  linkRisks(reasonId: string, riskIds: string[]) {
+    return this.http.post<ApiResponse>(`${this.apiUrl}/${reasonId}/risks`, { riskIds });
+  }
+
+  unlinkRisk(reasonId: string, riskId: string) {
+    return this.http.delete<ApiResponse>(`${this.apiUrl}/${reasonId}/risks/${riskId}`);
+  }
+
+  linkControls(reasonId: string, controlIds: string[]) {
+    return this.http.post<ApiResponse>(`${this.apiUrl}/${reasonId}/controls`, { controlIds });
+  }
+
+  unlinkControl(reasonId: string, controlId: string) {
+    return this.http.delete<ApiResponse>(`${this.apiUrl}/${reasonId}/controls/${controlId}`);
   }
 
 }

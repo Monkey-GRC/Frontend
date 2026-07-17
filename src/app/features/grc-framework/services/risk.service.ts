@@ -21,12 +21,13 @@ export class RiskService {
   ) { }
 
 
-  initializeForm(data?: Risk) {
+  initializeForm(data?: Risk, templateId?: string | null) {
     this.form = this.fb.group({
       name: [data?.name, [Validators.required]],
       description: [data?.description, [Validators.required]],
       probability: [data?.probability, [Validators.required]],
       impact: [data?.impact, [Validators.required]],
+      templateId: [data?.templateId ?? templateId ?? null],
     })
   }
 
@@ -44,6 +45,10 @@ export class RiskService {
 
   readAllRisk() {
     return this.http.get<ApiResponse>(`${this.apiUrl}`)
+  }
+
+  readRisk(id: string) {
+    return this.http.get<ApiResponse<Risk>>(`${this.apiUrl}/${id}`)
   }
 
 }
