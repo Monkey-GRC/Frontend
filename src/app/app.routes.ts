@@ -26,6 +26,21 @@ export const routes: Routes = [
         loadComponent: () => import('src/app/features/grc-framework/presentation/views/controls/controls').then(m => m.Controls),
         pathMatch: 'full',
       },
+      {
+        path: 'templates',
+        loadComponent: () => import('src/app/features/grc-framework/presentation/views/templates/templates').then(m => m.Templates),
+        pathMatch: 'full',
+      },
+      {
+        path: 'templates/new',
+        loadComponent: () => import('src/app/features/grc-framework/presentation/views/template-builder/template-builder').then(m => m.TemplateBuilder),
+        pathMatch: 'full',
+      },
+      {
+        path: 'templates/:id',
+        loadComponent: () => import('src/app/features/grc-framework/presentation/views/template-builder/template-builder').then(m => m.TemplateBuilder),
+        pathMatch: 'full',
+      },
 
     ]
   },

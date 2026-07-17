@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RiskService } from '@features/grc-framework/services/risk.service';
 import { ErrorResponse, SuccessResponse } from '@shared/models/api-response.model';
@@ -14,6 +14,9 @@ import { NumericTextBoxModule, TextAreaModule, TextBoxModule } from '@syncfusion
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class RiskForm implements OnInit {
+  /** Template al que se asocia el riesgo al crearlo (uso dentro del árbol de Templates) */
+  @Input() templateId?: string | null;
+
   /** Emite evento cuando se necesita recargar la lista de riesgos */
   sendedForm = output();
 
@@ -28,7 +31,10 @@ export class RiskForm implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.riskService.initializeForm();
+    if (this.action === 'create') {
+      this.riskService.selectedRisk = null;
+    }
+    this.riskService.initializeForm(undefined, this.templateId);
   }
 
   /** Calcula el nivel de riesgo basado en impacto + probabilidad */
@@ -69,7 +75,7 @@ export class RiskForm implements OnInit {
     }
 
     this.sendingForm = true;
-    const body = this.riskService.form.value;
+    const body = this.buildRequestBody();
     const request = this.getRequestFunction(body);
 
     try {
@@ -78,6 +84,15 @@ export class RiskForm implements OnInit {
     } catch (err) {
       this.handleError(err as ErrorResponse);
     }
+  }
+
+  /** Construye el body a enviar, omitiendo templateId si no aplica */
+  private buildRequestBody(): any {
+    const body = { ...this.riskService.form.value };
+    if (!body.templateId) {
+      delete body.templateId;
+    }
+    return body;
   }
 
   /** Determina qué función de servicio usar según la acción */
