@@ -26,7 +26,7 @@ export class TemplateForm implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.templateService.initializeForm();
+    this.templateService.initializeForm(this.templateService.selectedTemplate ?? undefined);
   }
 
   async onSubmit(): Promise<void> {

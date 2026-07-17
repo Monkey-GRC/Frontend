@@ -42,7 +42,7 @@ export class TemplateBuilder implements OnInit {
   allReasons: Reason[] = [];
   allControls: Control[] = [];
 
-  @ViewChild(TemplateForm) templateForm!: TemplateForm;
+  @ViewChild(TemplateForm) templateForm?: TemplateForm;
   @ViewChild(RiskForm) riskForm?: RiskForm;
 
   constructor(
@@ -66,7 +66,6 @@ export class TemplateBuilder implements OnInit {
       this.loadAllControls();
     } else {
       this.templateService.selectedTemplate = null;
-      this.templateService.initializeForm();
     }
   }
 
@@ -75,7 +74,6 @@ export class TemplateBuilder implements OnInit {
     this.templateService.readTemplate(id).subscribe({
       next: (resp: SuccessResponse) => {
         this.templateService.selectedTemplate = resp.data;
-        this.templateService.initializeForm(resp.data);
         this.isLoading = false;
       },
       error: (err: ErrorResponse) => {
@@ -170,7 +168,7 @@ export class TemplateBuilder implements OnInit {
   }
 
   onSave(): void {
-    this.templateForm.onSubmit();
+    this.templateForm?.onSubmit();
   }
 
   onTemplateSaved(template: Template): void {
