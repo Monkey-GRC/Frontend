@@ -1,22 +1,35 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  output,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ChecklistSelector } from '@features/grc-framework/presentation/components/control/checklist-selector/checklist-selector';
 import { Control } from '@features/grc-framework/models/control.model';
 import { ControlService } from '@features/grc-framework/services/control.service';
-import { ErrorResponse, SuccessResponse } from '@shared/models/api-response.model';
+import {
+  ErrorResponse,
+  SuccessResponse,
+} from '@shared/models/api-response.model';
 import { ToastService } from '@shared/services/toast.service';
 import { TextAreaModule, TextBoxModule } from '@syncfusion/ej2-angular-inputs';
 
 @Component({
   selector: 'app-control-form',
-  imports: [CommonModule, ReactiveFormsModule, TextAreaModule, TextBoxModule, ChecklistSelector],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TextAreaModule,
+    TextBoxModule,
+    ChecklistSelector,
+  ],
   templateUrl: './control-form.html',
   styleUrl: './control-form.css',
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class ControlForm implements OnInit {
-  /** Emite el control creado/actualizado (undefined si falló) */
   sendedForm = output<Control | undefined>();
   sendingForm = false;
   action: 'create' | 'update' = 'create';
@@ -29,8 +42,8 @@ export class ControlForm implements OnInit {
 
   constructor(
     public controlService: ControlService,
-    private toast: ToastService,
-  ) { }
+    private toast: ToastService
+  ) {}
 
   ngOnInit(): void {
     if (this.action === 'create') {
@@ -45,6 +58,11 @@ export class ControlForm implements OnInit {
 
   async onSubmit(): Promise<void> {
     if (this.controlService.form.invalid) {
+      this.controlService.form.markAllAsTouched();
+      this.toast.showWarning(
+        'Formulario incompleto',
+        'Complete los campos obligatorios antes de crear el control'
+      );
       this.sendingForm = false;
       return;
     }
@@ -73,14 +91,18 @@ export class ControlForm implements OnInit {
   private getRequestFunction(body: any) {
     return this.action === 'create' && !this.controlService.selectedControl?.id
       ? () => this.controlService.createControl(body)
-      : () => this.controlService.updateControl(this.controlService.selectedControl!.id, body);
+      : () =>
+          this.controlService.updateControl(
+            this.controlService.selectedControl!.id,
+            body
+          );
   }
 
   private async executeRequest(requestFn: Function): Promise<SuccessResponse> {
     return new Promise((resolve, reject) => {
       requestFn().subscribe({
         next: (resp: SuccessResponse) => resolve(resp),
-        error: (err: ErrorResponse) => reject(err)
+        error: (err: ErrorResponse) => reject(err),
       });
     });
   }

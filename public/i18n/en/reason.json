@@ -1,9 +1,9 @@
 {
     "REASON": {
         "HEADER": {
-            "BTN-CREATE": "New reason",
-            "TITLE": "Reasons management",
-            "SUBTITLE": "Create the reasons used to build the GRC templates"
+            "BTN-CREATE": "New cause",
+            "TITLE": "Cause management",
+            "SUBTITLE": "Create the causes used to build the GRC templates"
         },
         "LIST": {}
     }

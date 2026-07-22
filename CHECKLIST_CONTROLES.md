@@ -16,10 +16,10 @@ Requiere autenticación (cookie/JWT), igual que el resto de la API.
 
 **Query params:**
 
-| Parámetro | Tipo | Obligatorio | Descripción |
-|---|---|---|---|
-| `os` | `"UBUNTU" \| "WINDOWS"` | Sí | Sistema operativo del checklist a traer |
-| `search` | `string` | No | Filtra por texto libre sobre el título del check (`ILIKE %texto%`) |
+| Parámetro | Tipo                    | Obligatorio | Descripción                                                        |
+| --------- | ----------------------- | ----------- | ------------------------------------------------------------------ |
+| `os`      | `"UBUNTU" \| "WINDOWS"` | Sí          | Sistema operativo del checklist a traer                            |
+| `search`  | `string`                | No          | Filtra por texto libre sobre el título del check (`ILIKE %texto%`) |
 
 **Ejemplo:**
 
@@ -36,7 +36,10 @@ GET /v1/checklist?os=WINDOWS&search=firewall
   "message": "Checklist obtenido",
   "data": [
     { "checkId": "28500", "title": "Ensure /tmp is a separate partition." },
-    { "checkId": "28501", "title": "Ensure nodev option set on /tmp partition." }
+    {
+      "checkId": "28501",
+      "title": "Ensure nodev option set on /tmp partition."
+    }
   ]
 }
 ```
@@ -47,10 +50,10 @@ No hay paginación: para Ubuntu son ~207 checks y para Windows ~482, un payload 
 
 Se agregaron dos campos **opcionales** al body existente:
 
-| Campo | Tipo | Obligatorio | Descripción |
-|---|---|---|---|
-| `os` | `"UBUNTU" \| "WINDOWS"` | Solo si se envía `checklist` | Mismo enum que en `GET /checklist` |
-| `checklist` | `{ checkId: string; title: string }[]` | No | Los checks elegidos por el usuario. Se recomienda enviar exactamente los objetos `{ checkId, title }` que devolvió `GET /v1/checklist`, sin transformarlos |
+| Campo       | Tipo                                   | Obligatorio                  | Descripción                                                                                                                                                |
+| ----------- | -------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `os`        | `"UBUNTU" \| "WINDOWS"`                | Solo si se envía `checklist` | Mismo enum que en `GET /checklist`                                                                                                                         |
+| `checklist` | `{ checkId: string; title: string }[]` | No                           | Los checks elegidos por el usuario. Se recomienda enviar exactamente los objetos `{ checkId, title }` que devolvió `GET /v1/checklist`, sin transformarlos |
 
 **Ejemplo de body (control automático con checklist):**
 
@@ -61,7 +64,10 @@ Se agregaron dos campos **opcionales** al body existente:
   "os": "UBUNTU",
   "checklist": [
     { "checkId": "28500", "title": "Ensure /tmp is a separate partition." },
-    { "checkId": "28504", "title": "Ensure separate partition exists for /var." }
+    {
+      "checkId": "28504",
+      "title": "Ensure separate partition exists for /var."
+    }
   ]
 }
 ```
@@ -78,7 +84,12 @@ Cada control en `data` trae un array `checks` con lo que se guardó al crearlo:
   "name": "Endurecimiento del sistema de archivos",
   "type": "AUTOMATIC",
   "checks": [
-    { "id": "…", "check_id": "28500", "title": "Ensure /tmp is a separate partition.", "os": "UBUNTU" }
+    {
+      "id": "…",
+      "check_id": "28500",
+      "title": "Ensure /tmp is a separate partition.",
+      "os": "UBUNTU"
+    }
   ]
 }
 ```

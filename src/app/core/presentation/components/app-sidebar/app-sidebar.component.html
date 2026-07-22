@@ -160,7 +160,7 @@
                 </span>
                 <span class="menu-item-text">
                   @if ((isExpanded$ | async) || (isHovered$ | async) || (isMobileOpen$ | async)) {
-                  {{ item.name }}
+                  {{ item.name | translate }}
                   }
                 </span>
               </a>
