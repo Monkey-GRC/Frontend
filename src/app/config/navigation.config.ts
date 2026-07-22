@@ -24,6 +24,12 @@ export interface SectionIcon {
 export const NAV_ITEMS: NavItem[] = [
     // Sección "Menu"
     {
+        icon: 'monitoring',
+        name: "GRC_FRAMEWORK.DASHBOARD",
+        path: "/dashboard",
+        section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION"
+    },
+    {
         icon: 'list_alt_check',
         name: "GRC Framework",
         section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION",

@@ -19,7 +19,7 @@
     </span>
     <input
       type="text"
-      placeholder="Buscar razones..."
+      placeholder="Buscar causas..."
       class="w-full sm:w-64 pl-10 pr-4 py-2.5 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-colors duration-200"
     />
   </div>
@@ -42,7 +42,7 @@
       <button
         (click)="onEditReason(reason)"
         class="p-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-200 dark:hover:bg-blue-800/50 transition-colors duration-150"
-        title="Editar razón"
+        title="Editar causa"
       >
         <span class="material-symbols-outlined text-md!"> edit </span>
       </button>
@@ -51,7 +51,7 @@
       <button
         (click)="onDeleteReason(reason)"
         class="p-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-md hover:bg-red-200 dark:hover:bg-red-800/50 transition-colors duration-150"
-        title="Eliminar razón"
+        title="Eliminar causa"
       >
         <span class="material-symbols-outlined text-md!"> delete </span>
       </button>
@@ -88,8 +88,8 @@
       <div class="flex items-center gap-1">
         <span class="material-symbols-outlined text-base"> person </span>
         <span
-          >{{ reason.created_by_user!.name }} {{
-          reason.created_by_user!.last_name }}</span
+          >{{ reason.created_by_user?.name ?? 'Sistema' }} {{
+          reason.created_by_user?.last_name ?? '' }}</span
         >
       </div>
       <div class="flex items-center gap-1">

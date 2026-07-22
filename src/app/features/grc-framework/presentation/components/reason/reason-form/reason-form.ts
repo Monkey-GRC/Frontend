@@ -22,7 +22,6 @@ import { TextAreaModule, TextBoxModule } from '@syncfusion/ej2-angular-inputs';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class ReasonForm implements OnInit {
-  /** Emite evento cuando se necesita recargar la lista de razones */
   sendedForm = output();
 
   /** Estado del formulario */
@@ -83,14 +82,14 @@ export class ReasonForm implements OnInit {
   /** Maneja respuesta exitosa */
   private handleSuccess(resp: SuccessResponse): void {
     const actionText = this.action === 'create' ? 'creada' : 'actualizada';
-    this.toast.showSuccess(`Razón ${actionText}`, resp.message);
+    this.toast.showSuccess(`Causa ${actionText}`, resp.message);
     this.finalizeOperation();
   }
 
   /** Maneja error */
   private handleError(err: ErrorResponse): void {
     const actionText = this.action === 'create' ? 'crear' : 'actualizar';
-    this.toast.showError(`Error al ${actionText} razón`, err.message);
+    this.toast.showError(`Error al ${actionText} la causa`, err.message);
     this.finalizeOperation();
   }
 

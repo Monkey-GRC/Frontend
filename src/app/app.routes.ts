@@ -17,6 +17,11 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        path: 'dashboard',
+        loadComponent: () => import('src/app/features/dashboard/presentation/views/compliance-dashboard/compliance-dashboard').then(m => m.ComplianceDashboard),
+        pathMatch: 'full',
+      },
+      {
         path: 'risks',
         loadComponent: () => import('src/app/features/grc-framework/presentation/views/risks/risks').then(m => m.Risks),
         pathMatch: 'full',
