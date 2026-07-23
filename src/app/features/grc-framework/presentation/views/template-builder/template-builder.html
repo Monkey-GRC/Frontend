@@ -5,34 +5,22 @@
         <div class="max-w-full mx-auto space-y-6 p-4">
 
             <!-- HEADER -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div class="space-y-1">
-                    <button (click)="goBack()" class="inline-flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400
-                        hover:text-gray-700 dark:hover:text-gray-200 mb-1">
-                        <span class="material-symbols-outlined text-base">arrow_back</span>
-                        Volver a plantillas
-                    </button>
-                    <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white">
-                        @if (mode === 'create') {
-                            Crear plantilla
-                        } @else {
-                            Editar plantilla - {{ templateService.selectedTemplate?.name }}
-                        }
-                    </h1>
-                    <p class="text-sm text-gray-600 dark:text-gray-300 max-w-xl">
-                        Define los datos de la plantilla y luego arma su árbol de riesgos, causas y controles.
-                    </p>
-                </div>
-                <button [disabled]="templateForm?.sendingForm" class="inline-flex items-center justify-center gap-2 rounded-lg
-                       bg-primary px-4 py-2.5 text-sm font-medium text-white
-                       hover:bg-primary-500 dark:hover:bg-primary-600 transition-all duration-200
-                       disabled:opacity-70 disabled:cursor-not-allowed
-                       w-full sm:w-auto shadow-sm hover:shadow-md" (click)="onSave()">
-                    <span class="material-symbols-outlined text-base" [class.animate-spin]="templateForm?.sendingForm">
-                        {{ templateForm?.sendingForm ? 'progress_activity' : 'save' }}
-                    </span>
-                    {{ mode === 'create' ? 'Crear plantilla' : 'Guardar cambios' }}
+            <div class="flex flex-col gap-1">
+                <button (click)="goBack()" class="inline-flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400
+                    hover:text-gray-700 dark:hover:text-gray-200 mb-1 w-fit">
+                    <span class="material-symbols-outlined text-base">arrow_back</span>
+                    Volver a plantillas
                 </button>
+                <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white">
+                    @if (mode === 'create') {
+                        Crear plantilla
+                    } @else {
+                        Editar plantilla - {{ templateService.selectedTemplate?.name }}
+                    }
+                </h1>
+                <p class="text-sm text-gray-600 dark:text-gray-300 max-w-xl">
+                    Define los datos de la plantilla y luego arma su árbol de riesgos, causas y controles.
+                </p>
             </div>
 
             <!-- DATOS DE LA PLANTILLA -->
@@ -108,6 +96,20 @@
                 </div>
             </div>
             }
+
+            <!-- ACCIONES -->
+            <div class="flex justify-end">
+                <button [disabled]="templateForm?.sendingForm" class="inline-flex items-center justify-center gap-2 rounded-lg
+                       bg-primary px-4 py-2.5 text-sm font-medium text-white
+                       hover:bg-primary-500 dark:hover:bg-primary-600 transition-all duration-200
+                       disabled:opacity-70 disabled:cursor-not-allowed
+                       w-full sm:w-auto shadow-sm hover:shadow-md" (click)="onSave()">
+                    <span class="material-symbols-outlined text-base" [class.animate-spin]="templateForm?.sendingForm">
+                        {{ templateForm?.sendingForm ? 'progress_activity' : 'save' }}
+                    </span>
+                    {{ mode === 'create' ? 'Crear plantilla' : 'Guardar cambios' }}
+                </button>
+            </div>
 
         </div>
     </div>
