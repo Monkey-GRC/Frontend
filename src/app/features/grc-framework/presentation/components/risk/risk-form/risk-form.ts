@@ -97,7 +97,7 @@ export class RiskForm implements OnInit {
 
   /** Determina qué función de servicio usar según la acción */
   private getRequestFunction(body: any) {
-    return this.action === 'create' && !this.riskService.selectedRisk!.id
+    return this.action === 'create' && !this.riskService.selectedRisk?.id
       ? () => this.riskService.createRisk(body)
       : () => this.riskService.updateRisk(this.riskService.selectedRisk!.id, body);
   }

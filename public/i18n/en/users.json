@@ -1,0 +1,10 @@
+{
+    "USERS_MODULE": {
+        "HEADER": {
+            "BTN-CREATE": "New user",
+            "TITLE": "User management",
+            "SUBTITLE": "Manage Monkey platform users and their access roles"
+        },
+        "LIST": {}
+    }
+}

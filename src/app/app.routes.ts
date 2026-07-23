@@ -4,6 +4,7 @@ import { NotFoundLayout } from '@core/presentation/pages/not-found-layout/not-fo
 import { Home } from '@features/common/presentation/view/home/home';
 import { AppLayoutComponent } from '@core/presentation/pages/app-layout/app-layout.component';
 import { authGuard } from '@core/guards/auth.guard';
+import { roleGuard } from '@core/guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -49,6 +50,12 @@ export const routes: Routes = [
       {
         path: 'templates/:id',
         loadComponent: () => import('src/app/features/grc-framework/presentation/views/template-builder/template-builder').then(m => m.TemplateBuilder),
+        pathMatch: 'full',
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('src/app/features/users/presentation/views/users/users').then(m => m.Users),
+        canActivate: [roleGuard(['MONKEY_ADMIN'])],
         pathMatch: 'full',
       },
 

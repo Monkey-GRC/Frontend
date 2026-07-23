@@ -7,6 +7,7 @@ import { combineLatest, Subscription } from 'rxjs';
 import { SidebarService } from '@core/services/sidebar.service';
 import { NavItem, NAV_ITEMS, NavigationHelper, NavSubItem } from '@config/navigation.config';
 import { TranslateModule } from '@ngx-translate/core';
+import { AuthService } from '@features/auth/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -20,8 +21,8 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class AppSidebarComponent {
 
-  // Importar la configuración desde el archivo externo
-  navItems: NavItem[] = NAV_ITEMS;
+  // Importar la configuración desde el archivo externo, filtrada por rol
+  navItems: NavItem[];
 
   openSubmenu: string | null = null;
   subMenuHeights: { [key: string]: number } = {};
@@ -36,11 +37,17 @@ export class AppSidebarComponent {
   constructor(
     public sidebarService: SidebarService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) {
     this.isExpanded$ = this.sidebarService.isExpanded$;
     this.isMobileOpen$ = this.sidebarService.isMobileOpen$;
     this.isHovered$ = this.sidebarService.isHovered$;
+
+    const currentRole = this.authService.currentUser?.role ?? '';
+    this.navItems = NAV_ITEMS.filter(
+      (item) => !item.roles || item.roles.includes(currentRole)
+    );
   }
 
   ngOnInit() {
