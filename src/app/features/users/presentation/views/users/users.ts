@@ -53,6 +53,9 @@ export class Users implements OnInit {
       this.subtile = null;
       this.submitText = 'Actualizar usuario';
       this.userService.initializeForm(user);
+    } else {
+      this.userService.selectedUser = null;
+      this.userService.initializeForm();
     }
   }
 
