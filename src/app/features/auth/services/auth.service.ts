@@ -19,6 +19,11 @@ export class AuthService {
     readonly isLoggedIn$ = this._isLoggedIn$.asObservable();
     readonly user$ = this._user$.asObservable();
 
+    /** Snapshot síncrono del usuario logueado (poblado tras validateSession) */
+    get currentUser(): User | null {
+        return this._user$.value;
+    }
+
     constructor(private http: HttpClient) { }
 
     /**

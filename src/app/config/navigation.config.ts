@@ -14,6 +14,7 @@ export interface NavItem {
     new?: boolean;
     section: string; // Define a qué sección pertenece
     subItems?: NavSubItem[];
+    roles?: string[]; // Si se define, solo estos roles ven el item
 }
 
 export interface SectionIcon {
@@ -55,6 +56,13 @@ export const NAV_ITEMS: NavItem[] = [
                 section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION"
             },
         ],
+    },
+    {
+        icon: 'manage_accounts',
+        name: "GRC_FRAMEWORK.USERS",
+        path: "/users",
+        section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION",
+        roles: ['MONKEY_ADMIN'],
     },
 ];
 
