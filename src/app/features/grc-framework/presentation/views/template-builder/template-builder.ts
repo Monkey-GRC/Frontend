@@ -172,11 +172,18 @@ export class TemplateBuilder implements OnInit {
   }
 
   onTemplateSaved(template: Template): void {
-    if (this.mode === 'create') {
-      this.router.navigate(['/templates', template.id], { replaceUrl: true });
-      return;
-    }
     this.templateService.selectedTemplate = template;
+
+    if (this.mode === 'create') {
+      // Habilita de inmediato el árbol de riesgos/causas/controles, sin
+      // depender de que la navegación recree el componente.
+      this.mode = 'edit';
+      this.templateId = template.id;
+      this.loadAllRisks();
+      this.loadAllReasons();
+      this.loadAllControls();
+      this.router.navigate(['/templates', template.id], { replaceUrl: true });
+    }
   }
 
   goBack(): void {
