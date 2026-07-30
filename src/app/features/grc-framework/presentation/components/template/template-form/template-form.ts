@@ -31,6 +31,11 @@ export class TemplateForm implements OnInit {
 
   async onSubmit(): Promise<void> {
     if (this.templateService.form.invalid) {
+      this.templateService.form.markAllAsTouched();
+      this.toast.showWarning(
+        'Formulario incompleto',
+        'Revisa el nombre y el slug (minúsculas, números y guiones) antes de guardar'
+      );
       this.sendingForm = false;
       return;
     }

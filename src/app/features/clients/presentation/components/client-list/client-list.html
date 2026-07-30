@@ -1,0 +1,64 @@
+<!-- Header -->
+<div
+  class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 shrink-0"
+>
+  <div>
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+      Registro de tenants
+    </h3>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+      {{ clientService.clients.length }} tenants registrados
+    </p>
+  </div>
+</div>
+
+<!-- LISTADO CON SCROLL -->
+<div
+  class="space-y-3 sm:space-y-4 overflow-y-auto pr-1 grow max-h-[400px] sm:max-h-[500px] lg:max-h-[600px] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent"
+>
+  @for (client of clientService.clients; track client.id) {
+  <div
+    class="relative bg-transparent p-4 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-150 group"
+    [ngClass]="{ 'opacity-60': !client.is_active }"
+  >
+    <!-- Fila superior: seq y estado -->
+    <div class="flex justify-between items-center mb-2">
+      <span
+        class="text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded"
+      >
+        #{{ client.seq }}
+      </span>
+      <span
+        class="text-xs font-medium px-2 py-1 rounded-full"
+        [ngClass]="statusClass(client.provisioning_status)"
+      >
+        {{ statusLabel(client.provisioning_status) }}
+      </span>
+    </div>
+
+    <!-- Nombre -->
+    <h4
+      class="text-base font-semibold text-gray-900 dark:text-white mb-1 line-clamp-2"
+    >
+      {{ client.name }}
+    </h4>
+
+    <!-- tax_id -->
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+      {{ client.tax_id }}
+    </p>
+
+    <!-- Fecha de creación -->
+    <div
+      class="flex items-center justify-end text-sm text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-700"
+    >
+      <div class="flex items-center gap-1">
+        <span class="material-symbols-outlined text-base">
+          calendar_month
+        </span>
+        <span>{{ client.created_at | date:'dd/MM/yy' }}</span>
+      </div>
+    </div>
+  </div>
+  }
+</div>

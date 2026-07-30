@@ -42,7 +42,10 @@ export class TemplateBuilder implements OnInit {
   allReasons: Reason[] = [];
   allControls: Control[] = [];
 
-  @ViewChild(TemplateForm) templateForm?: TemplateForm;
+  // static: true porque <app-template-form> siempre está en el template (no
+  // depende de @if) — se resuelve en ngOnInit, antes del primer change
+  // detection, evitando el NG0100 (undefined -> definido entre pasadas).
+  @ViewChild(TemplateForm, { static: true }) templateForm!: TemplateForm;
   @ViewChild(RiskForm) riskForm?: RiskForm;
 
   constructor(
@@ -172,11 +175,18 @@ export class TemplateBuilder implements OnInit {
   }
 
   onTemplateSaved(template: Template): void {
-    if (this.mode === 'create') {
-      this.router.navigate(['/templates', template.id], { replaceUrl: true });
-      return;
-    }
     this.templateService.selectedTemplate = template;
+
+    if (this.mode === 'create') {
+      // Habilita de inmediato el árbol de riesgos/causas/controles, sin
+      // depender de que la navegación recree el componente.
+      this.mode = 'edit';
+      this.templateId = template.id;
+      this.loadAllRisks();
+      this.loadAllReasons();
+      this.loadAllControls();
+      this.router.navigate(['/templates', template.id], { replaceUrl: true });
+    }
   }
 
   goBack(): void {

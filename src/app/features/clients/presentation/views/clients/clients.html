@@ -1,0 +1,74 @@
+@if (isLoading) {
+<app-loader [type]="'monkey'" [headerSize]="'9rem'" />
+} @else {
+<div class="transition-colors duration-200 animation">
+  <div class="max-w-full mx-auto space-y-6 p-4">
+    <!-- ================= HEADER ================= -->
+    <div
+      class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div class="space-y-1">
+        <h1
+          class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white"
+        >
+          {{ 'CLIENTS_MODULE.HEADER.TITLE' | translate }}
+        </h1>
+        <p class="text-sm text-gray-600 dark:text-gray-300 max-w-xl">
+          {{ 'CLIENTS_MODULE.HEADER.SUBTITLE' | translate }}
+        </p>
+      </div>
+
+      <button
+        class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-500 dark:hover:bg-primary-600 transition-all duration-200 w-full sm:w-auto shadow-sm hover:shadow-md"
+        (click)="onOpenModal()"
+      >
+        <span class="material-symbols-outlined text-base">add</span>
+        {{ 'CLIENTS_MODULE.HEADER.BTN-CREATE' | translate }}
+      </button>
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <div class="glass-card dark:glass-card-dark p-5 sm:p-6 flex flex-col">
+      <app-client-list />
+    </div>
+  </div>
+
+  <!-- Modal de creación -->
+  <app-dialog
+    class="hidden"
+    [width]="'600px'"
+    [title]="'Crear un nuevo tenant'"
+    [subtitle]="'Aprovisiona una base de datos física propia para este cliente'"
+    [isModal]="true"
+    [showCloseIcon]="!(clientForm?.sendingForm ?? false)"
+    [submitText]="(clientForm?.sendingForm ?? false) ? 'Aprovisionando…' : 'Crear tenant'"
+    [isSubmitting]="clientForm?.sendingForm ?? false"
+    [visible]="isVisible"
+    (onClose)="onCloseModal()"
+    (onSubmit)="clientForm.onSubmit()"
+  >
+    <app-client-form (sendedForm)="onSubmitForm($event)" />
+  </app-dialog>
+
+  <!-- Modal de revelar api_key (una sola vez) -->
+  <app-dialog
+    class="hidden"
+    [width]="'600px'"
+    [icon]="'key'"
+    [title]="'api_key de ' + revealedClientName"
+    [subtitle]="'Copia y entrega este api_key ahora — no se podrá volver a consultar.'"
+    [isModal]="true"
+    [cancelText]="'Cerrar'"
+    [submitText]="copied ? 'Copiado ✓' : 'Copiar api_key'"
+    [visible]="isRevealVisible"
+    (onClose)="onCloseReveal()"
+    (onSubmit)="copyApiKey()"
+  >
+    <div
+      class="font-mono text-sm break-all bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-gray-900 dark:text-white"
+    >
+      {{ revealedApiKey }}
+    </div>
+  </app-dialog>
+</div>
+}

@@ -14,6 +14,7 @@ export function HttpLoaderFactory(httpBackend: HttpBackend): MultiTranslateHttpL
     { prefix: './i18n/', suffix: '/risk.json', optional: true },
     { prefix: './i18n/', suffix: '/reason.json', optional: true },
     { prefix: './i18n/', suffix: '/users.json', optional: true },
+    { prefix: './i18n/', suffix: '/clients.json', optional: true },
   ]);
 }
 

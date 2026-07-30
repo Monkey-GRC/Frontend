@@ -58,6 +58,12 @@ export const routes: Routes = [
         canActivate: [roleGuard(['MONKEY_ADMIN'])],
         pathMatch: 'full',
       },
+      {
+        path: 'clients',
+        loadComponent: () => import('src/app/features/clients/presentation/views/clients/clients').then(m => m.Clients),
+        canActivate: [roleGuard(['MONKEY_ADMIN'])],
+        pathMatch: 'full',
+      },
 
     ]
   },
