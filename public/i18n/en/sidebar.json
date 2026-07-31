@@ -8,7 +8,7 @@
         "CONTROLS": "Controls",
         "TEMPLATES": "Templates",
         "DASHBOARD": "Dashboard",
-        "USERS": "Users",
-        "CLIENTS": "Tenants"
+        "USERS": "Users management",
+        "CLIENTS": "Clients"
     }
 }
