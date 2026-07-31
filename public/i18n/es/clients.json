@@ -1,8 +1,8 @@
 {
     "CLIENTS_MODULE": {
         "HEADER": {
-            "BTN-CREATE": "Nuevo tenant",
-            "TITLE": "Gestión de tenants",
+            "BTN-CREATE": "Nuevo cliente",
+            "TITLE": "Gestión de clientes",
             "SUBTITLE": "Crea un nuevo cliente (tenant) de Monkey — se le aprovisiona su propia base de datos y se genera el api_key para su onboarding"
         },
         "LIST": {}

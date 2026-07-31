@@ -8,7 +8,7 @@
         "CONTROLS": "Controles",
         "TEMPLATES": "Plantillas",
         "DASHBOARD": "Dashboard",
-        "USERS": "Usuarios",
-        "CLIENTS": "Tenants"
+        "USERS": "Gestión de usuarios",
+        "CLIENTS": "Clientes"
     }
 }
