@@ -1,0 +1,10 @@
+{
+    "CLIENTS_MODULE": {
+        "HEADER": {
+            "BTN-CREATE": "New tenant",
+            "TITLE": "Tenant management",
+            "SUBTITLE": "Create a new Monkey client (tenant) — its own database gets provisioned and an api_key is generated for onboarding"
+        },
+        "LIST": {}
+    }
+}

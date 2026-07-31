@@ -42,7 +42,10 @@ export class TemplateBuilder implements OnInit {
   allReasons: Reason[] = [];
   allControls: Control[] = [];
 
-  @ViewChild(TemplateForm) templateForm?: TemplateForm;
+  // static: true porque <app-template-form> siempre está en el template (no
+  // depende de @if) — se resuelve en ngOnInit, antes del primer change
+  // detection, evitando el NG0100 (undefined -> definido entre pasadas).
+  @ViewChild(TemplateForm, { static: true }) templateForm!: TemplateForm;
   @ViewChild(RiskForm) riskForm?: RiskForm;
 
   constructor(
