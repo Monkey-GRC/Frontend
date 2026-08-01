@@ -29,7 +29,7 @@ export class Clients implements OnInit {
   isLoading = false;
 
   isRevealVisible = false;
-  revealedApiKey: string | null = null;
+  revealedOnboardingCode: string | null = null;
   revealedClientName = '';
   copied = false;
 
@@ -57,17 +57,17 @@ export class Clients implements OnInit {
     this.readAllClients();
 
     if (result) {
-      this.revealedApiKey = result.api_key;
+      this.revealedOnboardingCode = result.onboarding_code;
       this.revealedClientName = result.client.name;
       this.isRevealVisible = true;
     }
   }
 
-  copyApiKey() {
-    if (!this.revealedApiKey) return;
-    navigator.clipboard.writeText(this.revealedApiKey).then(() => {
+  copyOnboardingCode() {
+    if (!this.revealedOnboardingCode) return;
+    navigator.clipboard.writeText(this.revealedOnboardingCode).then(() => {
       this.copied = true;
-      this.toast.showSuccess('Copiado', 'El api_key se copió al portapapeles');
+      this.toast.showSuccess('Copiado', 'El código de onboarding se copió al portapapeles');
       setTimeout(() => (this.copied = false), 2000);
     });
   }
@@ -75,8 +75,15 @@ export class Clients implements OnInit {
   onCloseReveal() {
     this.isRevealVisible = false;
     // Nunca se vuelve a poder consultar — se limpia de memoria al cerrar.
-    this.revealedApiKey = null;
+    this.revealedOnboardingCode = null;
     this.revealedClientName = '';
+  }
+
+  onRegenerated(result: { client: any; onboarding_code: string }) {
+    this.readAllClients();
+    this.revealedOnboardingCode = result.onboarding_code;
+    this.revealedClientName = result.client.name;
+    this.isRevealVisible = true;
   }
 
   readAllClients() {

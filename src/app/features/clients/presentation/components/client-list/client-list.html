@@ -21,19 +21,64 @@
     class="relative bg-transparent p-4 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-150 group"
     [ngClass]="{ 'opacity-60': !client.is_active }"
   >
+    <!-- Botones de acciones -->
+    <div
+      class="absolute top-3 right-4 gap-1 opacity-0 group-hover:opacity-100 hidden group-hover:flex transition-opacity duration-200 z-10"
+    >
+      @if (client.provisioning_status === 'PENDING') {
+      <!-- Botón Regenerar código -->
+      <button
+        (click)="onRegenerateCode(client)"
+        class="p-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-200 dark:hover:bg-blue-800/50 transition-colors duration-150"
+        title="Regenerar código de onboarding"
+      >
+        <span class="material-symbols-outlined text-md!"> refresh </span>
+      </button>
+      }
+
+      @if (client.is_active) {
+      <!-- Botón Desactivar -->
+      <button
+        (click)="onDeactivateClient(client)"
+        class="p-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-md hover:bg-red-200 dark:hover:bg-red-800/50 transition-colors duration-150"
+        title="Desactivar cliente"
+      >
+        <span class="material-symbols-outlined text-md!"> block </span>
+      </button>
+      } @else {
+      <!-- Botón Reactivar -->
+      <button
+        (click)="onReactivateClient(client)"
+        class="p-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-md hover:bg-green-200 dark:hover:bg-green-800/50 transition-colors duration-150"
+        title="Reactivar cliente"
+      >
+        <span class="material-symbols-outlined text-md!"> restart_alt </span>
+      </button>
+      }
+    </div>
+
     <!-- Fila superior: seq y estado -->
-    <div class="flex justify-between items-center mb-2">
+    <div class="flex justify-between items-center mb-2 pr-20">
       <span
         class="text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded"
       >
         #{{ client.seq }}
       </span>
-      <span
-        class="text-xs font-medium px-2 py-1 rounded-full"
-        [ngClass]="statusClass(client.provisioning_status)"
-      >
-        {{ statusLabel(client.provisioning_status) }}
-      </span>
+      <div class="flex items-center gap-1">
+        @if (!client.is_active) {
+        <span
+          class="text-xs font-medium px-2 py-1 rounded-full bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
+        >
+          Inactivo
+        </span>
+        }
+        <span
+          class="text-xs font-medium px-2 py-1 rounded-full"
+          [ngClass]="statusClass(client.provisioning_status)"
+        >
+          {{ statusLabel(client.provisioning_status) }}
+        </span>
+      </div>
     </div>
 
     <!-- Nombre -->
@@ -43,9 +88,14 @@
       {{ client.name }}
     </h4>
 
-    <!-- tax_id -->
-    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
-      {{ client.tax_id }}
+    <!-- Documento -->
+    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+      {{ documentTypeLabel(client.document_type) }} · {{ client.document_number }}
+    </p>
+
+    <!-- Contacto -->
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+      {{ client.email }} · {{ client.phone }}
     </p>
 
     <!-- Fecha de creación -->

@@ -29,7 +29,7 @@
 
     <!-- ================= CONTENT ================= -->
     <div class="glass-card dark:glass-card-dark p-5 sm:p-6 flex flex-col">
-      <app-client-list />
+      <app-client-list (refreshClients)="readAllClients()" (regenerated)="onRegenerated($event)" />
     </div>
   </div>
 
@@ -38,10 +38,10 @@
     class="hidden"
     [width]="'600px'"
     [title]="'Crear un nuevo cliente'"
-    [subtitle]="'Aprovisiona una base de datos física propia para este cliente'"
+    [subtitle]="'Genera un código de onboarding — la base de datos propia se crea hasta que el cliente termine su proceso de alta'"
     [isModal]="true"
     [showCloseIcon]="!(clientForm?.sendingForm ?? false)"
-    [submitText]="(clientForm?.sendingForm ?? false) ? 'Aprovisionando…' : 'Crear cliente'"
+    [submitText]="(clientForm?.sendingForm ?? false) ? 'Creando…' : 'Crear cliente'"
     [isSubmitting]="clientForm?.sendingForm ?? false"
     [visible]="isVisible"
     (onClose)="onCloseModal()"
@@ -50,7 +50,7 @@
     <app-client-form (sendedForm)="onSubmitForm($event)" />
   </app-dialog>
 
-  <!-- Modal de revelar api_key (una sola vez) -->
+  <!-- Modal de revelar código de onboarding (una sola vez) -->
   <app-dialog
     class="hidden"
     [width]="'600px'"
@@ -62,12 +62,12 @@
     [submitText]="copied ? 'Copiado ✓' : 'Copiar código'"
     [visible]="isRevealVisible"
     (onClose)="onCloseReveal()"
-    (onSubmit)="copyApiKey()"
+    (onSubmit)="copyOnboardingCode()"
   >
     <div
       class="font-mono text-sm break-all bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-gray-900 dark:text-white"
     >
-      {{ revealedApiKey }}
+      {{ revealedOnboardingCode }}
     </div>
   </app-dialog>
 </div>
