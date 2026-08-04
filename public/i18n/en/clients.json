@@ -3,7 +3,7 @@
         "HEADER": {
             "BTN-CREATE": "New tenant",
             "TITLE": "Tenant management",
-            "SUBTITLE": "Create a new Monkey client (tenant) — its own database gets provisioned and an api_key is generated for onboarding"
+            "SUBTITLE": "Create a new Monkey client and generate its onboarding code — its own database is created once they complete onboarding"
         },
         "LIST": {}
     }

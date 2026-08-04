@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CreateClientResult } from '@features/clients/models/client.model';
-import { ClientService } from '@features/clients/services/client.service';
+import { ClientService, DOCUMENT_TYPES } from '@features/clients/services/client.service';
 import {
   ErrorResponse,
   SuccessResponse,
@@ -25,6 +25,7 @@ import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
 export class ClientForm implements OnInit {
   sendedForm = output<CreateClientResult | undefined>();
   sendingForm = false;
+  documentTypes = DOCUMENT_TYPES;
 
   constructor(
     public clientService: ClientService,
