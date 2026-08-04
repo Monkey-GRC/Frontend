@@ -13,7 +13,7 @@ function handleHttpError(error: HttpErrorResponse): Observable<never> {
     if (error.error instanceof ErrorEvent) {
         errorMessage = `${error.error.message}`;
     } else {
-        errorMessage = getServerErrorMessage(error);
+        errorMessage = sanitizeMessage(getServerErrorMessage(error));
     }
 
     return throwError(() => new Error(errorMessage));
@@ -29,5 +29,21 @@ function getServerErrorMessage(error: HttpErrorResponse): string {
         case 500: return `${error.error.message}`;
         default: return `Error inesperado: ${error.error.message}`;
     }
+}
+
+/**
+ * mnk-client-identifier/mnk-client-key son un detalle interno de enrutamiento
+ * entre tenants (ver ClientCredentialsGuard) — MONKEY_ADMIN nunca los usa y
+ * nunca deben llegar a un humano, sea admin o cliente. Si por cualquier causa
+ * (bug, estado inconsistente) el backend responde con uno de esos mensajes,
+ * se reemplaza por uno genérico antes de que cualquier toast lo muestre.
+ */
+const INTERNAL_ROUTING_MESSAGE_PATTERN = /mnk-client-(identifier|key)|credenciales de tenant/i;
+
+function sanitizeMessage(message: string): string {
+    if (INTERNAL_ROUTING_MESSAGE_PATTERN.test(message)) {
+        return 'Ocurrió un problema de autenticación. Si el error persiste, contacta a soporte.';
+    }
+    return message;
 }
 
