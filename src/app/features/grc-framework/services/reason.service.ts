@@ -12,7 +12,7 @@ export class ReasonService {
 
   apiUrl = environment.apiUrl + '/reasons';
   form!: FormGroup;
-  reasons!: Reason[];
+  reasons: Reason[] = [];
   selectedReason: Reason | null = {} as Reason;
 
   constructor(

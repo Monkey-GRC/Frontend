@@ -107,6 +107,11 @@ export class AuthService {
         );
     }
 
+    /** Limpia estado local (ej. tras un 401 inesperado en cualquier request) */
+    clearLocalSession() {
+        this.clearSession();
+    }
+
     /** Limpia estado local */
     private clearSession() {
         this._user$.next(null);
