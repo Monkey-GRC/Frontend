@@ -12,7 +12,7 @@ export class TemplateService {
 
   apiUrl = environment.apiUrl + '/templates';
   form!: FormGroup;
-  templates!: Template[];
+  templates: Template[] = [];
   selectedTemplate: Template | null = {} as Template;
 
   constructor(

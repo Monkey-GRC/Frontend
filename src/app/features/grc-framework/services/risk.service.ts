@@ -12,7 +12,7 @@ export class RiskService {
 
   apiUrl = environment.apiUrl + '/risks';
   form!: FormGroup;
-  risks!: Risk[];
+  risks: Risk[] = [];
   selectedRisk: Risk | null = {} as Risk;
 
   constructor(

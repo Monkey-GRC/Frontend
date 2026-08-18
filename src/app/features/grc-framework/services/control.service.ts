@@ -13,7 +13,7 @@ export class ControlService {
 
   apiUrl = environment.apiUrl + '/controls';
   form!: FormGroup;
-  controls!: Control[];
+  controls: Control[] = [];
   selectedControl: Control | null = {} as Control;
 
   constructor(
