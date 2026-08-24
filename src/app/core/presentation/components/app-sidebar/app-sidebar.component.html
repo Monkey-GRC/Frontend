@@ -17,7 +17,7 @@
       'xl:justify-center h-17': !((isExpanded$ | async) || (isHovered$ | async)),
       'justify-start': (isExpanded$ | async) || (isHovered$ | async)
     }">
-    <a routerLink="/">
+    <a routerLink="/dashboard">
       @if ((isExpanded$ | async) || (isHovered$ | async) || (isMobileOpen$ | async)) {
       <img class="dark:hidden" src="images/logo/logo-light.svg" alt="Logo" width="300" height="80" />
       <img class="hidden dark:block" src="/images/logo/logo-dark.svg" alt="Logo" width="300" height="80" />

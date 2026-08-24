@@ -8,6 +8,9 @@ export interface ControlCheck {
     check_id: string;
     title: string;
     os: ChecklistOS;
+    soc2_code?: string | null;
+    cis_code?: string | null;
+    pci_dss_code?: string | null;
 }
 
 export interface Control {
