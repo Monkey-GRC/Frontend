@@ -4,11 +4,12 @@ import { ChecklistCheck, ChecklistOS } from '@features/grc-framework/models/chec
 import { ChecklistService } from '@features/grc-framework/services/checklist.service';
 import { ControlService } from '@features/grc-framework/services/control.service';
 import { ErrorResponse, SuccessResponse } from '@shared/models/api-response.model';
+import { BadgeLegend } from '@shared/presentation/components/badge-legend/badge-legend';
 import { ToastService } from '@shared/services/toast.service';
 
 @Component({
   selector: 'app-checklist-selector',
-  imports: [CommonModule],
+  imports: [CommonModule, BadgeLegend],
   templateUrl: './checklist-selector.html',
   styleUrl: './checklist-selector.css',
   changeDetection: ChangeDetectionStrategy.Default,
@@ -17,6 +18,7 @@ export class ChecklistSelector implements OnInit {
   allChecks: ChecklistCheck[] = [];
   searchTerm = '';
   loading = false;
+  showLegend = false;
 
   constructor(
     public controlService: ControlService,
@@ -57,6 +59,14 @@ export class ChecklistSelector implements OnInit {
     this.searchTerm = (event.target as HTMLInputElement).value;
   }
 
+  openLegend(): void {
+    this.showLegend = true;
+  }
+
+  closeLegend(): void {
+    this.showLegend = false;
+  }
+
   isChecked(check: ChecklistCheck): boolean {
     return this.selectedChecks.some(c => c.checkId === check.checkId);
   }
@@ -65,7 +75,10 @@ export class ChecklistSelector implements OnInit {
     const current = this.selectedChecks;
     const updated = this.isChecked(check)
       ? current.filter(c => c.checkId !== check.checkId)
-      : [...current, check];
+      // Solo checkId/title viajan al backend (ver ControlChecklistItemDto);
+      // el resto de campos (soc2Code, rationale, etc.) es solo para mostrarle
+      // contexto al auditor mientras elige, no forma parte del contrato.
+      : [...current, { checkId: check.checkId, title: check.title }];
 
     this.controlService.form.get('checklist')?.setValue(updated);
   }

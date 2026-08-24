@@ -539,3 +539,16 @@ textarea::placeholder {
 .glass-card {
   @apply bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/30 rounded-2xl shadow-lg shadow-black/5 p-6 transition-all;
 }
+
+/*
+ * Bandera de check (estado / mapeo a marco). Forma de etiqueta con punta
+ * hacia la derecha, usada en el Catalogo CIS, el selector de checks al
+ * crear un Control, y la lista de Controles ya creados. El color viene de
+ * clases utilitarias de Tailwind (bg-.. y text-..) aplicadas junto a esta.
+ */
+.tag-badge {
+  @apply inline-flex items-center font-semibold whitespace-nowrap;
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%);
+  padding-inline: 0.625rem 1.05rem;
+  padding-block: 0.1875rem;
+}
