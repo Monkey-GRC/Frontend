@@ -18,44 +18,8 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
-        path: 'risks',
-        loadComponent: () => import('src/app/features/grc-framework/presentation/views/risks/risks').then(m => m.Risks),
-        pathMatch: 'full',
-      },
-      {
-        path: 'reasons',
-        loadComponent:() => import('src/app/features/grc-framework/presentation/views/reasons/reasons').then(m => m.Reasons ),
-        pathMatch: 'full',
-      },
-      {
-        path: 'controls',
-        loadComponent: () => import('src/app/features/grc-framework/presentation/views/controls/controls').then(m => m.Controls),
-        pathMatch: 'full',
-      },
-      {
-        path: 'templates',
-        loadComponent: () => import('src/app/features/grc-framework/presentation/views/templates/templates').then(m => m.Templates),
-        pathMatch: 'full',
-      },
-      {
-        path: 'templates/new',
-        loadComponent: () => import('src/app/features/grc-framework/presentation/views/template-builder/template-builder').then(m => m.TemplateBuilder),
-        pathMatch: 'full',
-      },
-      {
-        path: 'templates/:id',
-        loadComponent: () => import('src/app/features/grc-framework/presentation/views/template-builder/template-builder').then(m => m.TemplateBuilder),
-        pathMatch: 'full',
-      },
-      {
         path: 'users',
         loadComponent: () => import('src/app/features/users/presentation/views/users/users').then(m => m.Users),
-        canActivate: [roleGuard(['MONKEY_ADMIN'])],
-        pathMatch: 'full',
-      },
-      {
-        path: 'clients',
-        loadComponent: () => import('src/app/features/clients/presentation/views/clients/clients').then(m => m.Clients),
         canActivate: [roleGuard(['MONKEY_ADMIN'])],
         pathMatch: 'full',
       },
