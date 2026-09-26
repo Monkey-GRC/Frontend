@@ -3,11 +3,6 @@
         "MODULE_NAME": {
             "PARAMETRIZATION": "Parametrización"
         },
-        "CAUSES": "Causas",
-        "RISKS": "Riesgos",
-        "CONTROLS": "Controles",
-        "TEMPLATES": "Plantillas",
-        "USERS": "Gestión de usuarios",
-        "CLIENTS": "Clientes"
+        "USERS": "Gestión de usuarios"
     }
 }

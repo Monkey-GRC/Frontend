@@ -23,45 +23,10 @@ export interface SectionIcon {
 
 // Configuración de items de navegación
 export const NAV_ITEMS: NavItem[] = [
-    // Sección "Menu"
-    {
-        icon: 'list_alt_check',
-        name: "GRC Framework",
-        section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION",
-        subItems: [
-            {
-                name: "GRC_FRAMEWORK.CAUSES",
-                path: "/reasons",
-                section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION"
-            },
-            {
-                name: "GRC_FRAMEWORK.RISKS",
-                path: "/risks",
-                section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION"
-            },
-            {
-                name: "GRC_FRAMEWORK.CONTROLS",
-                path: "/controls",
-                section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION"
-            },
-            {
-                name: "GRC_FRAMEWORK.TEMPLATES",
-                path: "/templates",
-                section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION"
-            },
-        ],
-    },
     {
         icon: 'manage_accounts',
         name: "GRC_FRAMEWORK.USERS",
         path: "/users",
-        section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION",
-        roles: ['MONKEY_ADMIN'],
-    },
-    {
-        icon: 'apartment',
-        name: "GRC_FRAMEWORK.CLIENTS",
-        path: "/clients",
         section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION",
         roles: ['MONKEY_ADMIN'],
     },
