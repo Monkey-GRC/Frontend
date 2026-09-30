@@ -1,19 +1,14 @@
+// Los 4 roles del comité (modelo-datos.md §5.1). Monkey Admin solo admite admin_monkey.
+export type UserRole = 'admin_monkey' | 'admin_empresa' | 'funcional' | 'auditor';
+
 export interface User {
     id: string;
     email: string;
     name: string;
     last_name: string;
-    username: string;
-    seq?: number;
-    role?: string;
-    client_id?: null;
-    is_active?: boolean;
-    created_at?: Date;
-    updated_at?: Date;
-    created_by?: string;
-    updated_by?: null;
-    refresh_token_hash?: string;
-    refresh_token_expires_at?: Date;
+    role: UserRole;
+    status: 'active' | 'inactive' | 'suspended';
+    is_mfa_enabled: boolean;
+    last_login_at: string | null;
+    created_at: string;
 }
-
-//test for merge from develop to main

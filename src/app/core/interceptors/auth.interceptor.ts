@@ -1,7 +1,7 @@
 import type { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '@features/auth/services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
@@ -10,11 +10,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
     const lang = localStorage.getItem('lang') || 'es';
 
-    // Endpoints públicos (no requieren auth)
-    const isPublic =
-        req.url.includes('/auth/login') ||
-        req.url.includes('/auth/refresh') ||
-        req.url.includes('/auth/validate');
+    // Endpoints de auth: su 401 lo maneja AuthService, no este interceptor.
+    const isAuthEndpoint = /\/auth\/(login|refresh|logout|me)$/.test(req.url);
 
     const cloned = req.clone({
         withCredentials: true, // ✅ ENVÍA COOKIES httpOnly
@@ -25,16 +22,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
     return next(cloned).pipe(
         catchError((error: HttpErrorResponse) => {
-            // Un 401 en cualquier request autenticado (sesión vencida, o la
-            // cookie fue pisada por otra pestaña con otra sesión — las apps
-            // de Monkey comparten cookie jar en localhost al no diferir en
-            // dominio, solo en puerto) deja a la app en un estado roto si no
-            // se limpia y se manda a loguear de nuevo.
-            if (error.status === 401 && !isPublic) {
-                authService.clearLocalSession();
-                router.navigate(['/auth/login']);
-            }
-            return throwError(() => error);
+            if (error.status !== 401 || isAuthEndpoint) return throwError(() => error);
+
+            // El access token dura 15 min: ante un 401 se renueva una vez y se reintenta.
+            // Si la sesión ya no se puede renovar (30 min sin actividad, 8 h, o la cookie fue
+            // pisada por otra app en localhost), se limpia y se manda a loguear de nuevo.
+            return authService.refresh().pipe(
+                switchMap((ok) => {
+                    if (ok) return next(cloned);
+                    authService.clearLocalSession();
+                    router.navigate(['/auth/login']);
+                    return throwError(() => error);
+                }),
+            );
         }),
     );
 };
