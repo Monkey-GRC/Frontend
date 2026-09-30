@@ -1,8 +1,9 @@
 {
-    "GRC_FRAMEWORK": {
-        "MODULE_NAME": {
-            "PARAMETRIZATION": "Parametrización"
-        },
-        "USERS": "Gestión de usuarios"
-    }
+    "GRC_FRAMEWORK":  {
+                          "MODULE_NAME":  {
+                                              "PARAMETRIZATION":  "Parametrización"
+                                          },
+                          "USERS":  "Gestión de usuarios",
+                          "COMPANIES":  "Empresas"
+                      }
 }

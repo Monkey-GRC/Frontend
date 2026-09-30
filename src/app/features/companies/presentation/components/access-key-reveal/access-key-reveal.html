@@ -1,0 +1,29 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-start gap-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 p-3 text-amber-800 dark:text-amber-300">
+    <span class="material-symbols-outlined text-base">key</span>
+    <p class="text-sm">{{ 'COMPANIES_MODULE.KEY.ONLY_ONCE' | translate }}</p>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <span class="text-xs text-gray-500 dark:text-gray-400">{{ 'COMPANIES_MODULE.KEY.COMPANY' | translate }}</span>
+    <span class="text-base font-semibold text-gray-900 dark:text-white">{{ company().name }}</span>
+    <span class="text-sm text-gray-600 dark:text-gray-400">{{ company().admin_email }}</span>
+  </div>
+
+  <div class="flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+    <code class="flex-1 text-center sm:text-left text-2xl font-mono tracking-widest text-primary dark:text-white select-all">
+      {{ company().access_key.code }}
+    </code>
+    <button type="button" (click)="copy()"
+      class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition">
+      <span class="material-symbols-outlined text-base">{{ copied() ? 'check' : 'content_copy' }}</span>
+      {{ (copied() ? 'COMPANIES_MODULE.KEY.COPIED' : 'COMPANIES_MODULE.KEY.COPY') | translate }}
+    </button>
+  </div>
+
+  <p class="text-sm text-gray-600 dark:text-gray-400">
+    {{ 'COMPANIES_MODULE.KEY.EXPIRES' | translate }}
+    <strong>{{ company().access_key.expires_at | date:'dd/MM/yyyy HH:mm' }}</strong>.
+    {{ 'COMPANIES_MODULE.KEY.DELIVER' | translate }}
+  </p>
+</div>

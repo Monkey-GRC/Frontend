@@ -18,9 +18,15 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        path: 'companies',
+        loadComponent: () => import('src/app/features/companies/presentation/views/companies/companies').then(m => m.Companies),
+        canActivate: [roleGuard(['admin_monkey'])],
+        pathMatch: 'full',
+      },
+      {
         path: 'users',
         loadComponent: () => import('src/app/features/users/presentation/views/users/users').then(m => m.Users),
-        canActivate: [roleGuard(['MONKEY_ADMIN'])],
+        canActivate: [roleGuard(['admin_monkey'])],
         pathMatch: 'full',
       },
 

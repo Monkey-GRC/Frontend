@@ -1,0 +1,65 @@
+{
+    "COMPANIES_MODULE": {
+        "HEADER": {
+            "TITLE": "Companies",
+            "SUBTITLE": "Register client companies and hand over their access key. The client creates its own administrator account by redeeming it in Monkey Platform.",
+            "BTN-CREATE": "Register company"
+        },
+        "LIST": {
+            "TITLE": "Registered companies",
+            "COUNT": "{{total}} companies",
+            "EMPTY": "No companies registered yet.",
+            "ONBOARDED": "Onboarding completed",
+            "NOT_ONBOARDED": "Onboarding pending",
+            "KEY_EXPIRES": "Key expires",
+            "PREV": "Previous",
+            "NEXT": "Next",
+            "LOAD_ERROR": "Companies could not be loaded"
+        },
+        "FORM": {
+            "TITLE": "Register company",
+            "SUBTITLE": "Create the client company and generate its single-use access key.",
+            "NAME": "Legal name",
+            "NAME_PLACEHOLDER": "Next Audit & Consulting S.A.S.",
+            "NAME_HINT": "It becomes fixed: the client will see it locked in the onboarding.",
+            "ADMIN_EMAIL": "Administrative email",
+            "ADMIN_EMAIL_HINT": "Recipient of the access key.",
+            "DEDICATED": "Requires a dedicated database",
+            "DEDICATED_HINT": "Only if the client's own policy requires its data in a separate database. Otherwise its data is isolated in the shared database.",
+            "DEDICATED_WARNING": "This decision can't be reverted without migrating the data. Dedicated databases are not available yet: for now registration only supports the shared database.",
+            "REQUIRED": "This field is required.",
+            "INVALID_EMAIL": "Enter a valid email.",
+            "SUBMIT": "Register",
+            "CANCEL": "Cancel",
+            "INCOMPLETE_TITLE": "Incomplete form",
+            "INCOMPLETE_MESSAGE": "Fill in the required fields before continuing.",
+            "ERROR_TITLE": "The company could not be registered"
+        },
+        "KEY": {
+            "TITLE": "Access key",
+            "ONLY_ONCE": "Copy the key now: this is the only time it is shown. Monkey only keeps a fingerprint and cannot recover it.",
+            "COMPANY": "Company",
+            "COPY": "Copy",
+            "COPIED": "Copied",
+            "EXPIRES": "Expires on",
+            "DELIVER": "Send it to the administrative email; the client uses it to create its account in Monkey Platform.",
+            "DONE": "I copied it",
+            "CLOSE": "Close"
+        },
+        "KEY_STATUS": {
+            "pending": "Key pending",
+            "used": "Key redeemed",
+            "expired": "Key expired",
+            "revoked": "Key revoked",
+            "none": "No key"
+        },
+        "STATUS": {
+            "active": "Active",
+            "suspended": "Suspended"
+        },
+        "ISOLATION": {
+            "shared": "Shared database",
+            "dedicated": "Dedicated database"
+        }
+    }
+}

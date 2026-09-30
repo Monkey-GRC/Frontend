@@ -15,6 +15,7 @@ export function HttpLoaderFactory(httpBackend: HttpBackend): MultiTranslateHttpL
     { prefix: './i18n/', suffix: '/reason.json', optional: true },
     { prefix: './i18n/', suffix: '/users.json', optional: true },
     { prefix: './i18n/', suffix: '/clients.json', optional: true },
+    { prefix: './i18n/', suffix: '/companies.json', optional: true },
   ]);
 }
 
@@ -29,9 +30,12 @@ export const appConfig: ApplicationConfig = {
         deps: [HttpBackend]
       }
     }),
+    // Las respuestas recorren los interceptores al revés: authInterceptor (el último) recibe el
+    // HttpErrorResponse crudo y puede renovar la sesión ante un 401 antes de que
+    // errorHandlerInterceptor lo convierta en un Error para la UI.
     provideHttpClient(withInterceptors([
-      authInterceptor,
-      errorHandlerInterceptor
+      errorHandlerInterceptor,
+      authInterceptor
     ]))
   ],
 };

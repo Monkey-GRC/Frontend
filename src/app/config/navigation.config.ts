@@ -24,11 +24,18 @@ export interface SectionIcon {
 // Configuración de items de navegación
 export const NAV_ITEMS: NavItem[] = [
     {
+        icon: 'domain',
+        name: "GRC_FRAMEWORK.COMPANIES",
+        path: "/companies",
+        section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION",
+        roles: ['admin_monkey'],
+    },
+    {
         icon: 'manage_accounts',
         name: "GRC_FRAMEWORK.USERS",
         path: "/users",
         section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION",
-        roles: ['MONKEY_ADMIN'],
+        roles: ['admin_monkey'],
     },
 ];
 

@@ -1,0 +1,50 @@
+@if (isLoading) {
+<app-loader [type]="'monkey'" [headerSize]="'9rem'" />
+} @else {
+<div class="transition-colors duration-200 animation">
+  <div class="max-w-full mx-auto space-y-6 p-4">
+    <!-- ================= HEADER ================= -->
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div class="space-y-1">
+        <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white">
+          {{ 'COMPANIES_MODULE.HEADER.TITLE' | translate }}
+        </h1>
+        <p class="text-sm text-gray-600 dark:text-gray-300 max-w-xl">
+          {{ 'COMPANIES_MODULE.HEADER.SUBTITLE' | translate }}
+        </p>
+      </div>
+
+      <button
+        class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-500 dark:hover:bg-primary-600 transition-all duration-200 w-full sm:w-auto shadow-sm hover:shadow-md"
+        (click)="onOpenForm()">
+        <span class="material-symbols-outlined text-base">domain_add</span>
+        {{ 'COMPANIES_MODULE.HEADER.BTN-CREATE' | translate }}
+      </button>
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <div class="glass-card dark:glass-card-dark p-5 sm:p-6 flex flex-col">
+      <app-company-list (pageChange)="readCompanies($event)" />
+    </div>
+  </div>
+</div>
+}
+
+<!-- Registro: los 3 campos del comité -->
+<app-dialog [width]="'600px'" [title]="'COMPANIES_MODULE.FORM.TITLE' | translate"
+  [subtitle]="'COMPANIES_MODULE.FORM.SUBTITLE' | translate" [isModal]="true"
+  [submitText]="'COMPANIES_MODULE.FORM.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.FORM.CANCEL' | translate"
+  [isSubmitting]="companyForm?.sendingForm ?? false" [visible]="isFormVisible" (onClose)="onCloseForm()"
+  (onSubmit)="companyForm?.onSubmit()">
+  <app-company-form (registered)="onRegistered($event)" />
+</app-dialog>
+
+<!-- Clave de acceso: se muestra una sola vez -->
+<app-dialog [width]="'600px'" [title]="'COMPANIES_MODULE.KEY.TITLE' | translate" icon="key" [isModal]="true"
+  [allowDragging]="false" [submitText]="'COMPANIES_MODULE.KEY.DONE' | translate"
+  [cancelText]="'COMPANIES_MODULE.KEY.CLOSE' | translate" [visible]="!!registered" (onClose)="onCloseKey()"
+  (onSubmit)="onCloseKey()">
+  @if (registered) {
+  <app-access-key-reveal [company]="registered" />
+  }
+</app-dialog>
