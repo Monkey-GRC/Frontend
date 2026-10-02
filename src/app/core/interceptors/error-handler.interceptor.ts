@@ -16,7 +16,8 @@ function handleHttpError(error: HttpErrorResponse): Observable<never> {
         errorMessage = sanitizeMessage(getServerErrorMessage(error));
     }
 
-    return throwError(() => new Error(errorMessage));
+    // Se conserva el status: AuthService lo usa para distinguir un 401 (renovar sesión) del resto.
+    return throwError(() => Object.assign(new Error(errorMessage), { status: error.status }));
 }
 
 function getServerErrorMessage(error: HttpErrorResponse): string {
@@ -25,7 +26,8 @@ function getServerErrorMessage(error: HttpErrorResponse): string {
         case 401: return `${error.error.message}`;
         case 403: return `${error.error.message}`;
         case 404: return `${error.error.message}`;
-        case 422: return `Entidad no procesable`;
+        case 409: return `${error.error.message}`;
+        case 422: return error.error?.message ?? `Entidad no procesable`;
         case 500: return `${error.error.message}`;
         default: return `Error inesperado: ${error.error.message}`;
     }

@@ -38,8 +38,8 @@ export class LoginForm {
     // lee returnUrl una sola vez
     this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
     this.form = this.fb.group({
-      identifier: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
       remember: [false],
     });
   }
@@ -57,7 +57,7 @@ export class LoginForm {
     }
 
     const dto = {
-      identifier: this.form.value.identifier!.trim(),
+      email: this.form.value.email!.trim().toLowerCase(),
       password: this.form.value.password!,
     };
 

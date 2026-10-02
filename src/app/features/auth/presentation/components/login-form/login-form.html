@@ -52,18 +52,18 @@
                         <span class="material-symbols-rounded text-[20px] md:text-[22px] leading-none">mail</span>
                     </span>
 
-                    <input formControlName="identifier" type="text" autocomplete="email" placeholder="tu@empresa.com"
+                    <input formControlName="email" type="email" autocomplete="email" placeholder="tu@empresa.com"
                         class="bg-gray-100 dark:bg-[#162036] dark:text-white focus:bg-white dark:focus:bg-[#0E1525]
               w-full pl-10 pr-3 h-11 md:pl-12 md:h-12 text-sm md:text-base rounded-lg border border-gray-300 dark:border-gray-700
               focus:border-primary/60 transition" />
 
-                    @if (hasError('identifier','required')) {
+                    @if (hasError('email','required')) {
                     <p class="mt-1.5 text-xs text-rose-500">
-                        El correo/usuario es obligatorio.
+                        El correo es obligatorio.
                     </p>
                     }
 
-                    @if (hasError('identifier','email')) {
+                    @if (hasError('email','email')) {
                     <p class="mt-1.5 text-xs text-rose-500">
                         Ingresa un correo válido.
                     </p>
@@ -89,12 +89,6 @@
                     @if (hasError('password','required')) {
                     <p class="mt-1.5 text-xs text-rose-500">
                         La contraseña es requerida.
-                    </p>
-                    }
-
-                    @if (hasError('password','minlength')) {
-                    <p class="mt-1.5 text-xs text-rose-500">
-                        La contraseña debe tener al menos 8 caracteres.
                     </p>
                     }
                 </div>

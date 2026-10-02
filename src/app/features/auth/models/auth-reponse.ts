@@ -1,13 +1,10 @@
-export type LoginDto = { identifier: string; password: string };
+import { User } from './user';
 
-export type LoginResponse = {
-    status: number;
-    message: string;
-    data: {
-        access_token: string;
-        access_token_expires_at?: string;
-        refresh_token?: string;
-        refresh_token_expires_at?: string;
-        user?: any;
-    };
+// contracts/modules/auth.md — POST /v1/auth/login
+export type LoginDto = { email: string; password: string };
+
+// data de POST /auth/login y GET /auth/me
+export type AuthPayload = {
+    user: User;
+    company: { id: string; name: string };
 };

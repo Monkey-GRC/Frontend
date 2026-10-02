@@ -1,0 +1,85 @@
+<form [formGroup]="companyService.form">
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-1">
+      <label>{{ 'COMPANIES_MODULE.FORM.NAME' | translate }} <span class="text-red-500">*</span></label>
+      <ejs-textbox [placeholder]="'COMPANIES_MODULE.FORM.NAME_PLACEHOLDER' | translate" formControlName="name"
+        floatLabelType="Never" cssClass="e-outline shadow-input"></ejs-textbox>
+      <p class="text-xs text-gray-500 dark:text-gray-400">
+        {{ 'COMPANIES_MODULE.FORM.NAME_HINT' | translate }}
+      </p>
+      @if (hasError('name', 'required')) {
+      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.FORM.REQUIRED' | translate }}</p>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label>{{ 'COMPANIES_MODULE.FORM.ADMIN_EMAIL' | translate }} <span class="text-red-500">*</span></label>
+      <ejs-textbox placeholder="contacto@empresa.com" formControlName="admin_email" floatLabelType="Never"
+        cssClass="e-outline shadow-input"></ejs-textbox>
+      <p class="text-xs text-gray-500 dark:text-gray-400">
+        {{ 'COMPANIES_MODULE.FORM.ADMIN_EMAIL_HINT' | translate }}
+      </p>
+      @if (hasError('admin_email', 'required')) {
+      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.FORM.REQUIRED' | translate }}</p>
+      }
+      @if (hasError('admin_email', 'email')) {
+      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.FORM.INVALID_EMAIL' | translate }}</p>
+      }
+    </div>
+
+    <!-- Marco que se contrata para la empresa (D47). Con uno solo, SOC 2, va elegido y bloqueado. -->
+    <div class="flex flex-col gap-2" data-testid="frameworks">
+      <label>{{ 'COMPANIES_MODULE.FORM.FRAMEWORKS' | translate }} <span class="text-red-500">*</span></label>
+      @for (f of frameworks; track f.code) {
+      <button type="button" (click)="toggleFramework(f.code)" [attr.aria-pressed]="isSelected(f.code)"
+        [disabled]="frameworkLocked"
+        class="flex items-start gap-3 rounded-lg border p-3 text-left disabled:cursor-default"
+        [ngClass]="isSelected(f.code)
+          ? 'border-primary bg-primary/5'
+          : 'border-gray-200 dark:border-gray-700'">
+        <span class="material-symbols-outlined text-base mt-0.5 text-primary">
+          {{ frameworkLocked ? 'lock' : isSelected(f.code) ? 'check_circle' : 'radio_button_unchecked' }}
+        </span>
+        <span class="flex flex-col gap-1">
+          <span class="text-sm font-medium text-gray-900 dark:text-white">
+            {{ f.label }}
+            @if (frameworkLocked) {
+            <span class="ml-1 text-xs font-normal text-gray-500 dark:text-gray-400">
+              ({{ 'COMPANIES_MODULE.FORM.FRAMEWORK_FIXED' | translate }})
+            </span>
+            }
+          </span>
+          <span class="text-xs text-gray-500 dark:text-gray-400">{{ f.description }}</span>
+        </span>
+      </button>
+      }
+      @if (frameworksFailed) {
+      <p class="text-xs text-rose-500">
+        {{ 'COMPANIES_MODULE.FORM.FRAMEWORKS_ERROR' | translate }}
+        <button type="button" class="underline" (click)="loadFrameworks()">{{ 'COMPANIES_MODULE.FORM.RETRY' | translate }}</button>
+      </p>
+      } @else {
+      <p class="text-xs text-gray-500 dark:text-gray-400">{{ 'COMPANIES_MODULE.FORM.FRAMEWORKS_HINT' | translate }}</p>
+      }
+    </div>
+
+    <label class="flex items-start gap-3 rounded-lg border border-gray-200 dark:border-gray-700 p-3 cursor-pointer">
+      <input type="checkbox" formControlName="requires_dedicated_database" class="mt-1 h-4 w-4 accent-primary" />
+      <span class="flex flex-col gap-1">
+        <span class="text-sm font-medium text-gray-900 dark:text-white">
+          {{ 'COMPANIES_MODULE.FORM.DEDICATED' | translate }}
+        </span>
+        <span class="text-xs text-gray-500 dark:text-gray-400">
+          {{ 'COMPANIES_MODULE.FORM.DEDICATED_HINT' | translate }}
+        </span>
+      </span>
+    </label>
+
+    @if (requiresDedicated) {
+    <div class="flex items-start gap-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 p-3 text-amber-800 dark:text-amber-300">
+      <span class="material-symbols-outlined text-base">warning</span>
+      <p class="text-xs">{{ 'COMPANIES_MODULE.FORM.DEDICATED_WARNING' | translate }}</p>
+    </div>
+    }
+  </div>
+</form>
