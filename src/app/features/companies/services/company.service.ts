@@ -5,6 +5,7 @@ import { environment } from '@environments/environment';
 import {
   Company,
   CreateCompany,
+  FrameworkOption,
   Paginated,
   RegisteredCompany,
 } from '@features/companies/models/company.model';
@@ -34,6 +35,13 @@ export class CompanyService {
       admin_email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
       requires_dedicated_database: [false],
     });
+  }
+
+  // Los marcos que se pueden contratar. Hoy solo SOC 2 (D37): el formulario lo muestra fijo.
+  readFrameworks() {
+    return this.http.get<SuccessResponse<{ items: FrameworkOption[] }>>(
+      `${environment.apiUrl}/catalogs/frameworks`,
+    );
   }
 
   createCompany(body: CreateCompany) {

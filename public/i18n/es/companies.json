@@ -33,7 +33,12 @@
             "CANCEL": "Cancelar",
             "INCOMPLETE_TITLE": "Formulario incompleto",
             "INCOMPLETE_MESSAGE": "Completa los campos obligatorios antes de continuar.",
-            "ERROR_TITLE": "No se pudo registrar la empresa"
+            "ERROR_TITLE": "No se pudo registrar la empresa",
+            "FRAMEWORKS": "Marco contratado",
+            "FRAMEWORK_FIXED": "fijo por ahora",
+            "FRAMEWORKS_HINT": "El marco que se contrata para esta empresa. Hoy solo está disponible SOC 2. Al declarar su servicio, el cliente verá este marco como opción fija.",
+            "FRAMEWORKS_ERROR": "No se cargaron los marcos disponibles.",
+            "RETRY": "Reintentar"
         },
         "KEY": {
             "TITLE": "Clave de acceso",

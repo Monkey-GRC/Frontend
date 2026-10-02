@@ -26,7 +26,12 @@
       <span class="text-xs font-medium px-2 py-1 rounded-full" [ngClass]="keyStatusClass(company.access_key_status)">
         {{ 'COMPANIES_MODULE.KEY_STATUS.' + (company.access_key_status ?? 'none') | translate }}
       </span>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
+        @for (framework of company.frameworks; track framework.code) {
+        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded" data-testid="company-framework">
+          {{ framework.name }}
+        </span>
+        }
         <span class="text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
           {{ 'COMPANIES_MODULE.ISOLATION.' + company.isolation_strategy | translate }}
         </span>

@@ -27,6 +27,42 @@
       }
     </div>
 
+    <!-- Marco que se contrata para la empresa (D43). Con uno solo, SOC 2, va elegido y bloqueado. -->
+    <div class="flex flex-col gap-2" data-testid="frameworks">
+      <label>{{ 'COMPANIES_MODULE.FORM.FRAMEWORKS' | translate }} <span class="text-red-500">*</span></label>
+      @for (f of frameworks; track f.code) {
+      <button type="button" (click)="toggleFramework(f.code)" [attr.aria-pressed]="isSelected(f.code)"
+        [disabled]="frameworkLocked"
+        class="flex items-start gap-3 rounded-lg border p-3 text-left disabled:cursor-default"
+        [ngClass]="isSelected(f.code)
+          ? 'border-primary bg-primary/5'
+          : 'border-gray-200 dark:border-gray-700'">
+        <span class="material-symbols-outlined text-base mt-0.5 text-primary">
+          {{ frameworkLocked ? 'lock' : isSelected(f.code) ? 'check_circle' : 'radio_button_unchecked' }}
+        </span>
+        <span class="flex flex-col gap-1">
+          <span class="text-sm font-medium text-gray-900 dark:text-white">
+            {{ f.label }}
+            @if (frameworkLocked) {
+            <span class="ml-1 text-xs font-normal text-gray-500 dark:text-gray-400">
+              ({{ 'COMPANIES_MODULE.FORM.FRAMEWORK_FIXED' | translate }})
+            </span>
+            }
+          </span>
+          <span class="text-xs text-gray-500 dark:text-gray-400">{{ f.description }}</span>
+        </span>
+      </button>
+      }
+      @if (frameworksFailed) {
+      <p class="text-xs text-rose-500">
+        {{ 'COMPANIES_MODULE.FORM.FRAMEWORKS_ERROR' | translate }}
+        <button type="button" class="underline" (click)="loadFrameworks()">{{ 'COMPANIES_MODULE.FORM.RETRY' | translate }}</button>
+      </p>
+      } @else {
+      <p class="text-xs text-gray-500 dark:text-gray-400">{{ 'COMPANIES_MODULE.FORM.FRAMEWORKS_HINT' | translate }}</p>
+      }
+    </div>
+
     <label class="flex items-start gap-3 rounded-lg border border-gray-200 dark:border-gray-700 p-3 cursor-pointer">
       <input type="checkbox" formControlName="requires_dedicated_database" class="mt-1 h-4 w-4 accent-primary" />
       <span class="flex flex-col gap-1">
