@@ -3,7 +3,7 @@ export type IsolationStrategy = 'dedicated' | 'shared';
 export type CompanyStatus = 'active' | 'suspended';
 export type AccessKeyStatus = 'pending' | 'used' | 'expired' | 'revoked';
 
-// Un marco que se contrata para la empresa (D43). Hoy solo SOC 2.
+// Un marco que se contrata para la empresa (D47). Hoy solo SOC 2.
 export interface ContractedFramework {
     code: string;
     name: string;
@@ -31,7 +31,7 @@ export interface Company {
     created_at: string;
 }
 
-// Los 3 campos que fija el comité (modelo-datos.md §4.2) y el marco que se contrata (D43).
+// Los 3 campos que fija el comité (modelo-datos.md §4.2) y el marco que se contrata (D47).
 export interface CreateCompany {
     name: string;
     requires_dedicated_database: boolean;

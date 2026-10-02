@@ -20,7 +20,7 @@ export class CompanyForm implements OnInit {
   sendingForm = false;
 
   // Marcos que se pueden contratar y los elegidos. Con un solo marco (hoy, SOC 2) no hay nada que
-  // decidir: se muestra fijo y ya viene elegido (D43).
+  // decidir: se muestra fijo y ya viene elegido (D47).
   frameworks: FrameworkOption[] = [];
   selectedFrameworks: string[] = [];
   frameworksFailed = false;
