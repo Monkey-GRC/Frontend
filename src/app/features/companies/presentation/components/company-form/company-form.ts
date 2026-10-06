@@ -19,8 +19,8 @@ export class CompanyForm implements OnInit {
   registered = output<RegisteredCompany>();
   sendingForm = false;
 
-  // Marcos que se pueden contratar y los elegidos. Con un solo marco (hoy, SOC 2) no hay nada que
-  // decidir: se muestra fijo y ya viene elegido (D47).
+  // Todos los marcos que Monkey ofrece y los elegidos. Solo los `available` se pueden contratar (hoy,
+  // SOC 2); los demás se muestran como «próximamente» (D50). Si hay un único marco disponible, ya viene elegido.
   frameworks: FrameworkOption[] = [];
   selectedFrameworks: string[] = [];
   frameworksFailed = false;
@@ -42,8 +42,8 @@ export class CompanyForm implements OnInit {
     this.companyService.readFrameworks().subscribe({
       next: (resp) => {
         this.frameworks = resp.data?.items ?? [];
-        // Un solo marco: queda elegido y bloqueado. Si algún día hay más, el usuario decide.
-        this.selectedFrameworks = this.frameworks.length === 1 ? [this.frameworks[0].code] : [];
+        const available = this.frameworks.filter((f) => f.availability === 'available');
+        this.selectedFrameworks = available.length === 1 ? [available[0].code] : [];
         this.cdr.markForCheck();
       },
       error: () => {
@@ -53,8 +53,8 @@ export class CompanyForm implements OnInit {
     });
   }
 
-  get frameworkLocked(): boolean {
-    return this.frameworks.length === 1;
+  isAvailable(framework: FrameworkOption): boolean {
+    return framework.availability === 'available';
   }
 
   get requiresDedicated(): boolean {
@@ -65,8 +65,9 @@ export class CompanyForm implements OnInit {
     return this.selectedFrameworks.includes(code);
   }
 
-  toggleFramework(code: string): void {
-    if (this.frameworkLocked) return;
+  toggleFramework(framework: FrameworkOption): void {
+    if (!this.isAvailable(framework)) return;
+    const code = framework.code;
     this.selectedFrameworks = this.isSelected(code)
       ? this.selectedFrameworks.filter((c) => c !== code)
       : [...this.selectedFrameworks, code];

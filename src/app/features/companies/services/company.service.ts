@@ -37,7 +37,7 @@ export class CompanyService {
     });
   }
 
-  // Los marcos que se pueden contratar. Hoy solo SOC 2 (D37): el formulario lo muestra fijo.
+  // Todos los marcos que Monkey ofrece; solo los `available` se pueden contratar (D50).
   readFrameworks() {
     return this.http.get<SuccessResponse<{ items: FrameworkOption[] }>>(
       `${environment.apiUrl}/catalogs/frameworks`,

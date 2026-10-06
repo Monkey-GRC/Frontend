@@ -35,8 +35,8 @@
             "INCOMPLETE_MESSAGE": "Fill in the required fields before continuing.",
             "ERROR_TITLE": "The company could not be registered",
             "FRAMEWORKS": "Contracted framework",
-            "FRAMEWORK_FIXED": "fixed for now",
-            "FRAMEWORKS_HINT": "The framework contracted for this company. Only SOC 2 is available today. When declaring its service, the client will see this framework as a fixed option.",
+            "FRAMEWORK_SOON": "coming soon",
+            "FRAMEWORKS_HINT": "The frameworks contracted for this company. Only SOC 2 is available today; the others are shown as offers and will be enabled once built. When declaring a service, the client will see all of them but can only pick the ones contracted.",
             "FRAMEWORKS_ERROR": "The available frameworks could not be loaded.",
             "RETRY": "Retry"
         },
