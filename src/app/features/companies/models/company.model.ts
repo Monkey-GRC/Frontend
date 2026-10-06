@@ -10,12 +10,16 @@ export interface ContractedFramework {
     contracted_at: string;
 }
 
-// Un marco que se puede contratar (GET /v1/catalogs/frameworks).
+// Un marco que Monkey ofrece (GET /v1/catalogs/frameworks). `available` = ya tiene catálogo y se puede
+// contratar (hoy solo SOC 2); `coming_soon` = oferta comercial, se muestra pero no se puede elegir (D50).
+export type FrameworkAvailability = 'available' | 'coming_soon';
+
 export interface FrameworkOption {
     code: string;
     name: string;
     description: string;
     label: string;
+    availability: FrameworkAvailability;
 }
 
 export interface Company {
