@@ -33,7 +33,7 @@ export class AppHeaderComponent {
   }
 
   logout(): void {
-    this.authService.logout().subscribe(() => this.router.navigateByUrl('/auth/login'));
+    this.authService.logout().subscribe(() => this.router.navigateByUrl('/auth/login', { replaceUrl: true }));
   }
 
   handleToggle() {

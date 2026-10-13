@@ -5,6 +5,7 @@ import { Home } from '@features/common/presentation/view/home/home';
 import { AppLayoutComponent } from '@core/presentation/pages/app-layout/app-layout.component';
 import { authGuard } from '@core/guards/auth.guard';
 import { roleGuard } from '@core/guards/role.guard';
+import { guestGuard } from '@core/guards/guest.guard';
 
 export const routes: Routes = [
   {
@@ -35,7 +36,8 @@ export const routes: Routes = [
   // auth pages
   {
     path: 'auth/login',
-    component: Login
+    component: Login,
+    canActivate: [guestGuard],
   },
   // error pages
   {

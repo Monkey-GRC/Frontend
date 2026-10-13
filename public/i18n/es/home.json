@@ -1,0 +1,60 @@
+{
+  "HOME": {
+    "TITLE": "Resumen",
+    "SUBTITLE": "Un vistazo a las empresas que acompaña Monkey.",
+    "UPDATED": "Actualizado a las {{time}}",
+    "REFRESH": "Actualizar",
+    "LOADING": "Cargando el resumen",
+    "LOAD_ERROR_TITLE": "No pudimos cargar el resumen",
+    "LOAD_ERROR_BODY": "Revisa tu conexión e inténtalo de nuevo.",
+    "RETRY": "Reintentar",
+    "PARTIAL": "Se muestran {{shown}} de {{total}} empresas, así que las cifras de abajo son parciales.",
+    "EMPTY_TITLE": "Aún no hay empresas registradas",
+    "EMPTY_BODY": "Cuando registres la primera, aquí verás cómo avanza.",
+    "EMPTY_CTA": "Registrar una empresa",
+    "COMPANY_COUNT_ONE": "{{count}} empresa",
+    "COMPANY_COUNT_MANY": "{{count}} empresas",
+    "KPI": {
+      "COMPANIES": "Empresas registradas",
+      "NEW_30": "{{count}} nuevas en los últimos 30 días",
+      "ACTIVE": "Empresas activas",
+      "ACTIVE_OF": "de {{total}} · {{suspended}} suspendidas",
+      "ONBOARDING": "Onboarding completado",
+      "ONBOARDING_OF": "{{done}} de {{total}} empresas",
+      "EXPIRED_KEYS": "Claves vencidas",
+      "PENDING_KEYS": "{{count}} pendientes de usar"
+    },
+    "KEYS": {
+      "TITLE": "Claves de acceso",
+      "SUBTITLE": "Estado de la clave que se entregó a cada empresa.",
+      "USED": "Usada (cuenta activada)",
+      "PENDING": "Pendiente de usar",
+      "EXPIRED": "Vencida sin usar",
+      "REVOKED": "Revocada",
+      "NONE": "Sin clave"
+    },
+    "ATTENTION": {
+      "TITLE": "Requiere atención",
+      "EMPTY": "Nada pendiente por ahora.",
+      "KEY_EXPIRED": "Su clave de acceso venció sin usarse.",
+      "ONBOARDING_PENDING": "Activó su cuenta, pero aún no cuenta de su empresa.",
+      "SUSPENDED": "Está suspendida.",
+      "MORE": "y {{count}} más"
+    },
+    "RECENT": {
+      "TITLE": "Altas recientes",
+      "VIEW_ALL": "Ver todas las empresas",
+      "COL_COMPANY": "Empresa",
+      "COL_DATE": "Alta",
+      "COL_KEY": "Clave"
+    },
+    "FRAMEWORKS": {
+      "TITLE": "Marcos contratados"
+    },
+    "ISOLATION": {
+      "TITLE": "Aislamiento de datos",
+      "DEDICATED": "Base de datos dedicada",
+      "SHARED": "Base de datos compartida"
+    }
+  }
+}
