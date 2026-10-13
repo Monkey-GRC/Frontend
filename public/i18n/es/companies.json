@@ -7,6 +7,13 @@
         },
         "LIST": {
             "TITLE": "Empresas registradas",
+            "COL_COMPANY": "Empresa",
+            "COL_STATUS": "Estado",
+            "COL_KEY": "Clave de acceso",
+            "COL_FRAMEWORKS": "Marcos",
+            "COL_ISOLATION": "Aislamiento",
+            "COL_ONBOARDING": "Onboarding",
+            "COL_CREATED": "Alta",
             "COUNT": "{{total}} empresas",
             "EMPTY": "Aún no hay empresas registradas.",
             "ONBOARDED": "Onboarding completado",

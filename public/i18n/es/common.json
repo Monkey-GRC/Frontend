@@ -3,6 +3,7 @@
     "SHOW_PASSWORD": "Mostrar contraseña",
     "HIDE_PASSWORD": "Ocultar contraseña",
     "CHANGE_LANGUAGE": "Cambiar idioma",
+    "SEARCH_PLACEHOLDER": "Buscar o escribir un comando...",
     "LOGOUT": "Cerrar sesión",
     "ERRORS": {
       "AUTH_PROBLEM": "Ocurrió un problema de autenticación. Si el error persiste, contacta a soporte.",

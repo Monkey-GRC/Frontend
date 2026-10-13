@@ -7,6 +7,13 @@
         },
         "LIST": {
             "TITLE": "Registered companies",
+            "COL_COMPANY": "Company",
+            "COL_STATUS": "Status",
+            "COL_KEY": "Access key",
+            "COL_FRAMEWORKS": "Frameworks",
+            "COL_ISOLATION": "Isolation",
+            "COL_ONBOARDING": "Onboarding",
+            "COL_CREATED": "Created",
             "COUNT": "{{total}} companies",
             "EMPTY": "No companies registered yet.",
             "ONBOARDED": "Onboarding completed",
