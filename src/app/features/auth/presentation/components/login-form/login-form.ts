@@ -97,7 +97,8 @@ export class LoginForm {
       !ru || ru === '/' || ru === '' || ru.startsWith('/auth');
 
     const target = invalid ? '/' : ru!;
-    this.router.navigateByUrl(target);
+    // `replaceUrl`: el login no queda en el historial, así «atrás» no vuelve a él.
+    this.router.navigateByUrl(target, { replaceUrl: true });
   }
 
   // helpers para template

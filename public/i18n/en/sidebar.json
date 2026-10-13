@@ -1,8 +1,10 @@
 {
     "GRC_FRAMEWORK":  {
                           "MODULE_NAME":  {
+                                              "GENERAL":  "General",
                                               "PARAMETRIZATION":  "Parameterization"
                                           },
+                          "HOME":  "Home",
                           "USERS":  "Users management",
                           "COMPANIES":  "Companies"
                       }
