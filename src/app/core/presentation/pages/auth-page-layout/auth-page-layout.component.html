@@ -11,6 +11,9 @@
 
   <div class="relative flex flex-col justify-center w-full h-screen lg:flex-row dark:bg-gray-900 sm:p-0">
 
+    <!-- Selector de idioma: arriba a la derecha de la mitad del formulario, a la vista (no sobre el panel azul) -->
+    <div class="absolute top-6 left-0 z-50 flex w-full justify-end px-6 lg:w-1/2">  <app-language-toggle />  </div>
+
     <!-- Login form -->
     <ng-content></ng-content>
 
@@ -35,9 +38,7 @@
           </a>
 
           <p class="text-center text-gray-400 dark:text-white/60">
-            Monkey es una plataforma GRC que facilita el control de riesgos,
-            el cumplimiento normativo y la gestión de auditorías para empresas
-            de todos los tamaños.
+            {{ 'AUTH.LAYOUT.TAGLINE' | translate }}
           </p>
         </div>
       </div>

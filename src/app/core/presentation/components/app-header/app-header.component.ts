@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ThemeToggleButtonComponent } from '@core/presentation/components/app-header/theme-toggle/theme-toggle-button.component';
 import { SidebarService } from '@core/services/sidebar.service';
 import { AuthService } from '@features/auth/services/auth.service';
+import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageToggle } from './language-toggle/language-toggle';
 
 @Component({
@@ -13,7 +14,8 @@ import { LanguageToggle } from './language-toggle/language-toggle';
     CommonModule,
     RouterModule,
     ThemeToggleButtonComponent,
-    LanguageToggle
+    LanguageToggle,
+    TranslatePipe
   ],
   templateUrl: './app-header.component.html',
 })

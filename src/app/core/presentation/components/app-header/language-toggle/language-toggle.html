@@ -1,14 +1,6 @@
-<button (click)="toggleLanguage()"
-    class="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full hover:text-dark-900 h-11 w-11 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white">
-    <!-- Icono para español -->
-    @if (currentLang === 'es') {
-    <span class="material-symbols-outlined text-[20px]">
-        language_spanish
-    </span>
-    } @else {
-    <!-- Icono para inglés -->
-    <span class="material-symbols-outlined text-[20px]">
-        language_us
-    </span>
-    }
+<button type="button" (click)="toggleLanguage()"
+    [title]="'COMMON.CHANGE_LANGUAGE' | translate" [attr.aria-label]="'COMMON.CHANGE_LANGUAGE' | translate"
+    class="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-white/5">
+    <span class="material-symbols-outlined text-xl">translate</span>
+    <span>{{ currentLang === 'es' ? 'ES' : 'EN' }}</span>
 </button>
