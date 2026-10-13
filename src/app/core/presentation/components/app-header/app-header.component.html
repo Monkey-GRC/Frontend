@@ -69,10 +69,10 @@
         <!-- NotificationDropdown placeholder -->
          <app-language-toggle />
       </div>
-      <button type="button" (click)="logout()" title="Cerrar sesión" aria-label="Cerrar sesión"
+      <button type="button" (click)="logout()" [title]="'COMMON.LOGOUT' | translate" [attr.aria-label]="'COMMON.LOGOUT' | translate"
         class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5">
         <span class="material-symbols-outlined text-xl">logout</span>
-        <span class="hidden sm:inline">Cerrar sesión</span>
+        <span class="hidden sm:inline">{{ 'COMMON.LOGOUT' | translate }}</span>
       </button>
     </div>
   </div>

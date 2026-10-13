@@ -10,6 +10,8 @@ import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 
 export function HttpLoaderFactory(httpBackend: HttpBackend): MultiTranslateHttpLoader {
   return new MultiTranslateHttpLoader(httpBackend, [
+    { prefix: './i18n/', suffix: '/common.json' },
+    { prefix: './i18n/', suffix: '/auth.json' },
     { prefix: './i18n/', suffix: '/sidebar.json' },
     { prefix: './i18n/', suffix: '/risk.json', optional: true },
     { prefix: './i18n/', suffix: '/reason.json', optional: true },

@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
     BehaviorSubject,
@@ -23,6 +24,7 @@ const ADMIN_ROLE = 'admin_monkey';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+    private readonly translate = inject(TranslateService);
     private readonly API = environment.apiUrl + '/auth';
 
     private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
@@ -56,7 +58,7 @@ export class AuthService {
                 if (user.role !== ADMIN_ROLE) {
                     return this.logout().pipe(
                         switchMap(() =>
-                            throwError(() => new Error('Esta aplicación es solo para el equipo de Monkey.')),
+                            throwError(() => new Error(this.translate.instant('AUTH.ONLY_MONKEY_TEAM'))),
                         ),
                     );
                 }

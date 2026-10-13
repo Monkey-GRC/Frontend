@@ -4,6 +4,8 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '@features/auth/services/auth.service';
+import { PasswordToggle } from '@core/presentation/components/password-toggle/password-toggle';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription, finalize } from 'rxjs';
 
 @Component({
@@ -12,6 +14,8 @@ import { Subscription, finalize } from 'rxjs';
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
+    PasswordToggle,
+    TranslatePipe,
   ],
   templateUrl: './login-form.html',
   styleUrl: './login-form.css',
@@ -24,6 +28,7 @@ export class LoginForm {
 
   // UI state (signals o simples props)
   loading = signal(false);
+  showPassword = signal(false);
   errorMsg = signal<string | null>(null);
   form!: FormGroup;
 
@@ -32,6 +37,7 @@ export class LoginForm {
     private auth: AuthService,
     private router: Router,
     private route: ActivatedRoute,
+    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -74,7 +80,7 @@ export class LoginForm {
           const msg =
             err?.error?.message ||
             err?.message ||
-            'No se pudo iniciar sesión. Verifica tus credenciales.';
+            this.translate.instant('AUTH.LOGIN.ERROR_FALLBACK');
           this.errorMsg.set(msg);
         },
       });
