@@ -1,7 +1,6 @@
 {
   "HOME": {
     "TITLE": "Resumen",
-    "SUBTITLE": "Un vistazo a las empresas que acompaña Monkey.",
     "UPDATED": "Actualizado a las {{time}}",
     "REFRESH": "Actualizar",
     "LOADING": "Cargando el resumen",
@@ -16,7 +15,7 @@
     "COMPANY_COUNT_MANY": "{{count}} empresas",
     "KPI": {
       "COMPANIES": "Empresas registradas",
-      "NEW_30": "{{count}} nuevas en los últimos 30 días",
+      "NEW_RECENT": "{{count}} nuevas en los últimos {{days}} días",
       "ACTIVE": "Empresas activas",
       "ACTIVE_OF": "de {{total}} · {{suspended}} suspendidas",
       "ONBOARDING": "Onboarding completado",

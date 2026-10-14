@@ -25,7 +25,8 @@ export interface HomeMetrics {
     suspended: number;
     onboardingDone: number;
     onboardingPending: number;
-    createdLast30Days: number;
+    // Altas dentro de los últimos `RECENT_DAYS` días.
+    createdRecently: number;
     keys: Record<KeyBucket, number>;
     frameworks: FrameworkCount[];
     isolation: { dedicated: number; shared: number };
@@ -35,6 +36,8 @@ export interface HomeMetrics {
     attentionTotal: number;
 }
 
+// Ventana de «altas recientes». Es la única fuente: el texto de la pantalla recibe este número, no lo lleva escrito.
+export const RECENT_DAYS = 30;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const PRIORITY: Record<AttentionReason, number> = { key_expired: 0, onboarding_pending: 1, suspended: 2 };
 
@@ -52,13 +55,13 @@ export function computeHomeMetrics(companies: Company[], now: Date = new Date(),
     const isolation = { dedicated: 0, shared: 0 };
     let active = 0;
     let onboardingDone = 0;
-    let createdLast30Days = 0;
+    let createdRecently = 0;
     const attention: AttentionItem[] = [];
 
     for (const company of companies) {
         if (company.status === 'active') active++;
         if (company.onboarding_completed) onboardingDone++;
-        if (now.getTime() - new Date(company.created_at).getTime() <= 30 * DAY_MS) createdLast30Days++;
+        if (now.getTime() - new Date(company.created_at).getTime() <= RECENT_DAYS * DAY_MS) createdRecently++;
         keys[company.access_key_status ?? 'none']++;
         isolation[company.isolation_strategy === 'dedicated' ? 'dedicated' : 'shared']++;
         for (const framework of company.frameworks) {
@@ -79,7 +82,7 @@ export function computeHomeMetrics(companies: Company[], now: Date = new Date(),
         suspended: companies.length - active,
         onboardingDone,
         onboardingPending: companies.length - onboardingDone,
-        createdLast30Days,
+        createdRecently,
         keys,
         frameworks: [...frameworks.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
         isolation,

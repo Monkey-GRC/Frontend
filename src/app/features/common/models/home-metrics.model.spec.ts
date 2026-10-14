@@ -1,5 +1,5 @@
 import { AccessKeyStatus, Company } from '@features/companies/models/company.model';
-import { computeHomeMetrics } from './home-metrics.model';
+import { RECENT_DAYS, computeHomeMetrics } from './home-metrics.model';
 
 const NOW = new Date('2026-10-13T12:00:00Z');
 const daysAgo = (n: number) => new Date(NOW.getTime() - n * 24 * 60 * 60 * 1000).toISOString();
@@ -52,9 +52,9 @@ describe('computeHomeMetrics', () => {
         expect(m.keys).toEqual({ pending: 2, used: 1, expired: 1, revoked: 1, none: 1 });
     });
 
-    it('counts the sign-ups of the last 30 days', () => {
-        const m = computeHomeMetrics([company({ created_at: daysAgo(2) }), company({ created_at: daysAgo(30) }), company({ created_at: daysAgo(31) })], NOW);
-        expect(m.createdLast30Days).toBe(2);
+    it('counts the sign-ups inside the recent window', () => {
+        const m = computeHomeMetrics([company({ created_at: daysAgo(2) }), company({ created_at: daysAgo(RECENT_DAYS) }), company({ created_at: daysAgo(RECENT_DAYS + 1) })], NOW);
+        expect(m.createdRecently).toBe(2);
     });
 
     it('lists the most recent companies first, up to the limit', () => {

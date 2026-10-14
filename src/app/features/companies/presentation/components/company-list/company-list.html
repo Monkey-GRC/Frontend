@@ -1,78 +1,87 @@
-<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 shrink-0">
+<div class="mb-6 flex shrink-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
   <div>
-    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+    <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">
       {{ 'COMPANIES_MODULE.LIST.TITLE' | translate }}
-    </h3>
-    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+    </h1>
+    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
       {{ 'COMPANIES_MODULE.LIST.COUNT' | translate: { total: companyService.total } }}
     </p>
   </div>
+  <ng-content select="[listActions]" />
 </div>
 
 @if (companyService.companies.length === 0) {
-<div class="flex flex-col items-center justify-center gap-2 py-12 text-gray-500 dark:text-gray-400">
-  <span class="material-symbols-outlined text-4xl">domain_add</span>
+<div class="flex flex-col items-center justify-center gap-2 py-12 text-gray-600 dark:text-gray-300">
+  <span class="material-symbols-outlined text-4xl" aria-hidden="true">domain_add</span>
   <p class="text-sm">{{ 'COMPANIES_MODULE.LIST.EMPTY' | translate }}</p>
 </div>
 } @else {
-<div
-  class="space-y-3 sm:space-y-4 overflow-y-auto pr-1 grow max-h-[400px] sm:max-h-[500px] lg:max-h-[600px] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent">
-  @for (company of companyService.companies; track company.id) {
-  <div class="relative bg-transparent p-4 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-150"
-    [ngClass]="{ 'opacity-60': company.status === 'suspended' }">
-
-    <!-- Estado de la clave y de la empresa -->
-    <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
-      <span class="text-xs font-medium px-2 py-1 rounded-full" [ngClass]="keyStatusClass(company.access_key_status)">
-        {{ 'COMPANIES_MODULE.KEY_STATUS.' + (company.access_key_status ?? 'none') | translate }}
-      </span>
-      <div class="flex flex-wrap gap-2">
-        @for (framework of company.frameworks; track framework.code) {
-        <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded" data-testid="company-framework">
-          {{ framework.name }}
-        </span>
-        }
-        <span class="text-xs font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-          {{ 'COMPANIES_MODULE.ISOLATION.' + company.isolation_strategy | translate }}
-        </span>
-        <span class="text-xs font-medium px-2 py-1 rounded-full"
-          [ngClass]="company.status === 'active'
-            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-            : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400'">
-          {{ 'COMPANIES_MODULE.STATUS.' + company.status | translate }}
-        </span>
-      </div>
-    </div>
-
-    <h4 class="text-base font-semibold text-gray-900 dark:text-white mb-1 line-clamp-2">{{ company.name }}</h4>
-    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{{ company.admin_email }}</p>
-
-    <div class="flex flex-wrap items-center justify-between gap-2 text-sm text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-700">
-      <div class="flex items-center gap-1">
-        <span class="material-symbols-outlined text-base">
-          {{ company.onboarding_completed ? 'task_alt' : 'hourglass_empty' }}
-        </span>
-        <span>{{ (company.onboarding_completed ? 'COMPANIES_MODULE.LIST.ONBOARDED' : 'COMPANIES_MODULE.LIST.NOT_ONBOARDED') | translate }}</span>
-      </div>
-      <div class="flex items-center gap-3">
-        @if (company.access_key_status === 'pending' && company.access_key_expires_at) {
-        <span class="flex items-center gap-1">
-          <span class="material-symbols-outlined text-base">key</span>
-          {{ 'COMPANIES_MODULE.LIST.KEY_EXPIRES' | translate }} {{ company.access_key_expires_at | date:'dd/MM/yy' }}
-        </span>
-        }
-        <span class="flex items-center gap-1">
-          <span class="material-symbols-outlined text-base">calendar_month</span>
-          {{ company.created_at | date:'dd/MM/yy' }}
-        </span>
-      </div>
-    </div>
-  </div>
-  }
+<!-- Sin tarjeta: la tabla va directamente sobre la página, con líneas finas entre filas -->
+<div class="overflow-x-auto">
+  <table class="w-full min-w-[56rem] text-left text-sm">
+    <caption class="sr-only">{{ 'COMPANIES_MODULE.LIST.TITLE' | translate }}</caption>
+    <thead>
+      <tr class="border-b border-gray-300 text-xs font-semibold text-gray-600 dark:border-gray-600 dark:text-gray-300">
+        <th scope="col" class="py-2.5 pr-4">{{ 'COMPANIES_MODULE.LIST.COL_COMPANY' | translate }}</th>
+        <th scope="col" class="py-2.5 pr-4">{{ 'COMPANIES_MODULE.LIST.COL_STATUS' | translate }}</th>
+        <th scope="col" class="py-2.5 pr-4">{{ 'COMPANIES_MODULE.LIST.COL_KEY' | translate }}</th>
+        <th scope="col" class="py-2.5 pr-4">{{ 'COMPANIES_MODULE.LIST.COL_FRAMEWORKS' | translate }}</th>
+        <th scope="col" class="py-2.5 pr-4">{{ 'COMPANIES_MODULE.LIST.COL_ISOLATION' | translate }}</th>
+        <th scope="col" class="py-2.5 pr-4">{{ 'COMPANIES_MODULE.LIST.COL_ONBOARDING' | translate }}</th>
+        <th scope="col" class="py-2.5">{{ 'COMPANIES_MODULE.LIST.COL_CREATED' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      @for (company of companyService.companies; track company.id) {
+      <tr class="align-top transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.03]" [ngClass]="{ 'opacity-60': company.status === 'suspended' }">
+        <td class="py-3.5 pr-4">
+          <span class="block font-medium text-gray-900 dark:text-white">{{ company.name }}</span>
+          <span class="block text-gray-600 dark:text-gray-300">{{ company.admin_email }}</span>
+        </td>
+        <td class="py-3.5 pr-4">
+          <span class="inline-block text-xs font-medium px-2 py-1 rounded-full"
+            [ngClass]="company.status === 'active'
+              ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+              : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400'">
+            {{ 'COMPANIES_MODULE.STATUS.' + company.status | translate }}
+          </span>
+        </td>
+        <td class="py-3.5 pr-4">
+          <span class="inline-block text-xs font-medium px-2 py-1 rounded-full" [ngClass]="keyStatusClass(company.access_key_status)">
+            {{ 'COMPANIES_MODULE.KEY_STATUS.' + (company.access_key_status ?? 'none') | translate }}
+          </span>
+          @if (company.access_key_status === 'pending' && company.access_key_expires_at) {
+          <span class="mt-1 flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300">
+            <span class="material-symbols-outlined text-sm" aria-hidden="true">key</span>
+            {{ 'COMPANIES_MODULE.LIST.KEY_EXPIRES' | translate }} {{ company.access_key_expires_at | date:'dd/MM/yy' }}
+          </span>
+          }
+        </td>
+        <td class="py-3.5 pr-4">
+          <div class="flex flex-wrap gap-1.5">
+            @for (framework of company.frameworks; track framework.code) {
+            <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded" data-testid="company-framework">
+              {{ framework.name }}
+            </span>
+            } @empty { <span class="text-gray-600 dark:text-gray-300">—</span> }
+          </div>
+        </td>
+        <td class="py-3.5 pr-4 text-gray-800 dark:text-gray-100">{{ 'COMPANIES_MODULE.ISOLATION.' + company.isolation_strategy | translate }}</td>
+        <td class="py-3.5 pr-4">
+          <span class="inline-flex items-center gap-1.5 text-gray-800 dark:text-gray-100">
+            <span class="material-symbols-outlined text-base" aria-hidden="true">{{ company.onboarding_completed ? 'task_alt' : 'hourglass_empty' }}</span>
+            {{ (company.onboarding_completed ? 'COMPANIES_MODULE.LIST.ONBOARDED' : 'COMPANIES_MODULE.LIST.NOT_ONBOARDED') | translate }}
+          </span>
+        </td>
+        <td class="py-3.5 whitespace-nowrap text-gray-800 dark:text-gray-100">{{ company.created_at | date:'dd/MM/yy' }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
 </div>
 
 @if (companyService.totalPages > 1) {
-<div class="flex items-center justify-end gap-3 mt-4 text-sm text-gray-600 dark:text-gray-400">
+<div class="flex items-center justify-end gap-3 mt-4 text-sm text-gray-600 dark:text-gray-300">
   <button type="button" class="px-3 py-1 rounded border border-gray-300 dark:border-gray-600 disabled:opacity-40"
     [disabled]="companyService.page <= 1" (click)="pageChange.emit(companyService.page - 1)">
     {{ 'COMPANIES_MODULE.LIST.PREV' | translate }}
