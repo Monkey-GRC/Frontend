@@ -1,8 +1,6 @@
 {
     "COMPANIES_MODULE": {
         "HEADER": {
-            "TITLE": "Companies",
-            "SUBTITLE": "Register client companies and hand over their access key. The client creates its own administrator account by redeeming it in Monkey Platform.",
             "BTN-CREATE": "Register company"
         },
         "LIST": {

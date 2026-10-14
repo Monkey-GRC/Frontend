@@ -1,8 +1,6 @@
 {
     "COMPANIES_MODULE": {
         "HEADER": {
-            "TITLE": "Empresas",
-            "SUBTITLE": "Registra las empresas cliente y entrega su clave de acceso. El cliente crea su propia cuenta de administrador al canjearla en Monkey Platform.",
             "BTN-CREATE": "Registrar empresa"
         },
         "LIST": {

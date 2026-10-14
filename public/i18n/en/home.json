@@ -1,7 +1,6 @@
 {
   "HOME": {
     "TITLE": "Overview",
-    "SUBTITLE": "A quick look at the companies Monkey supports.",
     "UPDATED": "Updated at {{time}}",
     "REFRESH": "Refresh",
     "LOADING": "Loading the overview",
@@ -16,7 +15,7 @@
     "COMPANY_COUNT_MANY": "{{count}} companies",
     "KPI": {
       "COMPANIES": "Registered companies",
-      "NEW_30": "{{count}} new in the last 30 days",
+      "NEW_RECENT": "{{count}} new in the last {{days}} days",
       "ACTIVE": "Active companies",
       "ACTIVE_OF": "of {{total}} · {{suspended}} suspended",
       "ONBOARDING": "Onboarding completed",

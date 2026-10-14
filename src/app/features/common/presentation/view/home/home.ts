@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { AccessKeyStatus } from '@features/companies/models/company.model';
-import { AttentionReason, HomeMetrics, KeyBucket, computeHomeMetrics } from '@features/common/models/home-metrics.model';
+import { AttentionReason, HomeMetrics, KeyBucket, RECENT_DAYS, computeHomeMetrics } from '@features/common/models/home-metrics.model';
 import { HomeMetricsService } from '@features/common/services/home-metrics.service';
 
 type Stage = 'loading' | 'error' | 'ready';
@@ -57,6 +57,7 @@ export class Home implements OnInit {
     });
 
     readonly attentionIcon = ATTENTION_ICON;
+    readonly recentDays = RECENT_DAYS;
     // Las cifras son parciales si hay más empresas que las que se alcanzaron a leer.
     readonly partial = computed(() => !!this.metrics() && this.total() > this.metrics()!.total);
 
