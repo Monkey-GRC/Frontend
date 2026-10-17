@@ -70,4 +70,65 @@ describe('CatalogService', () => {
             http.expectOne((r) => r.url.endsWith(path)).flush(detail);
         }
     });
+    describe('writing', () => {
+        const ok = { statusCode: 200, message: 'ok', data: { id: 'x' } };
+
+        it('creates each kind of element at its own route and returns the saved one', () => {
+            const routes: [string, string][] = [['control', '/catalog/controls'], ['risk', '/catalog/risks'], ['cause', '/catalog/causes'], ['template', '/catalog/evidence-templates'], ['test', '/catalog/tests']];
+            for (const [kind, path] of routes) {
+                let saved: unknown;
+                service.create(kind as never, { code: 'X' }).subscribe((s) => (saved = s));
+                const req = http.expectOne((r) => r.url.endsWith(path));
+                expect(req.request.method).toBe('POST');
+                expect(req.request.body).toEqual({ code: 'X' });
+                req.flush(ok);
+                expect(saved).toEqual({ id: 'x' });
+            }
+        });
+
+        it('edits with a PATCH that carries only what is sent', () => {
+            service.update('control', 'k1', { name: 'Nuevo' }).subscribe();
+            const req = http.expectOne((r) => r.url.endsWith('/catalog/controls/k1'));
+            expect(req.request.method).toBe('PATCH');
+            expect(req.request.body).toEqual({ name: 'Nuevo' });
+            req.flush(ok);
+        });
+
+        it('retires with DELETE and reactivates with is_active: true, never deleting', () => {
+            service.deactivate('risk', 'r1').subscribe();
+            const del = http.expectOne((r) => r.url.endsWith('/catalog/risks/r1'));
+            expect(del.request.method).toBe('DELETE');
+            del.flush(null);
+            service.reactivate('risk', 'r1').subscribe();
+            const patch = http.expectOne((r) => r.url.endsWith('/catalog/risks/r1'));
+            expect(patch.request.method).toBe('PATCH');
+            expect(patch.request.body).toEqual({ is_active: true });
+            patch.flush(ok);
+        });
+
+        it('links at the route of the parent and unlinks with the id of the other side', () => {
+            service.link('control', 'k1', 'tests', { test_id: 't1' }).subscribe();
+            const link = http.expectOne((r) => r.url.endsWith('/catalog/controls/k1/tests'));
+            expect(link.request.method).toBe('POST');
+            expect(link.request.body).toEqual({ test_id: 't1' });
+            link.flush(ok);
+            service.unlink('cause', 'c1', 'controls', 'k1').subscribe();
+            const unlink = http.expectOne((r) => r.url.endsWith('/catalog/causes/c1/controls/k1'));
+            expect(unlink.request.method).toBe('DELETE');
+            unlink.flush(null);
+        });
+
+        it('reads the requirements of a framework and its points of focus, narrowed to a requirement', () => {
+            service.framework('f1').subscribe();
+            http.expectOne((r) => r.url.endsWith('/catalog/frameworks/f1')).flush(ok);
+            let ids: string[] = [];
+            service.pointsOfFocus('f1', 'CC1.1').subscribe((list) => (ids = list.map((p) => p.id)));
+            const req = http.expectOne((r) => r.url.endsWith('/catalog/frameworks/f1/points-of-focus'));
+            expect(req.request.params.get('requirement_code')).toBe('CC1.1');
+            req.flush({ statusCode: 200, message: 'ok', data: { items: [{ id: 'p1' }] } });
+            expect(ids).toEqual(['p1']);
+            service.evidenceTemplate('e1').subscribe();
+            http.expectOne((r) => r.url.endsWith('/catalog/evidence-templates/e1')).flush(ok);
+        });
+    });
 });

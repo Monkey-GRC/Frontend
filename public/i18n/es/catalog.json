@@ -137,7 +137,8 @@
       "SHOWN_TO_CLIENT": "Lo que ve el cliente",
       "DISPLAY_NAME": "Nombre",
       "DISPLAY_DESCRIPTION": "Descripción",
-      "COMMITTEE": "Textos del comité"
+      "COMMITTEE": "Textos del comité",
+      "USED_BY": "La piden {{count}} controles"
     },
     "LOADING": "Cargando…",
     "LOAD_ERROR": "No se pudo cargar el catálogo.",
@@ -145,6 +146,75 @@
     "EMPTY": "No hay resultados con esos filtros.",
     "TOTAL": "{{total}} resultados",
     "PREV": "Anterior",
-    "NEXT": "Siguiente"
+    "NEXT": "Siguiente",
+    "FORM": {
+      "NEW": {
+        "CONTROL": "Nuevo control",
+        "RISK": "Nuevo riesgo",
+        "CAUSE": "Nueva causa",
+        "TEMPLATE": "Nueva evidencia requerida",
+        "TEST": "Nueva prueba"
+      },
+      "CREATE": {
+        "CONTROL": "Nuevo control",
+        "RISK": "Nuevo riesgo",
+        "CAUSE": "Nueva causa",
+        "TEMPLATE": "Nueva evidencia requerida",
+        "TEST": "Nueva prueba"
+      },
+      "EDIT": {
+        "CONTROL": "Editar control",
+        "RISK": "Editar riesgo",
+        "CAUSE": "Editar causa",
+        "TEMPLATE": "Editar evidencia requerida",
+        "TEST": "Editar prueba"
+      },
+      "FIELD": {
+        "CODE": "Código",
+        "NAME": "Nombre",
+        "DESCRIPTION": "Descripción",
+        "DOMAIN": "Dominio",
+        "SOURCE_REF": "Fuente",
+        "TRUST_CRITERION": "Criterio",
+        "POTENTIAL_IMPACT": "Impacto potencial",
+        "FAILURE_CATEGORY": "Categoría de falla",
+        "DIMENSION": "Dimensión",
+        "DISPLAY_NAME": "Nombre que ve el cliente",
+        "DISPLAY_DESCRIPTION": "Descripción que ve el cliente",
+        "OBJECTIVE": "Objetivo (interno)",
+        "TYPE": "Tipo"
+      },
+      "REQUIRED": "Este campo es obligatorio.",
+      "CODE_INVALID": "Usa letras, números, punto, guion o guion bajo, sin espacios.",
+      "CODE_AUTO": "Se asigna sola si lo dejas vacío",
+      "CHOOSE": "Elige…",
+      "LINES_HINT": "Uno por línea",
+      "CANCEL": "Cancelar",
+      "CREATE_SUBMIT": "Agregar",
+      "SAVE": "Guardar cambios",
+      "COMMITTEE": "Textos del comité (opcionales)",
+      "COMMITTEE_HINT": "Internos: solo los ve Monkey; al cliente nunca le salen."
+    },
+    "ACTIONS": {
+      "EDIT": "Editar",
+      "DEACTIVATE": "Dar de baja",
+      "DEACTIVATE_CONFIRM": "¿Dar de baja? No se borra: deja de ofrecerse a los servicios nuevos.",
+      "YES": "Sí, dar de baja",
+      "REACTIVATE": "Reactivar",
+      "INACTIVE_HINT": "Está de baja: no se ofrece a los servicios nuevos. Las empresas que ya lo tienen conservan su copia."
+    },
+    "LINK": {
+      "ADD": "Agregar",
+      "REMOVE": "Quitar el vínculo con",
+      "POSITION": "Posición (opcional)",
+      "TYPE": "Tipo",
+      "TEST_FROM_CONTROL": "Una prueba se vincula desde el control que la usa.",
+      "TEMPLATE_FROM_CONTROL": "Una evidencia requerida se vincula desde el control que la pide."
+    },
+    "PICKER": {
+      "FRAMEWORK": "Marco",
+      "REQUIREMENT": "Requisito",
+      "EMPTY": "No hay nada que ofrecer con esa búsqueda."
+    }
   }
 }

@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
-import { CatalogFilters, CatalogFramework, CatalogOrigin, CatalogTab, ControlScope, Paginated } from '@features/catalog/models/catalog.model';
+import { CatalogFilters, CatalogFramework, CatalogOrigin, CatalogTab, ControlScope, FormKind, Paginated } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { CatalogColumn, CatalogRow, CatalogTable } from '@features/catalog/presentation/components/catalog-table/catalog-table';
-import { CatalogDetail, DetailKind } from '@features/catalog/presentation/components/catalog-detail/catalog-detail';
+import { CatalogDetail, DetailKind, EditRequest } from '@features/catalog/presentation/components/catalog-detail/catalog-detail';
+import { CatalogForm } from '@features/catalog/presentation/components/catalog-form/catalog-form';
 import { LoaderComponent } from '@shared/presentation/components/loader/loader.component';
 
 const BADGES: CatalogColumn[] = [
@@ -57,12 +58,14 @@ const COLUMNS: Record<CatalogTab, CatalogColumn[]> = {
 };
 
 const DIMENSIONS = ['policy', 'server', 'database', 'app', 'cloud'];
+const NEW_KIND: Record<CatalogTab, FormKind> = { controls: 'control', risks: 'risk', causes: 'cause', tests: 'test', 'evidence-templates': 'template' };
 
 // Catálogo maestro (contracts/modules/monkey-admin-catalog.md): los marcos, y sus controles, riesgos, causas, pruebas y evidencias requeridas. Solo lectura.
 // Solo los controles cuelgan de un marco; riesgos, causas y pruebas son un pool compartido, así que el marco elegido solo acota la pestaña de controles.
+// Desde aquí se agrega un elemento nuevo (botón «Nuevo»); editar, dar de baja y vincular se hace desde su detalle.
 @Component({
   selector: 'app-catalog',
-  imports: [CommonModule, TranslateModule, CatalogTable, CatalogDetail, LoaderComponent],
+  imports: [CommonModule, TranslateModule, CatalogTable, CatalogDetail, CatalogForm, LoaderComponent],
   templateUrl: './catalog.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -93,6 +96,8 @@ export class Catalog implements OnInit, OnDestroy {
   loading = true;
   failed = false;
   selected: { kind: DetailKind; id: string } | null = null;
+  form: { mode: 'create' | 'edit'; kind: FormKind; id: string | null; initial: Record<string, unknown> } | null = null;
+  @ViewChild(CatalogDetail) private detailPanel?: CatalogDetail;
 
   private readonly typing = new Subject<string>();
   private subscription?: Subscription;
@@ -128,8 +133,14 @@ export class Catalog implements OnInit, OnDestroy {
     return this.tabs.find((t) => t.key === this.tab)!.labelKey;
   }
 
-  get detailKind(): DetailKind | null {
-    return this.tab === 'evidence-templates' ? null : this.tab;
+  /** Todas las listas se pueden abrir; cada una tiene su detalle (la plantilla de evidencia, uno corto). */
+  get detailKind(): DetailKind {
+    return this.tab;
+  }
+
+  /** Qué se crea con el botón «Nuevo» de la pestaña abierta. */
+  get newKind(): FormKind {
+    return NEW_KIND[this.tab];
   }
 
   get currentFramework(): CatalogFramework | null {
@@ -179,8 +190,27 @@ export class Catalog implements OnInit, OnDestroy {
   }
 
   open(row: CatalogRow): void {
-    const kind = this.detailKind;
-    if (kind) this.selected = { kind, id: row.id };
+    this.selected = { kind: this.detailKind, id: row.id };
+  }
+
+  // ---- agregar y editar ----------------------------------------------------------------------------------------------------------------------
+
+  startCreate(): void {
+    this.form = { mode: 'create', kind: this.newKind, id: null, initial: {} };
+  }
+
+  startEdit(request: EditRequest): void {
+    this.form = { mode: 'edit', kind: request.kind, id: request.id, initial: request.initial };
+  }
+
+  /** El formulario guardó: la lista se vuelve a pedir; un elemento nuevo se abre para vincularlo, y uno editado refresca su detalle. */
+  onSaved(saved: unknown): void {
+    const mode = this.form?.mode;
+    this.form = null;
+    this.reload(this.page);
+    const id = (saved as { id?: string } | null)?.id;
+    if (mode === 'create' && id) this.selected = { kind: this.detailKind, id };
+    else this.detailPanel?.refresh();
   }
 
   reload(page: number): void {
