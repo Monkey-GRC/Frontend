@@ -1,0 +1,132 @@
+<div class="transition-colors duration-200 animation">
+  <div class="max-w-full mx-auto space-y-6 p-4">
+
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">{{ 'CATALOG_MODULE.TITLE' | translate }}</h1>
+      <p class="mt-1 max-w-3xl text-sm text-gray-600 dark:text-gray-300">{{ 'CATALOG_MODULE.INTRO' | translate }}</p>
+    </div>
+
+    <!-- Marcos: solo acotan la pestaña de controles; los riesgos, causas y pruebas son de todos -->
+    @if (frameworks.length) {
+    <section [attr.aria-label]="'CATALOG_MODULE.FRAMEWORKS' | translate">
+      <ul class="flex flex-wrap gap-3" data-frameworks>
+        @for (f of frameworks; track f.id) {
+        <li>
+          <button type="button" (click)="pickFramework(f.id)" [attr.aria-pressed]="f.id === frameworkId" [attr.data-framework]="f.code"
+            class="flex min-w-56 flex-col items-start rounded-xl border p-3 text-left transition"
+            [ngClass]="f.id === frameworkId ? 'border-primary bg-primary/5' : 'border-gray-300 hover:border-primary dark:border-gray-600'">
+            <span class="flex w-full items-center justify-between gap-2">
+              <span class="font-semibold text-gray-900 dark:text-white">{{ f.name }}</span>
+              <span class="rounded-full px-2 py-0.5 text-xs font-medium"
+                [ngClass]="f.availability === 'available' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400'">
+                {{ 'CATALOG_MODULE.AVAILABILITY.' + f.availability | translate }}
+              </span>
+            </span>
+            <span class="text-xs text-gray-600 dark:text-gray-300">{{ f.code }} · {{ f.version }}</span>
+            <span class="mt-1 text-xs text-gray-700 dark:text-gray-200">
+              {{ 'CATALOG_MODULE.COUNTS' | translate: { requirements: f.counts.requirements, controls: f.counts.controls, tests: f.counts.tests } }}
+            </span>
+          </button>
+        </li>
+        }
+      </ul>
+    </section>
+    }
+
+    <!-- Pestañas -->
+    <nav class="flex gap-1 overflow-x-auto border-b border-gray-200 dark:border-gray-700" [attr.aria-label]="'CATALOG_MODULE.TITLE' | translate">
+      @for (t of tabs; track t.key) {
+      <button type="button" (click)="pickTab(t.key)" [attr.aria-current]="t.key === tab ? 'page' : null" [attr.data-tab]="t.key"
+        class="shrink-0 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition"
+        [ngClass]="t.key === tab ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-primary dark:text-gray-300'">
+        {{ t.labelKey | translate }}
+      </button>
+      }
+    </nav>
+
+    @if (tab !== 'controls') {
+    <p class="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-300" data-shared-note>
+      <span class="material-symbols-outlined text-base" aria-hidden="true">info</span>{{ 'CATALOG_MODULE.SHARED_NOTE' | translate }}
+    </p>
+    }
+
+    <!-- Filtros -->
+    <div class="flex flex-wrap items-end gap-3">
+      <label class="flex min-w-60 flex-1 flex-col gap-1 text-xs font-medium text-gray-700 dark:text-gray-200">
+        {{ 'CATALOG_MODULE.FILTER.SEARCH' | translate }}
+        <input type="search" data-search [value]="search" (input)="onSearch($any($event.target).value)" [placeholder]="'CATALOG_MODULE.FILTER.SEARCH_HINT' | translate"
+          class="h-9 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white" />
+      </label>
+
+      @if (tab === 'controls') {
+      <label class="flex flex-col gap-1 text-xs font-medium text-gray-700 dark:text-gray-200">
+        {{ 'CATALOG_MODULE.FILTER.SCOPE' | translate }}
+        <select data-scope (change)="setScope($any($event.target).value)"
+          class="h-9 rounded-lg border border-gray-300 bg-white px-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+          <option value="framework" [selected]="scope === 'framework'">{{ 'CATALOG_MODULE.SCOPE.FRAMEWORK' | translate: { name: currentFramework?.name ?? '' } }}</option>
+          <option value="all" [selected]="scope === 'all'">{{ 'CATALOG_MODULE.SCOPE.ALL' | translate }}</option>
+          <option value="unlinked" [selected]="scope === 'unlinked'">{{ 'CATALOG_MODULE.SCOPE.UNLINKED' | translate }}</option>
+        </select>
+      </label>
+      <label class="flex h-9 items-center gap-2 text-sm text-gray-800 dark:text-gray-100">
+        <input type="checkbox" data-no-evidence [checked]="noEvidence" (change)="setNoEvidence($any($event.target).checked)" class="h-4 w-4 rounded border-gray-300" />
+        {{ 'CATALOG_MODULE.FILTER.NO_EVIDENCE' | translate }}
+      </label>
+      }
+
+      @if (tab === 'tests') {
+      <label class="flex flex-col gap-1 text-xs font-medium text-gray-700 dark:text-gray-200">
+        {{ 'CATALOG_MODULE.COL.DIMENSION' | translate }}
+        <select data-dimension (change)="setDimension($any($event.target).value)"
+          class="h-9 rounded-lg border border-gray-300 bg-white px-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+          <option value="" [selected]="!dimension">{{ 'CATALOG_MODULE.FILTER.ALL' | translate }}</option>
+          @for (d of dimensions; track d) {
+          <option [value]="d" [selected]="dimension === d">{{ 'CATALOG_MODULE.DIMENSION.' + d.toUpperCase() | translate }}</option>
+          }
+        </select>
+      </label>
+      }
+
+      <label class="flex flex-col gap-1 text-xs font-medium text-gray-700 dark:text-gray-200">
+        {{ 'CATALOG_MODULE.COL.ORIGIN' | translate }}
+        <select data-origin (change)="setOrigin($any($event.target).value)"
+          class="h-9 rounded-lg border border-gray-300 bg-white px-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+          <option value="" [selected]="!origin">{{ 'CATALOG_MODULE.FILTER.ALL' | translate }}</option>
+          <option value="committee" [selected]="origin === 'committee'">{{ 'CATALOG_MODULE.ORIGIN.committee' | translate }}</option>
+          <option value="monkey_admin" [selected]="origin === 'monkey_admin'">{{ 'CATALOG_MODULE.ORIGIN.monkey_admin' | translate }}</option>
+        </select>
+      </label>
+      <label class="flex flex-col gap-1 text-xs font-medium text-gray-700 dark:text-gray-200">
+        {{ 'CATALOG_MODULE.COL.STATE' | translate }}
+        <select data-state (change)="setState($any($event.target).value)"
+          class="h-9 rounded-lg border border-gray-300 bg-white px-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
+          <option value="" [selected]="!state">{{ 'CATALOG_MODULE.FILTER.ALL' | translate }}</option>
+          <option value="active" [selected]="state === 'active'">{{ 'CATALOG_MODULE.STATE.ACTIVE' | translate }}</option>
+          <option value="inactive" [selected]="state === 'inactive'">{{ 'CATALOG_MODULE.STATE.INACTIVE' | translate }}</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- Resultado -->
+    @if (loading) {
+    <app-loader [type]="'monkey'" [headerSize]="'9rem'" />
+    } @else if (failed) {
+    <div class="py-10 text-center" data-error>
+      <p class="text-sm text-gray-700 dark:text-gray-200">{{ 'CATALOG_MODULE.LOAD_ERROR' | translate }}</p>
+      <button type="button" (click)="reload(page)" data-retry class="mt-4 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90">{{ 'CATALOG_MODULE.RETRY' | translate }}</button>
+    </div>
+    } @else {
+    <p class="text-sm text-gray-600 dark:text-gray-300" data-total>{{ 'CATALOG_MODULE.TOTAL' | translate: { total: total } }}</p>
+    @if (rows.length === 0) {
+    <p class="py-8 text-center text-sm text-gray-600 dark:text-gray-300" data-empty>{{ 'CATALOG_MODULE.EMPTY' | translate }}</p>
+    } @else {
+    <app-catalog-table [columns]="columns" [rows]="rows" [page]="page" [totalPages]="totalPages" [captionKey]="captionKey" [clickable]="detailKind !== null"
+      [selectedId]="selected?.id ?? null" (rowClick)="open($event)" (pageChange)="reload($event)" />
+    }
+    }
+  </div>
+</div>
+
+@if (selected; as s) {
+<app-catalog-detail [kind]="s.kind" [itemId]="s.id" (closed)="selected = null" />
+}

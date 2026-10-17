@@ -38,6 +38,13 @@ export const NAV_ITEMS: NavItem[] = [
         roles: ['admin_monkey'],
     },
     {
+        icon: 'library_books',
+        name: "GRC_FRAMEWORK.CATALOG",
+        path: "/catalog",
+        section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION",
+        roles: ['admin_monkey'],
+    },
+    {
         icon: 'manage_accounts',
         name: "GRC_FRAMEWORK.USERS",
         path: "/users",

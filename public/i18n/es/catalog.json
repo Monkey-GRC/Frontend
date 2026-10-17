@@ -1,0 +1,150 @@
+{
+  "CATALOG_MODULE": {
+    "TITLE": "Catálogo maestro",
+    "INTRO": "Los marcos que ofrece Monkey y lo que hay dentro de cada uno: controles, riesgos, causas, pruebas y evidencias requeridas. Es el catálogo general, no el de una empresa. Por ahora es de solo lectura.",
+    "FRAMEWORKS": "Marcos",
+    "COUNTS": "{{requirements}} requisitos · {{controls}} controles · {{tests}} pruebas",
+    "AVAILABILITY": {
+      "available": "Disponible",
+      "coming_soon": "Próximamente"
+    },
+    "TABS": {
+      "CONTROLS": "Controles",
+      "RISKS": "Riesgos",
+      "CAUSES": "Causas",
+      "TESTS": "Pruebas",
+      "EVIDENCE": "Evidencias requeridas"
+    },
+    "SHARED_NOTE": "Los riesgos, las causas, las pruebas y las evidencias son un conjunto compartido por todos los marcos: solo los controles cuelgan de un marco, por sus requisitos.",
+    "FILTER": {
+      "SEARCH": "Buscar",
+      "SEARCH_HINT": "Código o nombre",
+      "SCOPE": "Controles de",
+      "NO_EVIDENCE": "Solo los que no tienen evidencia requerida",
+      "ALL": "Todos"
+    },
+    "SCOPE": {
+      "FRAMEWORK": "{{name}}",
+      "ALL": "Todo el catálogo",
+      "UNLINKED": "Sin requisito (no cuelgan de ningún marco)"
+    },
+    "ORIGIN": {
+      "committee": "Comité",
+      "monkey_admin": "Monkey Admin"
+    },
+    "STATE": {
+      "ACTIVE": "Activo",
+      "INACTIVE": "De baja"
+    },
+    "COL": {
+      "CODE": "Código",
+      "NAME": "Nombre",
+      "DOMAIN": "Dominio",
+      "DIMENSIONS": "Dimensiones",
+      "TESTS": "Pruebas",
+      "EVIDENCE": "Evidencias",
+      "ORIGIN": "Origen",
+      "STATE": "Estado",
+      "CRITERION": "Criterio",
+      "CAUSES": "Causas",
+      "CATEGORY": "Categoría",
+      "RISKS": "Riesgos",
+      "CONTROLS": "Controles",
+      "CLIENT_NAME": "Nombre que ve el cliente",
+      "COMMITTEE_NAME": "Nombre del comité",
+      "DIMENSION": "Dimensión",
+      "DESCRIPTION": "Descripción"
+    },
+    "DIMENSION": {
+      "POLICY": "Documental",
+      "SERVER": "Servidor",
+      "DATABASE": "Base de datos",
+      "APP": "Aplicación",
+      "CLOUD": "Nube"
+    },
+    "CONTROL_TYPE": {
+      "MANUAL": "Manual",
+      "AUTOMATED": "Automática",
+      "HYBRID": "Híbrida",
+      "TECHNICAL_MANUAL": "Técnica manual"
+    },
+    "RISK_CRITERION": {
+      "CONFIDENTIALITY": "Confidencialidad",
+      "INTEGRITY": "Integridad",
+      "AVAILABILITY": "Disponibilidad",
+      "PRIVACY": "Privacidad",
+      "COMPLIANCE": "Cumplimiento",
+      "SECURITY": "Seguridad",
+      "CONTINUITY": "Continuidad",
+      "THIRD_PARTIES": "Terceros",
+      "FRAUD": "Fraude",
+      "REPUTATION": "Reputación",
+      "OPERATIONS": "Operación"
+    },
+    "FAILURE_CATEGORY": {
+      "HUMAN_RESOURCE": "Recurso humano",
+      "PROCESSES": "Procesos",
+      "INFORMATION_TECHNOLOGY": "Tecnología de la información",
+      "INFRASTRUCTURE": "Infraestructura",
+      "EXTERNAL": "Externos",
+      "GOVERNANCE": "Gobierno"
+    },
+    "TEST_FIELD": {
+      "OBJECTIVE": "Objetivo",
+      "TYPE": "Tipo",
+      "TOOL": "Herramienta",
+      "POPULATION": "Población",
+      "PERIOD": "Período",
+      "POPULATION_SIZE": "Tamaño de la población",
+      "SUGGESTED_SAMPLE_SIZE": "Muestra sugerida",
+      "SELECTION_METHOD": "Método de selección",
+      "EVIDENCE_TO_REQUEST": "Evidencia a solicitar",
+      "PREREQUISITES": "Prerrequisitos",
+      "STEP_BY_STEP": "Paso a paso",
+      "ATTRIBUTES_TO_VALIDATE": "Atributos a validar",
+      "COMPLIANCE_CRITERION": "Criterio de cumplimiento",
+      "EXCEPTIONS": "Excepciones / desviaciones",
+      "EXCEPTIONS_HANDLING": "Tratamiento de excepciones",
+      "EVIDENCE_TO_RETAIN": "Evidencia a conservar",
+      "AUTOMATED_COVERAGE": "Cobertura automatizada",
+      "COMPLEMENTARY_MANUAL_VALIDATION": "Validación manual complementaria",
+      "LIMITATIONS": "Limitaciones"
+    },
+    "DETAIL": {
+      "TITLE": "Detalle",
+      "CLOSE": "Cerrar",
+      "LOAD_ERROR": "No se pudo cargar el detalle.",
+      "DOMAIN": "Dominio",
+      "SOURCE": "Fuente",
+      "REQUIREMENTS": "Requisitos",
+      "NO_REQUIREMENTS": "No cuelga de ningún requisito de ningún marco.",
+      "DIMENSIONS": "Dimensiones",
+      "PROBE": "sonda",
+      "AI": "IA",
+      "CONFIRMATION": "confirmación de cumplimiento",
+      "TESTS": "Pruebas",
+      "EVIDENCE": "Evidencia requerida",
+      "NO_EVIDENCE": "El comité no le pidió ninguna evidencia a este control.",
+      "POLICIES": "Políticas",
+      "EMPLOYEE_ACCEPTANCE": "requiere aceptación del empleado",
+      "CAUSES": "Causas que mitiga",
+      "RISKS": "Riesgos que origina",
+      "CONTROLS": "Controles que la mitigan",
+      "CRITERION": "Criterio",
+      "CATEGORY": "Categoría",
+      "POTENTIAL_IMPACT": "Impacto potencial",
+      "INTERNAL_NOTE": "Textos internos del comité. Solo los ve Monkey: al cliente nunca le salen, ni el proveedor de la sonda.",
+      "SHOWN_TO_CLIENT": "Lo que ve el cliente",
+      "DISPLAY_NAME": "Nombre",
+      "DISPLAY_DESCRIPTION": "Descripción",
+      "COMMITTEE": "Textos del comité"
+    },
+    "LOADING": "Cargando…",
+    "LOAD_ERROR": "No se pudo cargar el catálogo.",
+    "RETRY": "Reintentar",
+    "EMPTY": "No hay resultados con esos filtros.",
+    "TOTAL": "{{total}} resultados",
+    "PREV": "Anterior",
+    "NEXT": "Siguiente"
+  }
+}
