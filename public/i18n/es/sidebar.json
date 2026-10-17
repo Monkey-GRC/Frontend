@@ -6,6 +6,7 @@
                                           },
                           "HOME":  "Inicio",
                           "USERS":  "Gestión de usuarios",
-                          "COMPANIES":  "Empresas"
+                          "COMPANIES":  "Empresas",
+                          "CATALOG":  "Catálogo maestro"
                       }
 }

@@ -25,6 +25,12 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        path: 'catalog',
+        loadComponent: () => import('src/app/features/catalog/presentation/views/catalog/catalog').then(m => m.Catalog),
+        canActivate: [roleGuard(['admin_monkey'])],
+        pathMatch: 'full',
+      },
+      {
         path: 'users',
         loadComponent: () => import('src/app/features/users/presentation/views/users/users').then(m => m.Users),
         canActivate: [roleGuard(['admin_monkey'])],

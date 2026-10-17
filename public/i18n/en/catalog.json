@@ -1,0 +1,150 @@
+{
+  "CATALOG_MODULE": {
+    "TITLE": "Master catalog",
+    "INTRO": "The frameworks Monkey offers and what is inside each one: controls, risks, causes, tests and required evidence. This is the general catalog, not a company's. For now it is read-only.",
+    "FRAMEWORKS": "Frameworks",
+    "COUNTS": "{{requirements}} requirements · {{controls}} controls · {{tests}} tests",
+    "AVAILABILITY": {
+      "available": "Available",
+      "coming_soon": "Coming soon"
+    },
+    "TABS": {
+      "CONTROLS": "Controls",
+      "RISKS": "Risks",
+      "CAUSES": "Causes",
+      "TESTS": "Tests",
+      "EVIDENCE": "Required evidence"
+    },
+    "SHARED_NOTE": "Risks, causes, tests and evidence are one set shared by every framework: only controls hang from a framework, through its requirements.",
+    "FILTER": {
+      "SEARCH": "Search",
+      "SEARCH_HINT": "Code or name",
+      "SCOPE": "Controls of",
+      "NO_EVIDENCE": "Only those with no required evidence",
+      "ALL": "All"
+    },
+    "SCOPE": {
+      "FRAMEWORK": "{{name}}",
+      "ALL": "The whole catalog",
+      "UNLINKED": "Without a requirement (not in any framework)"
+    },
+    "ORIGIN": {
+      "committee": "Committee",
+      "monkey_admin": "Monkey Admin"
+    },
+    "STATE": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Retired"
+    },
+    "COL": {
+      "CODE": "Code",
+      "NAME": "Name",
+      "DOMAIN": "Domain",
+      "DIMENSIONS": "Dimensions",
+      "TESTS": "Tests",
+      "EVIDENCE": "Evidence",
+      "ORIGIN": "Origin",
+      "STATE": "State",
+      "CRITERION": "Criterion",
+      "CAUSES": "Causes",
+      "CATEGORY": "Category",
+      "RISKS": "Risks",
+      "CONTROLS": "Controls",
+      "CLIENT_NAME": "Name the client sees",
+      "COMMITTEE_NAME": "Committee name",
+      "DIMENSION": "Dimension",
+      "DESCRIPTION": "Description"
+    },
+    "DIMENSION": {
+      "POLICY": "Documentary",
+      "SERVER": "Server",
+      "DATABASE": "Database",
+      "APP": "Application",
+      "CLOUD": "Cloud"
+    },
+    "CONTROL_TYPE": {
+      "MANUAL": "Manual",
+      "AUTOMATED": "Automated",
+      "HYBRID": "Hybrid",
+      "TECHNICAL_MANUAL": "Technical manual"
+    },
+    "RISK_CRITERION": {
+      "CONFIDENTIALITY": "Confidentiality",
+      "INTEGRITY": "Integrity",
+      "AVAILABILITY": "Availability",
+      "PRIVACY": "Privacy",
+      "COMPLIANCE": "Compliance",
+      "SECURITY": "Security",
+      "CONTINUITY": "Continuity",
+      "THIRD_PARTIES": "Third parties",
+      "FRAUD": "Fraud",
+      "REPUTATION": "Reputation",
+      "OPERATIONS": "Operations"
+    },
+    "FAILURE_CATEGORY": {
+      "HUMAN_RESOURCE": "Human resources",
+      "PROCESSES": "Processes",
+      "INFORMATION_TECHNOLOGY": "Information technology",
+      "INFRASTRUCTURE": "Infrastructure",
+      "EXTERNAL": "External",
+      "GOVERNANCE": "Governance"
+    },
+    "TEST_FIELD": {
+      "OBJECTIVE": "Objective",
+      "TYPE": "Type",
+      "TOOL": "Tool",
+      "POPULATION": "Population",
+      "PERIOD": "Period",
+      "POPULATION_SIZE": "Population size",
+      "SUGGESTED_SAMPLE_SIZE": "Suggested sample size",
+      "SELECTION_METHOD": "Selection method",
+      "EVIDENCE_TO_REQUEST": "Evidence to request",
+      "PREREQUISITES": "Prerequisites",
+      "STEP_BY_STEP": "Step by step",
+      "ATTRIBUTES_TO_VALIDATE": "Attributes to validate",
+      "COMPLIANCE_CRITERION": "Compliance criterion",
+      "EXCEPTIONS": "Exceptions / deviations",
+      "EXCEPTIONS_HANDLING": "Exception handling",
+      "EVIDENCE_TO_RETAIN": "Evidence to retain",
+      "AUTOMATED_COVERAGE": "Automated coverage",
+      "COMPLEMENTARY_MANUAL_VALIDATION": "Complementary manual validation",
+      "LIMITATIONS": "Limitations"
+    },
+    "DETAIL": {
+      "TITLE": "Detail",
+      "CLOSE": "Close",
+      "LOAD_ERROR": "The detail could not be loaded.",
+      "DOMAIN": "Domain",
+      "SOURCE": "Source",
+      "REQUIREMENTS": "Requirements",
+      "NO_REQUIREMENTS": "It hangs from no requirement of any framework.",
+      "DIMENSIONS": "Dimensions",
+      "PROBE": "probe",
+      "AI": "AI",
+      "CONFIRMATION": "compliance confirmation",
+      "TESTS": "Tests",
+      "EVIDENCE": "Required evidence",
+      "NO_EVIDENCE": "The committee asked this control for no evidence.",
+      "POLICIES": "Policies",
+      "EMPLOYEE_ACCEPTANCE": "requires employee acceptance",
+      "CAUSES": "Causes it mitigates",
+      "RISKS": "Risks it originates",
+      "CONTROLS": "Controls that mitigate it",
+      "CRITERION": "Criterion",
+      "CATEGORY": "Category",
+      "POTENTIAL_IMPACT": "Potential impact",
+      "INTERNAL_NOTE": "Internal committee texts. Only Monkey sees them: the client never does, nor the probe provider.",
+      "SHOWN_TO_CLIENT": "What the client sees",
+      "DISPLAY_NAME": "Name",
+      "DISPLAY_DESCRIPTION": "Description",
+      "COMMITTEE": "Committee texts"
+    },
+    "LOADING": "Loading…",
+    "LOAD_ERROR": "The catalog could not be loaded.",
+    "RETRY": "Retry",
+    "EMPTY": "No results with those filters.",
+    "TOTAL": "{{total}} results",
+    "PREV": "Previous",
+    "NEXT": "Next"
+  }
+}
