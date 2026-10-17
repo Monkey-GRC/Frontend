@@ -10,7 +10,11 @@ import {
     ControlDetail,
     ControlRow,
     EvidenceTemplateRow,
+    FormKind,
+    FrameworkDetail,
+    KIND_PATH,
     Paginated,
+    PointOfFocusRef,
     RiskDetail,
     RiskRow,
     TestDetail,
@@ -64,6 +68,54 @@ export class CatalogService {
 
     evidenceTemplates(filters: CatalogFilters) {
         return this.get<Paginated<EvidenceTemplateRow>>('/evidence-templates', this.query(filters));
+    }
+
+    evidenceTemplate(id: string) {
+        return this.get<EvidenceTemplateRow>(`/evidence-templates/${id}`);
+    }
+
+    framework(id: string) {
+        return this.get<FrameworkDetail>(`/frameworks/${id}`);
+    }
+
+    pointsOfFocus(frameworkId: string, requirementCode?: string): Observable<PointOfFocusRef[]> {
+        const params: Record<string, string> = requirementCode ? { requirement_code: requirementCode } : {};
+        return this.get<{ items: PointOfFocusRef[] }>(`/frameworks/${frameworkId}/points-of-focus`, params).pipe(map((r) => r.items));
+    }
+
+    // ---- escritura -----------------------------------------------------------------------------------------------------------------------------
+    // Crear y editar responden con el elemento ya actualizado. Dar de baja no borra: `deactivate` y `reactivate` cambian `is_active` (contrato monkey-admin-catalog.md).
+
+    create<T = unknown>(kind: FormKind, body: Record<string, unknown>): Observable<T> {
+        return this.send<T>('post', `/${KIND_PATH[kind]}`, body);
+    }
+
+    update<T = unknown>(kind: FormKind, id: string, body: Record<string, unknown>): Observable<T> {
+        return this.send<T>('patch', `/${KIND_PATH[kind]}/${id}`, body);
+    }
+
+    deactivate(kind: FormKind, id: string): Observable<void> {
+        return this.http.delete<void>(`${this.base}/${KIND_PATH[kind]}/${id}`);
+    }
+
+    reactivate<T = unknown>(kind: FormKind, id: string): Observable<T> {
+        return this.update<T>(kind, id, { is_active: true });
+    }
+
+    /** Un vínculo: `POST /<padre>/<id>/<segmento>` con el id del otro lado; responde con el padre ya actualizado. */
+    link<T = unknown>(parent: FormKind, parentId: string, segment: string, body: Record<string, unknown>): Observable<T> {
+        return this.send<T>('post', `/${KIND_PATH[parent]}/${parentId}/${segment}`, body);
+    }
+
+    /** Quitar un vínculo borra solo la relación, nunca los elementos. */
+    unlink(parent: FormKind, parentId: string, segment: string, childId: string): Observable<void> {
+        return this.http.delete<void>(`${this.base}/${KIND_PATH[parent]}/${parentId}/${segment}/${childId}`);
+    }
+
+    private send<T>(verb: 'post' | 'patch', path: string, body: Record<string, unknown>): Observable<T> {
+        const url = this.base + path;
+        const request = verb === 'post' ? this.http.post<SuccessResponse<T>>(url, body) : this.http.patch<SuccessResponse<T>>(url, body);
+        return request.pipe(map((r) => r.data as T));
     }
 
     // Solo viajan los filtros que tienen valor: el backend rechaza (422) los que no conoce y no distingue «vacío» de «sin filtro».

@@ -137,7 +137,8 @@
       "SHOWN_TO_CLIENT": "What the client sees",
       "DISPLAY_NAME": "Name",
       "DISPLAY_DESCRIPTION": "Description",
-      "COMMITTEE": "Committee texts"
+      "COMMITTEE": "Committee texts",
+      "USED_BY": "Asked for by {{count}} controls"
     },
     "LOADING": "Loading…",
     "LOAD_ERROR": "The catalog could not be loaded.",
@@ -145,6 +146,75 @@
     "EMPTY": "No results with those filters.",
     "TOTAL": "{{total}} results",
     "PREV": "Previous",
-    "NEXT": "Next"
+    "NEXT": "Next",
+    "FORM": {
+      "NEW": {
+        "CONTROL": "New control",
+        "RISK": "New risk",
+        "CAUSE": "New cause",
+        "TEMPLATE": "New required evidence",
+        "TEST": "New test"
+      },
+      "CREATE": {
+        "CONTROL": "New control",
+        "RISK": "New risk",
+        "CAUSE": "New cause",
+        "TEMPLATE": "New required evidence",
+        "TEST": "New test"
+      },
+      "EDIT": {
+        "CONTROL": "Edit control",
+        "RISK": "Edit risk",
+        "CAUSE": "Edit cause",
+        "TEMPLATE": "Edit required evidence",
+        "TEST": "Edit test"
+      },
+      "FIELD": {
+        "CODE": "Code",
+        "NAME": "Name",
+        "DESCRIPTION": "Description",
+        "DOMAIN": "Domain",
+        "SOURCE_REF": "Source",
+        "TRUST_CRITERION": "Criterion",
+        "POTENTIAL_IMPACT": "Potential impact",
+        "FAILURE_CATEGORY": "Failure category",
+        "DIMENSION": "Dimension",
+        "DISPLAY_NAME": "Name the client sees",
+        "DISPLAY_DESCRIPTION": "Description the client sees",
+        "OBJECTIVE": "Objective (internal)",
+        "TYPE": "Type"
+      },
+      "REQUIRED": "This field is required.",
+      "CODE_INVALID": "Use letters, numbers, dot, hyphen or underscore, no spaces.",
+      "CODE_AUTO": "Assigned automatically if left empty",
+      "CHOOSE": "Choose…",
+      "LINES_HINT": "One per line",
+      "CANCEL": "Cancel",
+      "CREATE_SUBMIT": "Add",
+      "SAVE": "Save changes",
+      "COMMITTEE": "Committee texts (optional)",
+      "COMMITTEE_HINT": "Internal: only Monkey sees them; the client never does."
+    },
+    "ACTIONS": {
+      "EDIT": "Edit",
+      "DEACTIVATE": "Retire",
+      "DEACTIVATE_CONFIRM": "Retire it? It is not deleted: it stops being offered to new services.",
+      "YES": "Yes, retire",
+      "REACTIVATE": "Reactivate",
+      "INACTIVE_HINT": "It is retired: it is not offered to new services. Companies that already have it keep their copy."
+    },
+    "LINK": {
+      "ADD": "Add",
+      "REMOVE": "Remove the link with",
+      "POSITION": "Position (optional)",
+      "TYPE": "Type",
+      "TEST_FROM_CONTROL": "A test is linked from the control that uses it.",
+      "TEMPLATE_FROM_CONTROL": "Required evidence is linked from the control that asks for it."
+    },
+    "PICKER": {
+      "FRAMEWORK": "Framework",
+      "REQUIREMENT": "Requirement",
+      "EMPTY": "Nothing to offer with that search."
+    }
   }
 }

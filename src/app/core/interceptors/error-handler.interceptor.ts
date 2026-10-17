@@ -19,8 +19,9 @@ function handleHttpError(error: HttpErrorResponse, translate: TranslateService):
         errorMessage = sanitizeMessage(getServerErrorMessage(error, translate), translate);
     }
 
-    // Se conserva el status: AuthService lo usa para distinguir un 401 (renovar sesión) del resto.
-    return throwError(() => Object.assign(new Error(errorMessage), { status: error.status }));
+    // Se conserva el status: AuthService lo usa para distinguir un 401 (renovar sesión) del resto. Y, si el backend los manda, el código del error y sus errores por
+    // campo (ields, un 422): un formulario los muestra junto a cada campo en vez de un solo mensaje general.
+    return throwError(() => Object.assign(new Error(errorMessage), { status: error.status, code: error.error?.error?.code, fields: error.error?.error?.fields }));
 }
 
 function getServerErrorMessage(error: HttpErrorResponse, translate: TranslateService): string {

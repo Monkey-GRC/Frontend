@@ -50,7 +50,7 @@ export interface ControlDetail extends Stamped {
     description: string;
     domain: string;
     source_ref: string | null;
-    points_of_focus: { framework_code: string; requirement_code: string; number: number; description: string }[];
+    points_of_focus: { id: string; framework_code: string; requirement_code: string; number: number; description: string }[];
     dimensions: { dimension: string; type: string; requires_probe: boolean; requires_ai: boolean; requires_compliance_confirmation: boolean }[];
     tests: { id: string; code: string; dimension: string; display_name: string | null; is_active: boolean }[];
     evidence_templates: { id: string; code: string; description: string; sequence: number }[];
@@ -109,6 +109,37 @@ export interface EvidenceTemplateRow extends Stamped {
     description: string;
     dimension: string;
     controls_count: number;
+}
+
+// Lo que se puede crear y editar desde Monkey Admin, y la ruta de cada cosa en la API (`/v1/catalog/<ruta>`).
+export type FormKind = 'control' | 'risk' | 'cause' | 'template' | 'test';
+export const KIND_PATH: Record<FormKind, string> = { control: 'controls', risk: 'risks', cause: 'causes', template: 'evidence-templates', test: 'tests' };
+
+// Un error de campo que el backend devuelve en un 422, ya con su mensaje traducido.
+export interface FieldError {
+    field: string;
+    code: string;
+    message: string;
+}
+
+// El error que entrega el interceptor: el mensaje, el estado HTTP, el código del backend y, si es un 422, sus errores por campo.
+export interface ApiError extends Error {
+    status?: number;
+    code?: string;
+    fields?: FieldError[];
+}
+
+export interface PointOfFocusRef {
+    id: string;
+    framework_code: string;
+    requirement_code: string;
+    number: number;
+    description: string;
+    controls_count: number;
+}
+
+export interface FrameworkDetail extends CatalogFramework {
+    requirements: { code: string; tsc_category: string; criterion: string; trust_criterion: string; points_of_focus_count: number; controls_count: number }[];
 }
 
 export type CatalogTab = 'controls' | 'risks' | 'causes' | 'tests' | 'evidence-templates';

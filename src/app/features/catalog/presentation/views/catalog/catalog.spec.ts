@@ -16,7 +16,7 @@ describe('Catalog (Monkey Admin)', () => {
     let fixture: ComponentFixture<Catalog>;
 
     function setup(frameworks = [SOC2, ISO]): void {
-        api = jasmine.createSpyObj<CatalogService>('CatalogService', ['frameworks', 'controls', 'risks', 'causes', 'tests', 'evidenceTemplates', 'control', 'risk', 'cause', 'test']);
+        api = jasmine.createSpyObj<CatalogService>('CatalogService', ['frameworks', 'controls', 'risks', 'causes', 'tests', 'evidenceTemplates', 'control', 'risk', 'cause', 'test', 'evidenceTemplate', 'create', 'update', 'framework', 'pointsOfFocus']);
         api.frameworks.and.returnValue(of(frameworks));
         api.controls.and.returnValue(page([CONTROL], 1));
         api.risks.and.returnValue(page([]));
@@ -137,14 +137,52 @@ describe('Catalog (Monkey Admin)', () => {
         expect(el().querySelector('[data-detail]')).toBeNull();
     });
 
-    it('does not open anything on the evidence templates, which have no detail of their own', () => {
+    it('opens a short detail on the required evidence too, so it can be edited or retired', () => {
         setup();
         api.evidenceTemplates.and.returnValue(page([{ id: 'e1', code: 'DOC-001', description: 'Acta', dimension: 'policy', origin: 'committee', is_active: true, controls_count: 2 }]));
+        api.evidenceTemplate.and.returnValue(of({ id: 'e1', code: 'DOC-001', description: 'Acta', dimension: 'policy', origin: 'committee', is_active: true, controls_count: 2 }) as never);
         el().querySelector<HTMLButtonElement>('[data-tab="evidence-templates"]')!.click();
         fixture.detectChanges();
         el().querySelector<HTMLElement>('[data-row="e1"]')!.click();
         fixture.detectChanges();
-        expect(el().querySelector('[data-detail]')).toBeNull();
+        expect(api.evidenceTemplate).toHaveBeenCalledWith('e1');
+        expect(el().querySelector('[data-detail]')).not.toBeNull();
+    });
+
+    it('offers to add a new element of the kind of the tab that is open', () => {
+        setup();
+        const label = () => el().querySelector('[data-new]')!.textContent ?? '';
+        expect(label()).toContain('CATALOG_MODULE.FORM.NEW.CONTROL');
+        for (const [tab, kind] of [['risks', 'RISK'], ['causes', 'CAUSE'], ['tests', 'TEST'], ['evidence-templates', 'TEMPLATE']] as const) {
+            el().querySelector<HTMLButtonElement>(`[data-tab="${tab}"]`)!.click();
+            fixture.detectChanges();
+            expect(label()).toContain(`CATALOG_MODULE.FORM.NEW.${kind}`);
+        }
+    });
+
+    it('opens the form to create, and when it saves it reloads the list and opens the new element to link it', () => {
+        setup();
+        el().querySelector<HTMLButtonElement>('[data-new]')!.click();
+        fixture.detectChanges();
+        expect(el().querySelector('[data-form]')).not.toBeNull();
+        api.controls.calls.reset();
+        api.control.and.returnValue(of({ ...CONTROL, description: 'd', source_ref: null, points_of_focus: [], dimensions: [], tests: [], evidence_templates: [], policies: [], causes: [] }) as never);
+        fixture.componentInstance.onSaved({ id: 'c1' });
+        fixture.detectChanges();
+        expect(el().querySelector('[data-form]')).toBeNull();
+        expect(api.controls).toHaveBeenCalled();
+        expect(api.control).toHaveBeenCalledWith('c1');
+        expect(el().querySelector('[data-detail]')).not.toBeNull();
+    });
+
+    it('opens the form to edit with the current values when the detail asks for it', () => {
+        setup();
+        fixture.componentInstance.startEdit({ kind: 'risk', id: 'r1', initial: { name: 'Riesgo' } });
+        fixture.detectChanges();
+        expect(fixture.componentInstance.form).toEqual({ mode: 'edit', kind: 'risk', id: 'r1', initial: { name: 'Riesgo' } });
+        el().querySelector<HTMLButtonElement>('[data-form] button[type="button"]')!.click();
+        fixture.detectChanges();
+        expect(fixture.componentInstance.form).toBeNull();
     });
 
     it('says so when nothing matches, and offers to retry when the catalog cannot be read', () => {
