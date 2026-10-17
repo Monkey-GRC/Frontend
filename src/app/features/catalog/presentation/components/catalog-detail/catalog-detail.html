@@ -62,7 +62,7 @@
         <div class="mt-2 flex flex-wrap items-center gap-2">
           <span class="rounded-full px-2 py-1 text-xs font-medium"
             [ngClass]="detail.origin === 'monkey_admin' ? 'bg-primary/10 text-primary' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'">
-            {{ 'CATALOG_MODULE.ORIGIN.' + detail.origin | translate }}
+            {{ label('catalog_origin', detail.origin) }}
           </span>
           <span class="rounded-full px-2 py-1 text-xs font-medium" data-state
             [ngClass]="detail.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400'">
@@ -142,13 +142,13 @@
           <label class="flex flex-col gap-1 text-xs font-medium text-gray-700 dark:text-gray-200">
             {{ 'CATALOG_MODULE.COL.DIMENSION' | translate }}
             <select data-dim-dimension (change)="dimension.dimension = $any($event.target).value" class="h-9 rounded-lg border border-gray-300 bg-white px-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
-              @for (d of dimensions; track d) { <option [value]="d" [selected]="dimension.dimension === d">{{ 'CATALOG_MODULE.DIMENSION.' + d.toUpperCase() | translate }}</option> }
+              @for (d of options.options('dimension'); track d.value) { <option [value]="d.value" [selected]="dimension.dimension === d.value">{{ d.label }}</option> }
             </select>
           </label>
           <label class="flex flex-col gap-1 text-xs font-medium text-gray-700 dark:text-gray-200">
             {{ 'CATALOG_MODULE.LINK.TYPE' | translate }}
             <select data-dim-type (change)="dimension.type = $any($event.target).value" class="h-9 rounded-lg border border-gray-300 bg-white px-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
-              @for (t of controlTypes; track t) { <option [value]="t" [selected]="dimension.type === t">{{ 'CATALOG_MODULE.CONTROL_TYPE.' + t.toUpperCase() | translate }}</option> }
+              @for (t of options.options('control_type'); track t.value) { <option [value]="t.value" [selected]="dimension.type === t.value">{{ t.label }}</option> }
             </select>
           </label>
           <label class="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-200"><input type="checkbox" [checked]="dimension.requires_probe" (change)="dimension.requires_probe = $any($event.target).checked" />{{ 'CATALOG_MODULE.DETAIL.PROBE' | translate }}</label>
@@ -167,12 +167,12 @@
           @for (d of c.dimensions; track d.dimension) {
           <li class="flex items-start justify-between gap-2">
             <span>
-              <span class="font-medium">{{ label('CATALOG_MODULE.DIMENSION', d.dimension) }}</span> · {{ label('CATALOG_MODULE.CONTROL_TYPE', d.type) }}
+              <span class="font-medium">{{ label('dimension', d.dimension) }}</span> · {{ label('control_type', d.type) }}
               @if (d.requires_probe) { · {{ 'CATALOG_MODULE.DETAIL.PROBE' | translate }} }
               @if (d.requires_ai) { · {{ 'CATALOG_MODULE.DETAIL.AI' | translate }} }
               @if (d.requires_compliance_confirmation) { · {{ 'CATALOG_MODULE.DETAIL.CONFIRMATION' | translate }} }
             </span>
-            <ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: 'dimension', id: d.dimension, name: label('CATALOG_MODULE.DIMENSION', d.dimension) }" />
+            <ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: 'dimension', id: d.dimension, name: label('dimension', d.dimension) }" />
           </li>
           }
         </ul>
@@ -187,7 +187,7 @@
         <ul class="flex flex-col gap-1.5">
           @for (t of c.tests; track t.id) {
           <li class="flex items-start justify-between gap-2">
-            <span><span class="font-mono text-xs font-semibold">{{ t.code }}</span> · {{ t.display_name ?? '—' }} <span class="text-gray-600 dark:text-gray-300">({{ label('CATALOG_MODULE.DIMENSION', t.dimension) }})</span></span>
+            <span><span class="font-mono text-xs font-semibold">{{ t.code }}</span> · {{ t.display_name ?? '—' }} <span class="text-gray-600 dark:text-gray-300">({{ label('dimension', t.dimension) }})</span></span>
             <ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: 'test', id: t.id, name: t.code }" />
           </li>
           }
@@ -240,7 +240,7 @@
       @let r = $any(detail);
       <section>
         <p class="whitespace-pre-line">{{ r.description }}</p>
-        <p class="mt-2 text-xs text-gray-600 dark:text-gray-300">{{ 'CATALOG_MODULE.DETAIL.CRITERION' | translate }}: {{ label('CATALOG_MODULE.RISK_CRITERION', r.trust_criterion) }}</p>
+        <p class="mt-2 text-xs text-gray-600 dark:text-gray-300">{{ 'CATALOG_MODULE.DETAIL.CRITERION' | translate }}: {{ label('risk_criterion', r.trust_criterion) }}</p>
       </section>
       @if (list(r.potential_impact).length) {
       <section>
@@ -268,7 +268,7 @@
       @let k = $any(detail);
       <section>
         <p class="whitespace-pre-line">{{ k.description }}</p>
-        <p class="mt-2 text-xs text-gray-600 dark:text-gray-300">{{ 'CATALOG_MODULE.DETAIL.CATEGORY' | translate }}: {{ label('CATALOG_MODULE.FAILURE_CATEGORY', k.failure_category) }}</p>
+        <p class="mt-2 text-xs text-gray-600 dark:text-gray-300">{{ 'CATALOG_MODULE.DETAIL.CATEGORY' | translate }}: {{ label('failure_category', k.failure_category) }}</p>
       </section>
       <section>
         <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.RISKS', count: k.risks.length, slot: 'risk' }" />
@@ -300,7 +300,7 @@
       @let e = $any(detail);
       <section>
         <p class="whitespace-pre-line">{{ e.description }}</p>
-        <p class="mt-2 text-xs text-gray-600 dark:text-gray-300">{{ label('CATALOG_MODULE.DIMENSION', e.dimension) }} · {{ 'CATALOG_MODULE.DETAIL.USED_BY' | translate: { count: e.controls_count } }}</p>
+        <p class="mt-2 text-xs text-gray-600 dark:text-gray-300">{{ label('dimension', e.dimension) }} · {{ 'CATALOG_MODULE.DETAIL.USED_BY' | translate: { count: e.controls_count } }}</p>
         <p class="mt-2 text-xs text-gray-600 dark:text-gray-300">{{ 'CATALOG_MODULE.LINK.TEMPLATE_FROM_CONTROL' | translate }}</p>
       </section>
       }
@@ -311,7 +311,7 @@
         <span class="material-symbols-outlined text-base" aria-hidden="true">visibility_off</span>{{ 'CATALOG_MODULE.DETAIL.INTERNAL_NOTE' | translate }}
       </p>
       <section>
-        <p class="text-xs text-gray-600 dark:text-gray-300">{{ label('CATALOG_MODULE.DIMENSION', t.dimension) }}</p>
+        <p class="text-xs text-gray-600 dark:text-gray-300">{{ label('dimension', t.dimension) }}</p>
         <h4 class="mt-2 font-semibold text-gray-900 dark:text-white">{{ 'CATALOG_MODULE.DETAIL.SHOWN_TO_CLIENT' | translate }}</h4>
         <dl class="mt-1 grid gap-2">
           <div><dt class="text-xs text-gray-600 dark:text-gray-300">{{ 'CATALOG_MODULE.DETAIL.DISPLAY_NAME' | translate }}</dt><dd>{{ t.display_name ?? '—' }}</dd></div>

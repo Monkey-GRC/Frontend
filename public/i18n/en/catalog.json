@@ -28,10 +28,6 @@
       "ALL": "The whole catalog",
       "UNLINKED": "Without a requirement (not in any framework)"
     },
-    "ORIGIN": {
-      "committee": "Committee",
-      "monkey_admin": "Monkey Admin"
-    },
     "STATE": {
       "ACTIVE": "Active",
       "INACTIVE": "Retired"
@@ -54,40 +50,6 @@
       "COMMITTEE_NAME": "Committee name",
       "DIMENSION": "Dimension",
       "DESCRIPTION": "Description"
-    },
-    "DIMENSION": {
-      "POLICY": "Documentary",
-      "SERVER": "Server",
-      "DATABASE": "Database",
-      "APP": "Application",
-      "CLOUD": "Cloud"
-    },
-    "CONTROL_TYPE": {
-      "MANUAL": "Manual",
-      "AUTOMATED": "Automated",
-      "HYBRID": "Hybrid",
-      "TECHNICAL_MANUAL": "Technical manual"
-    },
-    "RISK_CRITERION": {
-      "CONFIDENTIALITY": "Confidentiality",
-      "INTEGRITY": "Integrity",
-      "AVAILABILITY": "Availability",
-      "PRIVACY": "Privacy",
-      "COMPLIANCE": "Compliance",
-      "SECURITY": "Security",
-      "CONTINUITY": "Continuity",
-      "THIRD_PARTIES": "Third parties",
-      "FRAUD": "Fraud",
-      "REPUTATION": "Reputation",
-      "OPERATIONS": "Operations"
-    },
-    "FAILURE_CATEGORY": {
-      "HUMAN_RESOURCE": "Human resources",
-      "PROCESSES": "Processes",
-      "INFORMATION_TECHNOLOGY": "Information technology",
-      "INFRASTRUCTURE": "Infrastructure",
-      "EXTERNAL": "External",
-      "GOVERNANCE": "Governance"
     },
     "TEST_FIELD": {
       "OBJECTIVE": "Objective",

@@ -3,6 +3,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import { ApiError, FormKind } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
+import { provideOptionsStub } from '@features/catalog/testing/catalog-options';
 import { CatalogForm } from './catalog-form';
 
 const apiError = (message: string, extra: Partial<ApiError> = {}): ApiError => Object.assign(new Error(message), extra);
@@ -14,7 +15,7 @@ describe('CatalogForm', () => {
 
     function setup(kind: FormKind, mode: 'create' | 'edit', initial: Record<string, unknown> = {}): void {
         api = jasmine.createSpyObj<CatalogService>('CatalogService', ['create', 'update']);
-        TestBed.configureTestingModule({ imports: [CatalogForm], providers: [provideTranslateService(), { provide: CatalogService, useValue: api }] });
+        TestBed.configureTestingModule({ imports: [CatalogForm], providers: [provideTranslateService(), provideOptionsStub(), { provide: CatalogService, useValue: api }] });
         fixture = TestBed.createComponent(CatalogForm);
         fixture.componentRef.setInput('kind', kind);
         fixture.componentRef.setInput('mode', mode);
@@ -94,6 +95,13 @@ describe('CatalogForm', () => {
         el().querySelector<HTMLButtonElement>('[data-committee-toggle]')!.click();
         fixture.detectChanges();
         expect(el().querySelector('[data-field="tool"]')).not.toBeNull();
+    });
+
+    it('fills the selects with the lists the backend serves, with their text', () => {
+        setup('risk', 'create');
+        const options = Array.from(el().querySelectorAll<HTMLOptionElement>('[data-field="trust_criterion"] option'));
+        expect(options.map((o) => o.value)).toContain('third_parties');
+        expect(options.find((o) => o.value === 'security')!.textContent).toContain('«security»');
     });
 
     it('edits sending only what changed, and the code is not editable', () => {

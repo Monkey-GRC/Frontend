@@ -3,6 +3,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import { CatalogFramework } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
+import { provideOptionsStub } from '@features/catalog/testing/catalog-options';
 import { Catalog } from './catalog';
 
 const SOC2: CatalogFramework = { id: 'f1', code: 'soc2', name: 'SOC 2', version: '2017', type: 'attestation', availability: 'available', scope_description: '', counts: { requirements: 61, controls: 118, tests: 61 } };
@@ -23,7 +24,7 @@ describe('Catalog (Monkey Admin)', () => {
         api.causes.and.returnValue(page([]));
         api.tests.and.returnValue(page([]));
         api.evidenceTemplates.and.returnValue(page([]));
-        TestBed.configureTestingModule({ imports: [Catalog], providers: [provideTranslateService(), { provide: CatalogService, useValue: api }] });
+        TestBed.configureTestingModule({ imports: [Catalog], providers: [provideTranslateService(), provideOptionsStub(), { provide: CatalogService, useValue: api }] });
         fixture = TestBed.createComponent(Catalog);
         fixture.detectChanges();
     }

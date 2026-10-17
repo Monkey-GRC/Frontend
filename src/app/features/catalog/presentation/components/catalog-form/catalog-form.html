@@ -35,8 +35,8 @@
           class="h-10 rounded-lg border bg-white px-2 text-sm font-normal text-gray-900 dark:bg-gray-800 dark:text-white"
           [ngClass]="errors[f.key] ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'">
           @if (!f.initial) { <option value="" [selected]="!values[f.key]">{{ 'CATALOG_MODULE.FORM.CHOOSE' | translate }}</option> }
-          @for (o of f.options; track o) {
-          <option [value]="o" [selected]="values[f.key] === o">{{ f.optionsPrefix + '.' + o.toUpperCase() | translate }}</option>
+          @for (o of optionsOf(f); track o.value) {
+          <option [value]="o.value" [selected]="values[f.key] === o.value">{{ o.label }}</option>
           }
         </select>
         }

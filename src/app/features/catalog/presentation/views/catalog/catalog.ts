@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CatalogFilters, CatalogFramework, CatalogOrigin, CatalogTab, ControlScope, FormKind, Paginated } from '@features/catalog/models/catalog.model';
+import { CatalogOptionsService } from '@features/catalog/services/catalog-options.service';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { CatalogColumn, CatalogRow, CatalogTable } from '@features/catalog/presentation/components/catalog-table/catalog-table';
 import { CatalogDetail, DetailKind, EditRequest } from '@features/catalog/presentation/components/catalog-detail/catalog-detail';
@@ -20,7 +21,7 @@ const COLUMNS: Record<CatalogTab, CatalogColumn[]> = {
     { key: 'code', labelKey: 'CATALOG_MODULE.COL.CODE', kind: 'code' },
     { key: 'name', labelKey: 'CATALOG_MODULE.COL.NAME' },
     { key: 'domain', labelKey: 'CATALOG_MODULE.COL.DOMAIN' },
-    { key: 'dimensions', labelKey: 'CATALOG_MODULE.COL.DIMENSIONS', kind: 'list', enumPrefix: 'CATALOG_MODULE.DIMENSION' },
+    { key: 'dimensions', labelKey: 'CATALOG_MODULE.COL.DIMENSIONS', kind: 'list', options: 'dimension' },
     { key: 'tests_count', labelKey: 'CATALOG_MODULE.COL.TESTS', kind: 'count' },
     { key: 'evidence_templates_count', labelKey: 'CATALOG_MODULE.COL.EVIDENCE', kind: 'count' },
     ...BADGES,
@@ -28,14 +29,14 @@ const COLUMNS: Record<CatalogTab, CatalogColumn[]> = {
   risks: [
     { key: 'code', labelKey: 'CATALOG_MODULE.COL.CODE', kind: 'code' },
     { key: 'name', labelKey: 'CATALOG_MODULE.COL.NAME' },
-    { key: 'trust_criterion', labelKey: 'CATALOG_MODULE.COL.CRITERION', kind: 'enum', enumPrefix: 'CATALOG_MODULE.RISK_CRITERION' },
+    { key: 'trust_criterion', labelKey: 'CATALOG_MODULE.COL.CRITERION', kind: 'enum', options: 'risk_criterion' },
     { key: 'causes_count', labelKey: 'CATALOG_MODULE.COL.CAUSES', kind: 'count' },
     ...BADGES,
   ],
   causes: [
     { key: 'code', labelKey: 'CATALOG_MODULE.COL.CODE', kind: 'code' },
     { key: 'name', labelKey: 'CATALOG_MODULE.COL.NAME' },
-    { key: 'failure_category', labelKey: 'CATALOG_MODULE.COL.CATEGORY', kind: 'enum', enumPrefix: 'CATALOG_MODULE.FAILURE_CATEGORY' },
+    { key: 'failure_category', labelKey: 'CATALOG_MODULE.COL.CATEGORY', kind: 'enum', options: 'failure_category' },
     { key: 'risks_count', labelKey: 'CATALOG_MODULE.COL.RISKS', kind: 'count' },
     { key: 'controls_count', labelKey: 'CATALOG_MODULE.COL.CONTROLS', kind: 'count' },
     ...BADGES,
@@ -44,20 +45,19 @@ const COLUMNS: Record<CatalogTab, CatalogColumn[]> = {
     { key: 'code', labelKey: 'CATALOG_MODULE.COL.CODE', kind: 'code' },
     { key: 'display_name', labelKey: 'CATALOG_MODULE.COL.CLIENT_NAME' },
     { key: 'name', labelKey: 'CATALOG_MODULE.COL.COMMITTEE_NAME' },
-    { key: 'dimension', labelKey: 'CATALOG_MODULE.COL.DIMENSION', kind: 'enum', enumPrefix: 'CATALOG_MODULE.DIMENSION' },
+    { key: 'dimension', labelKey: 'CATALOG_MODULE.COL.DIMENSION', kind: 'enum', options: 'dimension' },
     { key: 'controls_count', labelKey: 'CATALOG_MODULE.COL.CONTROLS', kind: 'count' },
     ...BADGES,
   ],
   'evidence-templates': [
     { key: 'code', labelKey: 'CATALOG_MODULE.COL.CODE', kind: 'code' },
     { key: 'description', labelKey: 'CATALOG_MODULE.COL.DESCRIPTION' },
-    { key: 'dimension', labelKey: 'CATALOG_MODULE.COL.DIMENSION', kind: 'enum', enumPrefix: 'CATALOG_MODULE.DIMENSION' },
+    { key: 'dimension', labelKey: 'CATALOG_MODULE.COL.DIMENSION', kind: 'enum', options: 'dimension' },
     { key: 'controls_count', labelKey: 'CATALOG_MODULE.COL.CONTROLS', kind: 'count' },
     ...BADGES,
   ],
 };
 
-const DIMENSIONS = ['policy', 'server', 'database', 'app', 'cloud'];
 const NEW_KIND: Record<CatalogTab, FormKind> = { controls: 'control', risks: 'risk', causes: 'cause', tests: 'test', 'evidence-templates': 'template' };
 
 // Catálogo maestro (contracts/modules/monkey-admin-catalog.md): los marcos, y sus controles, riesgos, causas, pruebas y evidencias requeridas. Solo lectura.
@@ -77,7 +77,6 @@ export class Catalog implements OnInit, OnDestroy {
     { key: 'tests', labelKey: 'CATALOG_MODULE.TABS.TESTS' },
     { key: 'evidence-templates', labelKey: 'CATALOG_MODULE.TABS.EVIDENCE' },
   ];
-  readonly dimensions = DIMENSIONS;
 
   tab: CatalogTab = 'controls';
   frameworks: CatalogFramework[] = [];
@@ -103,9 +102,13 @@ export class Catalog implements OnInit, OnDestroy {
   private subscription?: Subscription;
   private request = 0;
 
-  constructor(private readonly catalog: CatalogService) {}
+  constructor(
+    private readonly catalog: CatalogService,
+    readonly options: CatalogOptionsService,
+  ) {}
 
   ngOnInit(): void {
+    this.options.load(['dimension', 'control_type', 'risk_criterion', 'failure_category', 'catalog_origin']).subscribe();
     // La búsqueda espera a que se deje de escribir para no pedir una página por cada letra.
     this.subscription = this.typing.pipe(debounceTime(300), distinctUntilChanged()).subscribe((text) => {
       this.search = text;

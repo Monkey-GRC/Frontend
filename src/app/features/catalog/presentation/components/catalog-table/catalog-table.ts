@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CatalogOrigin } from '@features/catalog/models/catalog.model';
+import { TranslateModule } from '@ngx-translate/core';
+import { CatalogOrigin, OptionName } from '@features/catalog/models/catalog.model';
+import { CatalogOptionsService } from '@features/catalog/services/catalog-options.service';
 
 export type CatalogRow = { id: string } & Record<string, unknown>;
 
@@ -10,8 +11,8 @@ export interface CatalogColumn {
   key: string;
   labelKey: string;
   kind?: 'code' | 'text' | 'count' | 'origin' | 'active' | 'enum' | 'list';
-  /** Para `enum` y `list`: prefijo de las traducciones (`CATALOG_MODULE.DIMENSION` → `CATALOG_MODULE.DIMENSION.SERVER`). */
-  enumPrefix?: string;
+  /** Para `enum` y `list`: la lista del backend de la que sale el texto de cada valor. */
+  options?: OptionName;
 }
 
 // La tabla de cualquiera de las listas del catálogo: la misma forma con distintas columnas. Sin lógica de negocio; emite la fila que se pulsa y la página pedida.
@@ -34,13 +35,13 @@ export class CatalogTable {
   readonly rowClick = output<CatalogRow>();
   readonly pageChange = output<number>();
 
-  constructor(private readonly translate: TranslateService) {}
+  constructor(private readonly options: CatalogOptionsService) {}
 
   text(row: CatalogRow, column: CatalogColumn): string {
     const value = row[column.key];
     if (value === null || value === undefined || value === '') return '—';
-    if (column.kind === 'enum') return this.label(column.enumPrefix, String(value));
-    if (column.kind === 'list' && Array.isArray(value)) return value.length ? value.map((v) => this.label(column.enumPrefix, String(v))).join(', ') : '—';
+    if (column.kind === 'enum') return this.label(column.options, String(value));
+    if (column.kind === 'list' && Array.isArray(value)) return value.length ? value.map((v) => this.label(column.options, String(v))).join(', ') : '—';
     return String(value);
   }
 
@@ -48,10 +49,11 @@ export class CatalogTable {
     return origin === 'monkey_admin' ? 'bg-primary/10 text-primary' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
   }
 
-  private label(prefix: string | undefined, value: string): string {
-    if (!prefix) return value;
-    const key = `${prefix}.${value.toUpperCase()}`;
-    const text = this.translate.instant(key);
-    return text === key ? value : text;
+  originLabel(origin: unknown): string {
+    return this.options.label('catalog_origin', String(origin));
+  }
+
+  private label(name: OptionName | undefined, value: string): string {
+    return name ? this.options.label(name, value) : value;
   }
 }

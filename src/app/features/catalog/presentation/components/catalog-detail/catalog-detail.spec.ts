@@ -3,6 +3,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import { ApiError } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
+import { provideOptionsStub } from '@features/catalog/testing/catalog-options';
 import { CatalogDetail, DetailKind, EditRequest } from './catalog-detail';
 
 const empty = of({ items: [], page: 1, page_size: 25, total: 0, total_pages: 1 }) as never;
@@ -44,7 +45,7 @@ describe('CatalogDetail', () => {
         api.unlink.and.returnValue(of(undefined));
         const byKind: Record<DetailKind, jasmine.Spy> = { controls: api.control, risks: api.risk, causes: api.cause, tests: api.test, 'evidence-templates': api.evidenceTemplate };
         byKind[kind].and.returnValue(of(detail));
-        TestBed.configureTestingModule({ imports: [CatalogDetail], providers: [provideTranslateService(), { provide: CatalogService, useValue: api }] });
+        TestBed.configureTestingModule({ imports: [CatalogDetail], providers: [provideTranslateService(), provideOptionsStub(), { provide: CatalogService, useValue: api }] });
         fixture = TestBed.createComponent(CatalogDetail);
         fixture.componentRef.setInput('kind', kind);
         fixture.componentRef.setInput('itemId', (detail as { id: string }).id);
