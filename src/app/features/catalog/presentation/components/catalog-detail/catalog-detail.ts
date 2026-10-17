@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges, input, output } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { ApiError, CauseDetail, ControlDetail, EvidenceTemplateRow, FormKind, RiskDetail, TestDetail } from '@features/catalog/models/catalog.model';
+import { CatalogOptionsService } from '@features/catalog/services/catalog-options.service';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { ItemPicker, Pick, PickKind } from '@features/catalog/presentation/components/item-picker/item-picker';
-import { CONTROL_TYPES, DIMENSIONS } from '@features/catalog/presentation/components/catalog-form/catalog-form.config';
+import { OptionName } from '@features/catalog/models/catalog.model';
 
 export type DetailKind = 'controls' | 'risks' | 'causes' | 'tests' | 'evidence-templates';
 type Detail = ControlDetail | RiskDetail | CauseDetail | TestDetail | EvidenceTemplateRow;
@@ -39,9 +40,6 @@ export class CatalogDetail implements OnChanges {
   readonly changed = output<void>();
   readonly editRequested = output<EditRequest>();
 
-  readonly dimensions = DIMENSIONS;
-  readonly controlTypes = CONTROL_TYPES;
-
   detail: Detail | null = null;
   loading = true;
   failed = false;
@@ -56,11 +54,12 @@ export class CatalogDetail implements OnChanges {
 
   constructor(
     private readonly catalog: CatalogService,
-    private readonly translate: TranslateService,
+    readonly options: CatalogOptionsService,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['kind'] || changes['itemId']) {
+      this.options.load(['dimension', 'control_type', 'risk_criterion', 'failure_category', 'catalog_origin']).subscribe();
       this.resetEditing();
       this.load();
     }
@@ -225,11 +224,8 @@ export class CatalogDetail implements OnChanges {
     return Array.isArray(value) ? value.map((v) => (typeof v === 'string' ? v : JSON.stringify(v))) : [];
   }
 
-  label(prefix: string, value: string | null | undefined): string {
-    if (!value) return '—';
-    const key = `${prefix}.${value.toUpperCase()}`;
-    const text = this.translate.instant(key);
-    return text === key ? value : text;
+  label(name: OptionName, value: string | null | undefined): string {
+    return this.options.label(name, value);
   }
 
   private request(): Observable<Detail> {

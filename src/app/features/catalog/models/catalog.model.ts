@@ -113,6 +113,15 @@ export interface EvidenceTemplateRow extends Stamped {
 
 // Lo que se puede crear y editar desde Monkey Admin, y la ruta de cada cosa en la API (`/v1/catalog/<ruta>`).
 export type FormKind = 'control' | 'risk' | 'cause' | 'template' | 'test';
+
+/** Una opción de una lista que sirve el backend (`GET /v1/catalogs/{nombre}`): el valor del enum y su texto en el idioma de la sesión. */
+export interface CatalogOption {
+  value: string;
+  label: string;
+}
+
+/** Las listas del backend que usa esta pantalla. */
+export type OptionName = 'dimension' | 'control_type' | 'risk_criterion' | 'failure_category' | 'catalog_origin';
 export const KIND_PATH: Record<FormKind, string> = { control: 'controls', risk: 'risks', cause: 'causes', template: 'evidence-templates', test: 'tests' };
 
 // Un error de campo que el backend devuelve en un 422, ya con su mensaje traducido.

@@ -86,8 +86,8 @@
         <select data-dimension (change)="setDimension($any($event.target).value)"
           class="h-9 rounded-lg border border-gray-300 bg-white px-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
           <option value="" [selected]="!dimension">{{ 'CATALOG_MODULE.FILTER.ALL' | translate }}</option>
-          @for (d of dimensions; track d) {
-          <option [value]="d" [selected]="dimension === d">{{ 'CATALOG_MODULE.DIMENSION.' + d.toUpperCase() | translate }}</option>
+          @for (d of options.options('dimension'); track d.value) {
+          <option [value]="d.value" [selected]="dimension === d.value">{{ d.label }}</option>
           }
         </select>
       </label>
@@ -98,8 +98,7 @@
         <select data-origin (change)="setOrigin($any($event.target).value)"
           class="h-9 rounded-lg border border-gray-300 bg-white px-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white">
           <option value="" [selected]="!origin">{{ 'CATALOG_MODULE.FILTER.ALL' | translate }}</option>
-          <option value="committee" [selected]="origin === 'committee'">{{ 'CATALOG_MODULE.ORIGIN.committee' | translate }}</option>
-          <option value="monkey_admin" [selected]="origin === 'monkey_admin'">{{ 'CATALOG_MODULE.ORIGIN.monkey_admin' | translate }}</option>
+          @for (o of options.options('catalog_origin'); track o.value) { <option [value]="o.value" [selected]="origin === o.value">{{ o.label }}</option> }
         </select>
       </label>
       <label class="flex flex-col gap-1 text-xs font-medium text-gray-700 dark:text-gray-200">

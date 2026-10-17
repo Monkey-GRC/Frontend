@@ -26,7 +26,7 @@
           }
           @case ('origin') {
           <span class="inline-block rounded-full px-2 py-1 text-xs font-medium" [ngClass]="originClass($any(row[column.key]))">
-            {{ 'CATALOG_MODULE.ORIGIN.' + row[column.key] | translate }}
+            {{ originLabel(row[column.key]) }}
           </span>
           }
           @case ('active') {

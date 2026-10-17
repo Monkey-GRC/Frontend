@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ApiError, FormKind } from '@features/catalog/models/catalog.model';
+import { ApiError, CatalogOption, FormKind } from '@features/catalog/models/catalog.model';
+import { CatalogOptionsService } from '@features/catalog/services/catalog-options.service';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { CODE_PATTERN, FORM_FIELDS, FieldDef } from './catalog-form.config';
 
@@ -35,6 +36,7 @@ export class CatalogForm implements OnInit {
 
   constructor(
     private readonly catalog: CatalogService,
+    private readonly options: CatalogOptionsService,
     private readonly translate: TranslateService,
   ) {}
 
@@ -44,6 +46,12 @@ export class CatalogForm implements OnInit {
       this.values[field.key] = this.mode() === 'edit' ? this.show(raw) : (field.initial ?? '');
     }
     this.original = { ...this.values };
+    // Las opciones de los selects salen del backend; el formulario se pinta ya y los selects se llenan cuando llegan.
+    this.options.load(this.fields.flatMap((f) => (f.optionsCatalog ? [f.optionsCatalog] : []))).subscribe();
+  }
+
+  optionsOf(field: FieldDef): CatalogOption[] {
+    return field.optionsCatalog ? this.options.options(field.optionsCatalog) : [];
   }
 
   get fields(): FieldDef[] {
