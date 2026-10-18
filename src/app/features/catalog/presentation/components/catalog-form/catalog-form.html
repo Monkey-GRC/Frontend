@@ -10,7 +10,7 @@
     </div>
 
     @if (banner) {
-    <div class="mb-4 flex items-start gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300" role="alert" data-banner>
+    <div class="mb-4 flex items-start gap-2 rounded-xl bg-red-50 p-3.5 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-200 dark:border-red-800" role="alert" data-banner>
       <span class="material-symbols-outlined text-base" aria-hidden="true">error</span><span>{{ banner }}</span>
     </div>
     }
@@ -81,12 +81,12 @@
       }
     </div>
 
-    <div class="mt-6 flex items-center justify-end gap-3 border-t border-gray-200 pt-4 dark:border-gray-700">
+    <div class="mt-4 flex items-center justify-end gap-3 border-t border-gray-200 pt-4 dark:border-gray-700">
       <button type="button" (click)="cancelled.emit()" [disabled]="sending" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-white dark:hover:bg-white/10">
         {{ 'CATALOG_MODULE.FORM.CANCEL' | translate }}
       </button>
       <button type="submit" data-save [disabled]="sending || (mode() === 'edit' && !changed)"
-        class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
+        class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50">
         @if (sending) { <span class="material-symbols-outlined animate-spin text-base" aria-hidden="true">progress_activity</span> }
         {{ (mode() === 'create' ? 'CATALOG_MODULE.FORM.CREATE_SUBMIT' : 'CATALOG_MODULE.FORM.SAVE') | translate }}
       </button>

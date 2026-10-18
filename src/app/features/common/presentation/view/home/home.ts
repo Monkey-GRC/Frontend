@@ -6,6 +6,7 @@ import { map } from 'rxjs';
 import { AccessKeyStatus } from '@features/companies/models/company.model';
 import { AttentionReason, HomeMetrics, KeyBucket, RECENT_DAYS, computeHomeMetrics } from '@features/common/models/home-metrics.model';
 import { HomeMetricsService } from '@features/common/services/home-metrics.service';
+import { PageHeader } from '@shared/presentation/components/page-header/page-header';
 
 type Stage = 'loading' | 'error' | 'ready';
 
@@ -37,7 +38,7 @@ const ATTENTION_ICON: Record<AttentionReason, { icon: string; tone: string }> = 
 // cifras que se leen de un vistazo; debajo, el estado de las claves de acceso, lo que pide atención, las últimas altas y los marcos contratados.
 @Component({
     selector: 'app-home',
-    imports: [TranslateModule, RouterLink],
+    imports: [PageHeader, TranslateModule, RouterLink],
     templateUrl: './home.html',
     styleUrl: './home.css',
     changeDetection: ChangeDetectionStrategy.OnPush,

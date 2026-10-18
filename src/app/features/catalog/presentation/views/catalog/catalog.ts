@@ -9,6 +9,7 @@ import { CatalogColumn, CatalogRow, CatalogTable } from '@features/catalog/prese
 import { CatalogDetail, DetailKind, EditRequest } from '@features/catalog/presentation/components/catalog-detail/catalog-detail';
 import { CatalogForm } from '@features/catalog/presentation/components/catalog-form/catalog-form';
 import { LoaderComponent } from '@shared/presentation/components/loader/loader.component';
+import { PageHeader } from '@shared/presentation/components/page-header/page-header';
 
 const BADGES: CatalogColumn[] = [
   { key: 'origin', labelKey: 'CATALOG_MODULE.COL.ORIGIN', kind: 'origin' },
@@ -65,7 +66,7 @@ const NEW_KIND: Record<CatalogTab, FormKind> = { controls: 'control', risks: 'ri
 // Desde aquí se agrega un elemento nuevo (botón «Nuevo»); editar, dar de baja y vincular se hace desde su detalle.
 @Component({
   selector: 'app-catalog',
-  imports: [CommonModule, TranslateModule, CatalogTable, CatalogDetail, CatalogForm, LoaderComponent],
+  imports: [PageHeader, CommonModule, TranslateModule, CatalogTable, CatalogDetail, CatalogForm, LoaderComponent],
   templateUrl: './catalog.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
