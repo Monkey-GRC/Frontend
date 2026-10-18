@@ -90,7 +90,9 @@ export class AppSidebarComponent {
   }
 
   isActive(path: string): boolean {
-    return this.router.url === path;
+    const url = this.router.url.split(/[?#]/)[0];
+    if (path === '/') return url === '/';
+    return url === path || url.startsWith(path + '/');
   }
 
   toggleSubmenu(itemName: string) {

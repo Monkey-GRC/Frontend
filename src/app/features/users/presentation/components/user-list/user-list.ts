@@ -8,6 +8,7 @@ import {
 } from '@shared/models/api-response.model';
 import { ToastService } from '@shared/services/toast.service';
 import { DialogUtility } from '@syncfusion/ej2-angular-popups';
+import { PageHeader } from '@shared/presentation/components/page-header/page-header';
 
 const ROLE_LABELS: Record<Role, string> = {
   MONKEY_ADMIN: 'Monkey Admin',
@@ -18,7 +19,7 @@ const ROLE_LABELS: Record<Role, string> = {
 
 @Component({
   selector: 'app-user-list',
-  imports: [CommonModule],
+  imports: [PageHeader, CommonModule],
   templateUrl: './user-list.html',
   styleUrl: './user-list.css',
   changeDetection: ChangeDetectionStrategy.Default,

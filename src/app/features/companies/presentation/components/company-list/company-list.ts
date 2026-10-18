@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessKeyStatus } from '@features/companies/models/company.model';
 import { CompanyService } from '@features/companies/services/company.service';
+import { PageHeader } from '@shared/presentation/components/page-header/page-header';
 
 const KEY_STATUS_CLASSES: Record<AccessKeyStatus, string> = {
   pending: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
@@ -13,7 +14,7 @@ const KEY_STATUS_CLASSES: Record<AccessKeyStatus, string> = {
 
 @Component({
   selector: 'app-company-list',
-  imports: [CommonModule, TranslateModule],
+  imports: [PageHeader, CommonModule, TranslateModule],
   templateUrl: './company-list.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })

@@ -2,7 +2,7 @@
 <app-loader [type]="'monkey'" [headerSize]="'9rem'" />
 } @else {
 <div class="transition-colors duration-200 animation">
-  <div class="max-w-full mx-auto space-y-6 p-4">
+  <div class="max-w-full mx-auto space-y-4 p-4">
     <!-- ================= CONTENT ================= -->
     <div class="flex flex-col">
       <app-user-list
@@ -10,7 +10,7 @@
         (openModalEmit)="onOpenModal('update', $event)"
       >
         <button listActions
-          class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-500 dark:hover:bg-primary-600 transition-all duration-200 w-full sm:w-auto shadow-sm hover:shadow-md"
+          class="mk-hero-btn-solid"
           (click)="onOpenModal('create')"
         >
           <span class="material-symbols-outlined text-base">add</span>

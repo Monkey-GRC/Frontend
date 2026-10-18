@@ -16,7 +16,7 @@
       {{ company().access_key.code }}
     </code>
     <button type="button" (click)="copy()"
-      class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition">
+      class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 transition">
       <span class="material-symbols-outlined text-base">{{ copied() ? 'check' : 'content_copy' }}</span>
       {{ (copied() ? 'COMPANIES_MODULE.KEY.COPIED' : 'COMPANIES_MODULE.KEY.COPY') | translate }}
     </button>

@@ -1,17 +1,7 @@
 <!-- Header -->
-<div
-  class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 shrink-0"
->
-  <div>
-    <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">
-      Registro de usuarios
-    </h1>
-    <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-      {{ userService.users.length }} usuarios registrados
-    </p>
-  </div>
-  <ng-content select="[listActions]" />
-</div>
+<app-page-header class="mb-4" title="Registro de usuarios" [subtitle]="userService.users.length + ' usuarios registrados'" icon="group">
+  <div actions><ng-content select="[listActions]" /></div>
+</app-page-header>
 
 <!-- LISTADO CON SCROLL -->
 <div
@@ -19,7 +9,7 @@
 >
   @for (user of userService.users; track user.id) {
   <div
-    class="relative bg-transparent p-4 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-150 group"
+    class="mk-card relative p-4 transition-colors duration-150 group"
     [ngClass]="{ 'opacity-60': !user.is_active }"
   >
     <!-- Botones de acciones (editar/eliminar/reactivar) -->
