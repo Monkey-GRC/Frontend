@@ -13,23 +13,23 @@
     <caption class="sr-only">{{ 'COMPANIES_MODULE.LIST.TITLE' | translate }}</caption>
     <thead>
       <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:border-gray-800 dark:bg-white/5 dark:text-gray-300">
-        <th scope="col" class="px-4 py-3">{{ 'COMPANIES_MODULE.LIST.COL_COMPANY' | translate }}</th>
-        <th scope="col" class="px-4 py-3">{{ 'COMPANIES_MODULE.LIST.COL_STATUS' | translate }}</th>
-        <th scope="col" class="px-4 py-3">{{ 'COMPANIES_MODULE.LIST.COL_KEY' | translate }}</th>
-        <th scope="col" class="px-4 py-3">{{ 'COMPANIES_MODULE.LIST.COL_FRAMEWORKS' | translate }}</th>
-        <th scope="col" class="px-4 py-3">{{ 'COMPANIES_MODULE.LIST.COL_ISOLATION' | translate }}</th>
-        <th scope="col" class="px-4 py-3">{{ 'COMPANIES_MODULE.LIST.COL_ONBOARDING' | translate }}</th>
-        <th scope="col" class="px-4 py-3">{{ 'COMPANIES_MODULE.LIST.COL_CREATED' | translate }}</th>
+        <th scope="col" class="px-4 py-2">{{ 'COMPANIES_MODULE.LIST.COL_COMPANY' | translate }}</th>
+        <th scope="col" class="px-4 py-2">{{ 'COMPANIES_MODULE.LIST.COL_STATUS' | translate }}</th>
+        <th scope="col" class="px-4 py-2">{{ 'COMPANIES_MODULE.LIST.COL_KEY' | translate }}</th>
+        <th scope="col" class="px-4 py-2">{{ 'COMPANIES_MODULE.LIST.COL_FRAMEWORKS' | translate }}</th>
+        <th scope="col" class="px-4 py-2">{{ 'COMPANIES_MODULE.LIST.COL_ISOLATION' | translate }}</th>
+        <th scope="col" class="px-4 py-2">{{ 'COMPANIES_MODULE.LIST.COL_ONBOARDING' | translate }}</th>
+        <th scope="col" class="px-4 py-2">{{ 'COMPANIES_MODULE.LIST.COL_CREATED' | translate }}</th>
       </tr>
     </thead>
     <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
       @for (company of companyService.companies; track company.id) {
       <tr class="align-top transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.03]" [ngClass]="{ 'opacity-60': company.status === 'suspended' }">
-        <td class="px-4 py-3.5">
+        <td class="px-4 py-2.5">
           <span class="block font-medium text-gray-900 dark:text-white">{{ company.name }}</span>
           <span class="block text-gray-600 dark:text-gray-300">{{ company.admin_email }}</span>
         </td>
-        <td class="px-4 py-3.5">
+        <td class="px-4 py-2.5">
           <span class="inline-block text-xs font-medium px-2 py-1 rounded-full"
             [ngClass]="company.status === 'active'
               ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
@@ -37,7 +37,7 @@
             {{ 'COMPANIES_MODULE.STATUS.' + company.status | translate }}
           </span>
         </td>
-        <td class="px-4 py-3.5">
+        <td class="px-4 py-2.5">
           <span class="inline-block text-xs font-medium px-2 py-1 rounded-full" [ngClass]="keyStatusClass(company.access_key_status)">
             {{ 'COMPANIES_MODULE.KEY_STATUS.' + (company.access_key_status ?? 'none') | translate }}
           </span>
@@ -48,7 +48,7 @@
           </span>
           }
         </td>
-        <td class="px-4 py-3.5">
+        <td class="px-4 py-2.5">
           <div class="flex flex-wrap gap-1.5">
             @for (framework of company.frameworks; track framework.code) {
             <span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded" data-testid="company-framework">
@@ -57,14 +57,14 @@
             } @empty { <span class="text-gray-600 dark:text-gray-300">—</span> }
           </div>
         </td>
-        <td class="px-4 py-3.5 text-gray-800 dark:text-gray-100">{{ 'COMPANIES_MODULE.ISOLATION.' + company.isolation_strategy | translate }}</td>
-        <td class="px-4 py-3.5">
+        <td class="px-4 py-2.5 text-gray-800 dark:text-gray-100">{{ 'COMPANIES_MODULE.ISOLATION.' + company.isolation_strategy | translate }}</td>
+        <td class="px-4 py-2.5">
           <span class="inline-flex items-center gap-1.5 text-gray-800 dark:text-gray-100">
             <span class="material-symbols-outlined text-base" aria-hidden="true">{{ company.onboarding_completed ? 'task_alt' : 'hourglass_empty' }}</span>
             {{ (company.onboarding_completed ? 'COMPANIES_MODULE.LIST.ONBOARDED' : 'COMPANIES_MODULE.LIST.NOT_ONBOARDED') | translate }}
           </span>
         </td>
-        <td class="px-4 py-3.5 whitespace-nowrap text-gray-800 dark:text-gray-100">{{ company.created_at | date:'dd/MM/yy' }}</td>
+        <td class="px-4 py-2.5 whitespace-nowrap text-gray-800 dark:text-gray-100">{{ company.created_at | date:'dd/MM/yy' }}</td>
       </tr>
       }
     </tbody>
