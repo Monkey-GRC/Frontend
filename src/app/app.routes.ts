@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { Login } from '@features/auth/presentation/views/login/login';
+import { Mfa } from '@features/auth/presentation/views/mfa/mfa';
 import { NotFoundLayout } from '@core/presentation/pages/not-found-layout/not-found-layout';
 import { Home } from '@features/common/presentation/view/home/home';
 import { AppLayoutComponent } from '@core/presentation/pages/app-layout/app-layout.component';
@@ -40,6 +41,11 @@ export const routes: Routes = [
     ]
   },
   // auth pages
+  {
+    path: 'auth/mfa',
+    component: Mfa,
+    canActivate: [guestGuard],
+  },
   {
     path: 'auth/login',
     component: Login,

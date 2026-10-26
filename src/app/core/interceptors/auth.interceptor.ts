@@ -11,7 +11,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const lang = localStorage.getItem('lang') || 'es';
 
     // Endpoints de auth: su 401 lo maneja AuthService, no este interceptor.
-    const isAuthEndpoint = /\/auth\/(login|refresh|logout|me)$/.test(req.url);
+    const isAuthEndpoint = /\/auth\/(login|refresh|logout|me|mfa\/(verify|setup|setup\/confirm|recovery-codes))$/.test(req.url);
 
     const cloned = req.clone({
         withCredentials: true, // ✅ ENVÍA COOKIES httpOnly
