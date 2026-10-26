@@ -72,7 +72,12 @@ export class LoginForm {
     const sub = this.auth.login(dto)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: () => {
+        next: (outcome) => {
+          if (outcome.kind === 'mfa') {
+            // Falta el segundo factor (D94): la pantalla del código conserva a dónde volver.
+            this.router.navigate(['/auth/mfa'], { queryParams: this.returnUrl ? { returnUrl: this.returnUrl } : {}, replaceUrl: true });
+            return;
+          }
           // ✅ Si llegó aquí, las cookies ya están seteadas por el backend
           this.navigateAfterLogin();
         },
