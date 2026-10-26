@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 /**
  * Modal informativo, reutilizable, que explica que significa cada bandera
  * de color que aparece sobre un check CIS (estado + mapeo a marcos).
- * Pensado para un auditor que no necesariamente conoce a fondo Wazuh o los
+ * Pensado para un auditor que no necesariamente conoce a fondo la sonda o los
  * frameworks de cumplimiento -- ver también monkey-brain-ai/docs/flujo-negocio-riesgos-causas-controles.md
  */
 @Component({

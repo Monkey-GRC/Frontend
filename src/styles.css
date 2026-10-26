@@ -573,8 +573,9 @@ textarea::placeholder {
 } */
 
 /* Estilos para los Toast */
+/* Por encima de los paneles del catálogo (z-99999): si no, el aviso de un error al guardar queda detrás del panel. */
 .e-toast-container {
-  z-index: 9999;
+  z-index: 100001;
 }
 
 .no-shadow {
