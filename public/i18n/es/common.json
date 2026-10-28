@@ -10,5 +10,13 @@
       "UNPROCESSABLE": "Entidad no procesable",
       "UNEXPECTED": "Error inesperado: {{message}}"
     }
+  },
+  "STEP_UP": {
+    "TITLE": "Confirma con tu código",
+    "SUBTITLE": "Por seguridad, esta acción pide el código de tu app de autenticación.",
+    "LABEL": "Código de 6 dígitos",
+    "HINT": "El que muestra tu app para tu cuenta de Monkey Admin.",
+    "SUBMIT_ARCHIVE": "Confirmar y archivar",
+    "SUBMIT_REACTIVATE": "Confirmar y reactivar"
   }
 }

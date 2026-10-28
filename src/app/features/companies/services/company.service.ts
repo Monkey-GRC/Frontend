@@ -3,10 +3,13 @@ import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from '@environments/environment';
 import {
+  ArchiveCompany,
   Company,
+  CompanyStatus,
   CreateCompany,
   FrameworkOption,
   Paginated,
+  ReactivateCompany,
   RegisteredCompany,
 } from '@features/companies/models/company.model';
 import { SuccessResponse } from '@shared/models/api-response.model';
@@ -23,6 +26,8 @@ export class CompanyService {
   pageSize = 25;
   total = 0;
   totalPages = 0;
+  // D95: las archivadas salen del listado por defecto; con este filtro se ven solo ellas.
+  statusFilter: Extract<CompanyStatus, 'deactivated'> | null = null;
 
   constructor(
     private http: HttpClient,
@@ -49,11 +54,20 @@ export class CompanyService {
   }
 
   readCompanies(page = this.page) {
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('page', page)
       .set('page_size', this.pageSize)
       .set('sort', '-created_at');
+    if (this.statusFilter) params = params.set('status', this.statusFilter);
     return this.http.get<SuccessResponse<Paginated<Company>>>(this.apiUrl, { params });
   }
 
+  // D95: archivar corta el acceso y fija cuándo se borra todo; reactivar lo deshace dentro del plazo. Ambos piden el código de quien actúa.
+  archiveCompany(id: string, body: ArchiveCompany) {
+    return this.http.post<SuccessResponse<Company>>(`${this.apiUrl}/${id}/deactivation`, body);
+  }
+
+  reactivateCompany(id: string, body: ReactivateCompany) {
+    return this.http.post<SuccessResponse<Company>>(`${this.apiUrl}/${id}/reactivation`, body);
+  }
 }

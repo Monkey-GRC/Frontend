@@ -16,6 +16,10 @@ const company = (over: Partial<Company> = {}): Company => ({
     access_key_expires_at: null,
     onboarding_completed: true,
     created_at: daysAgo(100),
+    deactivated_at: null,
+    archive_until: null,
+    deactivation_reason_code: null,
+    deactivation_reason: null,
     ...over,
 });
 

@@ -19,7 +19,17 @@
             "KEY_EXPIRES": "Clave vence",
             "PREV": "Anterior",
             "NEXT": "Siguiente",
-            "LOAD_ERROR": "No se cargaron las empresas"
+            "LOAD_ERROR": "No se cargaron las empresas",
+            "FILTER_LABEL": "Filtrar empresas",
+            "FILTER_ACTIVE": "Activas",
+            "FILTER_ARCHIVED": "Archivadas",
+            "EMPTY_ARCHIVED": "No hay empresas archivadas.",
+            "COL_ACTIONS": "Acciones",
+            "ACTION_ARCHIVE": "Archivar",
+            "ACTION_REACTIVATE": "Reactivar",
+            "DAYS_LEFT": "{{days}} días",
+            "TODAY": "hoy",
+            "COL_DELETES": "Se elimina"
         },
         "FORM": {
             "TITLE": "Registrar empresa",
@@ -65,11 +75,49 @@
         },
         "STATUS": {
             "active": "Activa",
-            "suspended": "Suspendida"
+            "suspended": "Suspendida",
+            "deactivated": "Archivada"
         },
         "ISOLATION": {
             "shared": "Base compartida",
             "dedicated": "Base dedicada"
+        },
+        "ARCHIVE": {
+            "TITLE": "Archivar empresa",
+            "SUBTITLE": "Corta el acceso ahora y borra todo al vencer el plazo.",
+            "WARNING_TITLE": "Qué ocurre al archivar",
+            "CONSEQ_ACCESS": "Todos sus usuarios pierden el acceso y sus sesiones se cierran.",
+            "CONSEQ_ENGINES": "Se detienen las evaluaciones automáticas y no se recibe ningún dato nuevo.",
+            "CONSEQ_KEPT": "Sus datos y usuarios se conservan, sin acceso, hasta la fecha de borrado; se guarda además una copia cifrada.",
+            "CONSEQ_DELETE": "El {{date}} se elimina todo, incluida la auditoría y esa copia. No se puede recuperar.",
+            "CONSEQ_REVERSIBLE": "Hasta esa fecha puedes reactivarla.",
+            "REASON_CODE_LABEL": "Motivo",
+            "REASON": {
+                "non_payment": "Falta de pago",
+                "client_request": "El cliente ya no desea el servicio",
+                "other": "Otro"
+            },
+            "REASON_LABEL": "Detalle del motivo",
+            "REASON_HINT": "Entre 5 y 500 caracteres.",
+            "RETENTION_LABEL": "Días hasta el borrado definitivo",
+            "RETENTION_HINT": "Se borrará el {{date}}. Por defecto 180 días (6 meses); mínimo {{min}}.",
+            "CONFIRM_LABEL": "Escribe la razón social para confirmar:",
+            "SUBMIT": "Archivar empresa",
+            "CANCEL": "Cancelar",
+            "SUCCESS_TITLE": "Empresa archivada",
+            "SUCCESS_MESSAGE": "{{name}} se borrará definitivamente el {{date}}.",
+            "ERROR_TITLE": "No se pudo archivar",
+            "CONFIRM_MISMATCH": "La razón social no coincide."
+        },
+        "REACTIVATE": {
+            "TITLE": "Reactivar empresa",
+            "SUBTITLE": "Devuelve el acceso a sus usuarios y cancela el borrado.",
+            "INFO": "{{name}} se borraría el {{date}}. Al reactivarla, el plazo desaparece y sus usuarios deben iniciar sesión de nuevo.",
+            "REASON_LABEL": "Motivo de la reactivación",
+            "SUBMIT": "Reactivar empresa",
+            "SUCCESS_TITLE": "Empresa reactivada",
+            "SUCCESS_MESSAGE": "{{name}} vuelve a estar activa.",
+            "ERROR_TITLE": "No se pudo reactivar"
         }
     }
 }

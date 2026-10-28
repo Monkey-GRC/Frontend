@@ -10,5 +10,13 @@
       "UNPROCESSABLE": "Unprocessable entity",
       "UNEXPECTED": "Unexpected error: {{message}}"
     }
+  },
+  "STEP_UP": {
+    "TITLE": "Confirm with your code",
+    "SUBTITLE": "For security, this action asks for the code from your authenticator app.",
+    "LABEL": "6-digit code",
+    "HINT": "The one your app shows for your Monkey Admin account.",
+    "SUBMIT_ARCHIVE": "Confirm and archive",
+    "SUBMIT_REACTIVATE": "Confirm and reactivate"
   }
 }

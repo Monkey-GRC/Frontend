@@ -1,0 +1,16 @@
+@if (company(); as c) {
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="flex flex-col gap-4">
+    <div class="rounded-lg border border-sky-300 bg-sky-50 p-3 text-sm text-sky-900 dark:border-sky-500/40 dark:bg-sky-500/10 dark:text-sky-200" role="note">
+      {{ 'COMPANIES_MODULE.REACTIVATE.INFO' | translate: { name: c.name, date: (c.archive_until | date: 'dd/MM/yyyy') } }}
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label>{{ 'COMPANIES_MODULE.REACTIVATE.REASON_LABEL' | translate }} <span class="text-red-500">*</span></label>
+      <ejs-textbox formControlName="reason" [multiline]="true" floatLabelType="Never" cssClass="e-outline shadow-input"
+        [htmlAttributes]="{ rows: '2', maxlength: '500' }"></ejs-textbox>
+      <p class="text-xs text-gray-500 dark:text-gray-400">{{ 'COMPANIES_MODULE.ARCHIVE.REASON_HINT' | translate }}</p>
+    </div>
+  </div>
+</form>
+}

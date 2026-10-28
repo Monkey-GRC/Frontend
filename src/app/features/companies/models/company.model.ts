@@ -1,6 +1,12 @@
 // contracts/modules/monkey-admin.md — empresas (tenants) y su clave de acceso.
 export type IsolationStrategy = 'dedicated' | 'shared';
-export type CompanyStatus = 'active' | 'suspended';
+export type CompanyStatus = 'active' | 'suspended' | 'deactivated';
+// D95: por qué se archiva una empresa (contracts/enums.md).
+export type DeactivationReason = 'non_payment' | 'client_request' | 'other';
+export const DEACTIVATION_REASONS: DeactivationReason[] = ['non_payment', 'client_request', 'other'];
+// Plazo por defecto hasta el borrado definitivo (6 meses) y el mínimo que acepta el backend (D95).
+export const DEFAULT_RETENTION_DAYS = 180;
+export const MIN_RETENTION_DAYS = 7;
 export type AccessKeyStatus = 'pending' | 'used' | 'expired' | 'revoked';
 
 // Un marco que se contrata para la empresa (D47). Hoy solo SOC 2.
@@ -33,6 +39,11 @@ export interface Company {
     access_key_expires_at: string | null;
     onboarding_completed: boolean;
     created_at: string;
+    // D95: solo una empresa archivada trae estos campos.
+    deactivated_at: string | null;
+    archive_until: string | null;
+    deactivation_reason_code: DeactivationReason | null;
+    deactivation_reason: string | null;
 }
 
 // Los 3 campos que fija el comité (modelo-datos.md §4.2) y el marco que se contrata (D47).
@@ -67,4 +78,19 @@ export interface Paginated<T> {
     page_size: number;
     total: number;
     total_pages: number;
+}
+
+// POST /v1/companies/{id}/deactivation (D95)
+export interface ArchiveCompany {
+    confirm_name: string;
+    reason_code: DeactivationReason;
+    reason: string;
+    retention_days: number;
+    totp_code: string;
+}
+
+// POST /v1/companies/{id}/reactivation (D95)
+export interface ReactivateCompany {
+    reason: string;
+    totp_code: string;
 }

@@ -32,7 +32,9 @@
             </button>
 
             <!-- Botón Submit -->
-            <button (click)="onSubmit.emit()" [disabled]="isSubmitting" class="flex items-center justify-center px-4 py-2 rounded-md bg-primary text-white hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200">
+            <button (click)="onSubmit.emit()" [disabled]="isSubmitting || submitDisabled" [attr.aria-busy]="isSubmitting"
+                class="flex items-center justify-center px-4 py-2 rounded-md text-white disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
+                [class]="danger ? 'bg-rose-600 hover:bg-rose-700' : 'bg-primary hover:bg-secondary'">
 
                 <!-- Spinner -->
                 @if (isSubmitting) {

@@ -5,7 +5,7 @@
   <div class="max-w-full mx-auto space-y-4 p-4">
     <!-- ================= CONTENT ================= -->
     <div class="flex flex-col">
-      <app-company-list (pageChange)="readCompanies($event)">
+      <app-company-list (pageChange)="readCompanies($event)" (filterChange)="onFilterChange($event)" (archive)="archiving = $event" (reactivate)="reactivating = $event">
         <!-- El botón va en la fila del título de la lista: ya no hay un encabezado aparte que repita lo mismo -->
         <button listActions
           class="mk-hero-btn-solid"
@@ -36,4 +36,31 @@
   @if (registered) {
   <app-access-key-reveal [company]="registered" />
   }
+</app-dialog>
+
+<!-- D95 · Archivar: aprobar el formulario no lo envía; después se pide el código de seguridad. El botón se habilita al escribir la razón social exacta y completar el resto -->
+<app-dialog [width]="'640px'" [title]="'COMPANIES_MODULE.ARCHIVE.TITLE' | translate"
+  [subtitle]="'COMPANIES_MODULE.ARCHIVE.SUBTITLE' | translate" icon="inventory_2" [isModal]="true" [allowDragging]="false"
+  [danger]="true" [submitText]="'COMPANIES_MODULE.ARCHIVE.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate"
+  [submitDisabled]="!(archiveForm?.canSubmit ?? false)"
+  [visible]="!!archiving" (onClose)="archiving = null" (onSubmit)="archiveForm?.onSubmit()">
+  <app-company-archive-form [company]="archiving" (approved)="onArchiveApproved($event)" />
+</app-dialog>
+
+<!-- D95 · Reactivar: solo dentro del plazo -->
+<app-dialog [width]="'560px'" [title]="'COMPANIES_MODULE.REACTIVATE.TITLE' | translate"
+  [subtitle]="'COMPANIES_MODULE.REACTIVATE.SUBTITLE' | translate" icon="restore" [isModal]="true" [allowDragging]="false"
+  [submitText]="'COMPANIES_MODULE.REACTIVATE.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate"
+  [submitDisabled]="!(reactivateForm?.canSubmit ?? false)"
+  [visible]="!!reactivating" (onClose)="reactivating = null" (onSubmit)="reactivateForm?.onSubmit()">
+  <app-company-reactivate-form [company]="reactivating" (approved)="onReactivateApproved($event)" />
+</app-dialog>
+
+<!-- Segunda confirmación (D94, D95): el código de la app de autenticación de quien actúa, ya aprobada la acción -->
+<app-dialog [width]="'440px'" [title]="'STEP_UP.TITLE' | translate" [subtitle]="'STEP_UP.SUBTITLE' | translate" icon="shield_lock"
+  [isModal]="true" [allowDragging]="false" [danger]="stepUp?.kind === 'archive'"
+  [submitText]="(stepUp?.kind === 'archive' ? 'STEP_UP.SUBMIT_ARCHIVE' : 'STEP_UP.SUBMIT_REACTIVATE') | translate"
+  [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate" [isSubmitting]="stepUpSending"
+  [submitDisabled]="!(stepUpForm?.canSubmit ?? false)" [visible]="!!stepUp" (onClose)="stepUp = null" (onSubmit)="stepUpForm?.submit()">
+  <app-step-up-form [sending]="stepUpSending" (confirmed)="onStepUpConfirmed($event)" />
 </app-dialog>
