@@ -19,7 +19,17 @@
             "KEY_EXPIRES": "Key expires",
             "PREV": "Previous",
             "NEXT": "Next",
-            "LOAD_ERROR": "Companies could not be loaded"
+            "LOAD_ERROR": "Companies could not be loaded",
+            "FILTER_LABEL": "Filter companies",
+            "FILTER_ACTIVE": "Active",
+            "FILTER_ARCHIVED": "Archived",
+            "EMPTY_ARCHIVED": "There are no archived companies.",
+            "COL_ACTIONS": "Actions",
+            "ACTION_ARCHIVE": "Archive",
+            "ACTION_REACTIVATE": "Reactivate",
+            "DAYS_LEFT": "{{days}} days",
+            "TODAY": "today",
+            "COL_DELETES": "Deleted on"
         },
         "FORM": {
             "TITLE": "Register company",
@@ -65,11 +75,49 @@
         },
         "STATUS": {
             "active": "Active",
-            "suspended": "Suspended"
+            "suspended": "Suspended",
+            "deactivated": "Archived"
         },
         "ISOLATION": {
             "shared": "Shared database",
             "dedicated": "Dedicated database"
+        },
+        "ARCHIVE": {
+            "TITLE": "Archive company",
+            "SUBTITLE": "Cuts access now and deletes everything when the period ends.",
+            "WARNING_TITLE": "What happens when you archive",
+            "CONSEQ_ACCESS": "All its users lose access and their sessions are closed.",
+            "CONSEQ_ENGINES": "Automatic evaluations stop and no new data is received.",
+            "CONSEQ_KEPT": "Its data and users are kept, without access, until the deletion date; an encrypted copy is also saved.",
+            "CONSEQ_DELETE": "On {{date}} everything is deleted, including the audit trail and that copy. It cannot be recovered.",
+            "CONSEQ_REVERSIBLE": "Until then you can reactivate it.",
+            "REASON_CODE_LABEL": "Reason",
+            "REASON": {
+                "non_payment": "Non-payment",
+                "client_request": "The client no longer wants the service",
+                "other": "Other"
+            },
+            "REASON_LABEL": "Reason details",
+            "REASON_HINT": "Between 5 and 500 characters.",
+            "RETENTION_LABEL": "Days until permanent deletion",
+            "RETENTION_HINT": "It will be deleted on {{date}}. Default 180 days (6 months); minimum {{min}}.",
+            "CONFIRM_LABEL": "Type the legal name to confirm:",
+            "SUBMIT": "Archive company",
+            "CANCEL": "Cancel",
+            "SUCCESS_TITLE": "Company archived",
+            "SUCCESS_MESSAGE": "{{name}} will be permanently deleted on {{date}}.",
+            "ERROR_TITLE": "Could not archive",
+            "CONFIRM_MISMATCH": "The legal name does not match."
+        },
+        "REACTIVATE": {
+            "TITLE": "Reactivate company",
+            "SUBTITLE": "Gives its users access back and cancels the deletion.",
+            "INFO": "{{name}} would be deleted on {{date}}. When reactivated, the period disappears and its users must sign in again.",
+            "REASON_LABEL": "Reason for reactivating",
+            "SUBMIT": "Reactivate company",
+            "SUCCESS_TITLE": "Company reactivated",
+            "SUCCESS_MESSAGE": "{{name}} is active again.",
+            "ERROR_TITLE": "Could not reactivate"
         }
     }
 }

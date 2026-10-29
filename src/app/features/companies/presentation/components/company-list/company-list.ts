@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { AccessKeyStatus } from '@features/companies/models/company.model';
+import { AccessKeyStatus, Company } from '@features/companies/models/company.model';
 import { CompanyService } from '@features/companies/services/company.service';
 import { PageHeader } from '@shared/presentation/components/page-header/page-header';
 
@@ -20,10 +20,24 @@ const KEY_STATUS_CLASSES: Record<AccessKeyStatus, string> = {
 })
 export class CompanyList {
   pageChange = output<number>();
+  // D95: el filtro (activas / archivadas) y las dos acciones; el diálogo y la llamada los resuelve la vista.
+  filterChange = output<boolean>();
+  archive = output<Company>();
+  reactivate = output<Company>();
 
   constructor(public companyService: CompanyService) {}
 
   keyStatusClass(status: AccessKeyStatus | null): string {
     return status ? KEY_STATUS_CLASSES[status] : KEY_STATUS_CLASSES.expired;
+  }
+
+  get showingArchived(): boolean {
+    return this.companyService.statusFilter === 'deactivated';
+  }
+
+  // Días que faltan para el borrado definitivo (0 si es hoy o ya venció).
+  daysLeft(company: Company): number {
+    if (!company.archive_until) return 0;
+    return Math.max(0, Math.ceil((new Date(company.archive_until).getTime() - Date.now()) / 86_400_000));
   }
 }

@@ -26,6 +26,10 @@ export class DialogComponent {
   @Input() submitText: string = 'Guardar';
   @Input() cancelText: string = 'Cancelar';
   @Input() isSubmitting: boolean = false;
+  // Deshabilita el botón principal sin mostrar el spinner (p. ej. mientras el formulario no es válido).
+  @Input() submitDisabled: boolean = false;
+  // `danger` pinta el botón principal de rojo: una acción grave (archivar una empresa).
+  @Input() danger: boolean = false;
 
   // Eventos
   @Output() onClose = new EventEmitter<void>();

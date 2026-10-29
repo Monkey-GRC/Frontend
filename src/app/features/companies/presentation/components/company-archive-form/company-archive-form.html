@@ -1,0 +1,56 @@
+@if (company(); as c) {
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="flex flex-col gap-4">
+    <!-- Qué ocurre al archivar: se lee antes de confirmar -->
+    <div class="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200" role="note">
+      <p class="mb-1.5 flex items-center gap-1.5 font-semibold">
+        <span class="material-symbols-outlined text-base" aria-hidden="true">warning</span>
+        {{ 'COMPANIES_MODULE.ARCHIVE.WARNING_TITLE' | translate }}
+      </p>
+      <ul class="list-disc space-y-1 pl-5">
+        <li>{{ 'COMPANIES_MODULE.ARCHIVE.CONSEQ_ACCESS' | translate }}</li>
+        <li>{{ 'COMPANIES_MODULE.ARCHIVE.CONSEQ_ENGINES' | translate }}</li>
+        <li>{{ 'COMPANIES_MODULE.ARCHIVE.CONSEQ_KEPT' | translate }}</li>
+        <li>{{ 'COMPANIES_MODULE.ARCHIVE.CONSEQ_DELETE' | translate: { date: (deleteDate | date: 'dd/MM/yyyy') } }}</li>
+        <li>{{ 'COMPANIES_MODULE.ARCHIVE.CONSEQ_REVERSIBLE' | translate }}</li>
+      </ul>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label>{{ 'COMPANIES_MODULE.ARCHIVE.REASON_CODE_LABEL' | translate }} <span class="text-red-500">*</span></label>
+      <select formControlName="reason_code"
+        class="h-[38px] w-full rounded border border-gray-300 bg-transparent px-3 text-sm text-gray-900 dark:border-gray-600 dark:text-white dark:[&>option]:bg-gray-900">
+        @for (code of reasons; track code) {
+        <option [value]="code">{{ 'COMPANIES_MODULE.ARCHIVE.REASON.' + code | translate }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label>{{ 'COMPANIES_MODULE.ARCHIVE.REASON_LABEL' | translate }} <span class="text-red-500">*</span></label>
+      <ejs-textbox formControlName="reason" [multiline]="true" floatLabelType="Never" cssClass="e-outline shadow-input"
+        [htmlAttributes]="{ rows: '2', maxlength: '500' }"></ejs-textbox>
+      <p class="text-xs" [class]="hasError('reason', 'required') || hasError('reason', 'minlength') ? 'text-rose-500' : 'text-gray-500 dark:text-gray-400'">
+        {{ 'COMPANIES_MODULE.ARCHIVE.REASON_HINT' | translate }}
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label>{{ 'COMPANIES_MODULE.ARCHIVE.RETENTION_LABEL' | translate }} <span class="text-red-500">*</span></label>
+      <ejs-textbox formControlName="retention_days" type="number" floatLabelType="Never" cssClass="e-outline shadow-input"></ejs-textbox>
+      <p class="text-xs" [class]="hasError('retention_days', 'min') || hasError('retention_days', 'max') ? 'text-rose-500' : 'text-gray-500 dark:text-gray-400'">
+        {{ 'COMPANIES_MODULE.ARCHIVE.RETENTION_HINT' | translate: { date: (deleteDate | date: 'dd/MM/yyyy'), min: minDays } }}
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label>{{ 'COMPANIES_MODULE.ARCHIVE.CONFIRM_LABEL' | translate }} <strong class="select-all text-gray-900 dark:text-white">{{ c.name }}</strong> <span class="text-red-500">*</span></label>
+      <ejs-textbox formControlName="confirm_name" floatLabelType="Never" cssClass="e-outline shadow-input"
+        [placeholder]="c.name"></ejs-textbox>
+      @if (form.controls.confirm_name.value && !nameMatches) {
+      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.ARCHIVE.CONFIRM_MISMATCH' | translate }}</p>
+      }
+    </div>
+  </div>
+</form>
+}
