@@ -20,7 +20,7 @@ const KEY_STATUS_CLASSES: Record<AccessKeyStatus, string> = {
 })
 export class CompanyList {
   pageChange = output<number>();
-  // D95: el filtro (activas / archivadas) y las dos acciones; el diálogo y la llamada los resuelve la vista.
+  // D97: el filtro (activas / archivadas) y las dos acciones; el diálogo y la llamada los resuelve la vista.
   filterChange = output<boolean>();
   archive = output<Company>();
   reactivate = output<Company>();

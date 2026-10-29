@@ -9,7 +9,7 @@ export interface ReactivateDetails {
   reason: string;
 }
 
-// D95 · Reactivar una empresa archivada, solo dentro del plazo. Igual que archivar: aprobarlo no lo envía, la vista pide después el código de seguridad.
+// D97 · Reactivar una empresa archivada, solo dentro del plazo. Igual que archivar: aprobarlo no lo envía, la vista pide después el código de seguridad.
 @Component({
   selector: 'app-company-reactivate-form',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, TextBoxModule],

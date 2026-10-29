@@ -1,10 +1,10 @@
 // contracts/modules/monkey-admin.md — empresas (tenants) y su clave de acceso.
 export type IsolationStrategy = 'dedicated' | 'shared';
 export type CompanyStatus = 'active' | 'suspended' | 'deactivated';
-// D95: por qué se archiva una empresa (contracts/enums.md).
+// D97: por qué se archiva una empresa (contracts/enums.md).
 export type DeactivationReason = 'non_payment' | 'client_request' | 'other';
 export const DEACTIVATION_REASONS: DeactivationReason[] = ['non_payment', 'client_request', 'other'];
-// Plazo por defecto hasta el borrado definitivo (6 meses) y el mínimo que acepta el backend (D95).
+// Plazo por defecto hasta el borrado definitivo (6 meses) y el mínimo que acepta el backend (D97).
 export const DEFAULT_RETENTION_DAYS = 180;
 export const MIN_RETENTION_DAYS = 7;
 export type AccessKeyStatus = 'pending' | 'used' | 'expired' | 'revoked';
@@ -39,7 +39,7 @@ export interface Company {
     access_key_expires_at: string | null;
     onboarding_completed: boolean;
     created_at: string;
-    // D95: solo una empresa archivada trae estos campos.
+    // D97: solo una empresa archivada trae estos campos.
     deactivated_at: string | null;
     archive_until: string | null;
     deactivation_reason_code: DeactivationReason | null;
@@ -80,7 +80,7 @@ export interface Paginated<T> {
     total_pages: number;
 }
 
-// POST /v1/companies/{id}/deactivation (D95)
+// POST /v1/companies/{id}/deactivation (D97)
 export interface ArchiveCompany {
     confirm_name: string;
     reason_code: DeactivationReason;
@@ -89,7 +89,7 @@ export interface ArchiveCompany {
     totp_code: string;
 }
 
-// POST /v1/companies/{id}/reactivation (D95)
+// POST /v1/companies/{id}/reactivation (D97)
 export interface ReactivateCompany {
     reason: string;
     totp_code: string;

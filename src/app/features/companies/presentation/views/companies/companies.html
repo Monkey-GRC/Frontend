@@ -38,7 +38,7 @@
   }
 </app-dialog>
 
-<!-- D95 · Archivar: aprobar el formulario no lo envía; después se pide el código de seguridad. El botón se habilita al escribir la razón social exacta y completar el resto -->
+<!-- D97 · Archivar: aprobar el formulario no lo envía; después se pide el código de seguridad. El botón se habilita al escribir la razón social exacta y completar el resto -->
 <app-dialog [width]="'640px'" [title]="'COMPANIES_MODULE.ARCHIVE.TITLE' | translate"
   [subtitle]="'COMPANIES_MODULE.ARCHIVE.SUBTITLE' | translate" icon="inventory_2" [isModal]="true" [allowDragging]="false"
   [danger]="true" [submitText]="'COMPANIES_MODULE.ARCHIVE.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate"
@@ -47,7 +47,7 @@
   <app-company-archive-form [company]="archiving" (approved)="onArchiveApproved($event)" />
 </app-dialog>
 
-<!-- D95 · Reactivar: solo dentro del plazo -->
+<!-- D97 · Reactivar: solo dentro del plazo -->
 <app-dialog [width]="'560px'" [title]="'COMPANIES_MODULE.REACTIVATE.TITLE' | translate"
   [subtitle]="'COMPANIES_MODULE.REACTIVATE.SUBTITLE' | translate" icon="restore" [isModal]="true" [allowDragging]="false"
   [submitText]="'COMPANIES_MODULE.REACTIVATE.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate"
@@ -56,7 +56,7 @@
   <app-company-reactivate-form [company]="reactivating" (approved)="onReactivateApproved($event)" />
 </app-dialog>
 
-<!-- Segunda confirmación (D94, D95): el código de la app de autenticación de quien actúa, ya aprobada la acción -->
+<!-- Segunda confirmación (D94, D97): el código de la app de autenticación de quien actúa, ya aprobada la acción -->
 <app-dialog [width]="'440px'" [title]="'STEP_UP.TITLE' | translate" [subtitle]="'STEP_UP.SUBTITLE' | translate" icon="shield_lock"
   [isModal]="true" [allowDragging]="false" [danger]="stepUp?.kind === 'archive'"
   [submitText]="(stepUp?.kind === 'archive' ? 'STEP_UP.SUBMIT_ARCHIVE' : 'STEP_UP.SUBMIT_REACTIVATE') | translate"

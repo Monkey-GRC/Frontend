@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output, signal } from '@angu
 import { TranslateModule } from '@ngx-translate/core';
 import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
 
-// Segunda confirmación de una acción grave: tras aprobar el formulario, se pide el código de 6 dígitos de la app de autenticación de quien actúa (D94, D95).
+// Segunda confirmación de una acción grave: tras aprobar el formulario, se pide el código de 6 dígitos de la app de autenticación de quien actúa (D94, D97).
 // El botón de confirmar vive en el diálogo: esta pieza expone `canSubmit`, `submit()` y `reset()`.
 //   <app-step-up-form #stepUp [sending]="enviando" (confirmed)="enviar($event)" />
 @Component({
