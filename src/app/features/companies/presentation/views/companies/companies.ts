@@ -38,12 +38,12 @@ export class Companies implements OnInit {
   // no se vuelve a pedir al backend (no puede: solo existe su hash).
   registered: RegisteredCompany | null = null;
 
-  // D95: la empresa que se está archivando o reactivando (el diálogo abierto).
+  // D97: la empresa que se está archivando o reactivando (el diálogo abierto).
   archiving: Company | null = null;
   reactivating: Company | null = null;
 
   @ViewChild(CompanyForm) companyForm?: CompanyForm;
-  // D95: tras aprobar el formulario se pide el código de seguridad; aquí queda lo aprobado mientras se escribe.
+  // D97: tras aprobar el formulario se pide el código de seguridad; aquí queda lo aprobado mientras se escribe.
   stepUp: { kind: 'archive' | 'reactivate'; company: Company; archive?: ArchiveDetails; reactivate?: ReactivateDetails } | null = null;
   stepUpSending = false;
 

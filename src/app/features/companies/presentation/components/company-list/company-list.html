@@ -2,7 +2,7 @@
   <div actions><ng-content select="[listActions]" /></div>
 </app-page-header>
 
-<!-- D95: las archivadas salen del listado y se ven con este filtro -->
+<!-- D97: las archivadas salen del listado y se ven con este filtro -->
 <div class="mb-3 inline-flex rounded-lg border border-gray-200 p-0.5 dark:border-gray-700" role="tablist" [attr.aria-label]="'COMPANIES_MODULE.LIST.FILTER_LABEL' | translate">
   @for (archived of [false, true]; track archived) {
   <button type="button" role="tab" [attr.aria-selected]="showingArchived === archived" (click)="filterChange.emit(archived)"

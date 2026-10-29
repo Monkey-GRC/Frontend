@@ -20,7 +20,7 @@ export interface ArchiveDetails {
 
 const DAY_MS = 86_400_000;
 
-// D95 · Archivar una empresa: los datos del archivado. Aprobarlo NO lo envía: la vista pide después el código de seguridad de quien archiva. El botón de aprobar vive en el
+// D97 · Archivar una empresa: los datos del archivado. Aprobarlo NO lo envía: la vista pide después el código de seguridad de quien archiva. El botón de aprobar vive en el
 // diálogo; esta pieza expone `canSubmit` y `onSubmit()` como el resto de los formularios de Monkey Admin.
 @Component({
   selector: 'app-company-archive-form',

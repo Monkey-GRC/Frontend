@@ -26,7 +26,7 @@ export class CompanyService {
   pageSize = 25;
   total = 0;
   totalPages = 0;
-  // D95: las archivadas salen del listado por defecto; con este filtro se ven solo ellas.
+  // D97: las archivadas salen del listado por defecto; con este filtro se ven solo ellas.
   statusFilter: Extract<CompanyStatus, 'deactivated'> | null = null;
 
   constructor(
@@ -62,7 +62,7 @@ export class CompanyService {
     return this.http.get<SuccessResponse<Paginated<Company>>>(this.apiUrl, { params });
   }
 
-  // D95: archivar corta el acceso y fija cuándo se borra todo; reactivar lo deshace dentro del plazo. Ambos piden el código de quien actúa.
+  // D97: archivar corta el acceso y fija cuándo se borra todo; reactivar lo deshace dentro del plazo. Ambos piden el código de quien actúa.
   archiveCompany(id: string, body: ArchiveCompany) {
     return this.http.post<SuccessResponse<Company>>(`${this.apiUrl}/${id}/deactivation`, body);
   }
