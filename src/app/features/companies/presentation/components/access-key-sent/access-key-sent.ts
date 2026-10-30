@@ -1,23 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { RegisteredCompany } from '@features/companies/models/company.model';
 
-// Muestra la clave de acceso recién emitida. Es la única vez que existe en claro: el envío por
-// correo está aplazado (MD-69), así que admin_monkey la copia y la entrega por su canal.
+// D99 · La clave de acceso ya no se muestra: viaja por correo al administrativo. Este resumen dice si el correo salió y,
+// si no salió, ofrece reenviar una clave nueva. La vista hace la llamada; aquí solo se muestra el estado.
 @Component({
-  selector: 'app-access-key-reveal',
+  selector: 'app-access-key-sent',
   imports: [CommonModule, TranslateModule],
-  templateUrl: './access-key-reveal.html',
+  templateUrl: './access-key-sent.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccessKeyReveal {
+export class AccessKeySent {
   company = input.required<RegisteredCompany>();
-  copied = signal(false);
+  sending = input(false);
+  resend = output<void>();
 
-  async copy(): Promise<void> {
-    await navigator.clipboard.writeText(this.company().access_key.code);
-    this.copied.set(true);
-    setTimeout(() => this.copied.set(false), 2500);
+  get failed(): boolean {
+    return this.company().access_key.delivery_status === 'failed';
   }
 }

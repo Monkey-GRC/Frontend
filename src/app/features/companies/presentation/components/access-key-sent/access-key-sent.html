@@ -1,30 +1,21 @@
-<!-- p-5: el contenido del diálogo llegaba pegado al borde del modal -->
-<div class="flex flex-col gap-4 p-5">
-  <div class="flex items-start gap-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 p-3 text-amber-800 dark:text-amber-300">
-    <span class="material-symbols-outlined text-base">key</span>
-    <p class="text-sm">{{ 'COMPANIES_MODULE.KEY.ONLY_ONCE' | translate }}</p>
-  </div>
-
-  <div class="flex flex-col gap-1">
-    <span class="text-xs text-gray-500 dark:text-gray-400">{{ 'COMPANIES_MODULE.KEY.COMPANY' | translate }}</span>
-    <span class="text-base font-semibold text-gray-900 dark:text-white">{{ company().name }}</span>
-    <span class="text-sm text-gray-600 dark:text-gray-400">{{ company().admin_email }}</span>
-  </div>
-
-  <div class="flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-    <code class="flex-1 text-center sm:text-left text-2xl font-mono tracking-widest text-primary dark:text-white select-all">
-      {{ company().access_key.code }}
-    </code>
-    <button type="button" (click)="copy()"
-      class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 transition">
-      <span class="material-symbols-outlined text-base">{{ copied() ? 'check' : 'content_copy' }}</span>
-      {{ (copied() ? 'COMPANIES_MODULE.KEY.COPIED' : 'COMPANIES_MODULE.KEY.COPY') | translate }}
-    </button>
-  </div>
-
-  <p class="text-sm text-gray-600 dark:text-gray-400">
-    {{ 'COMPANIES_MODULE.KEY.EXPIRES' | translate }}
-    <strong>{{ company().access_key.expires_at | date:'dd/MM/yyyy HH:mm' }}</strong>.
-    {{ 'COMPANIES_MODULE.KEY.DELIVER' | translate }}
+<div class="flex flex-col items-center gap-3 px-5 pb-2 pt-1 text-center">
+  @if (failed) {
+  <span class="material-symbols-outlined text-4xl text-rose-500" aria-hidden="true">error</span>
+  <p class="text-sm text-gray-700 dark:text-gray-200" role="alert" data-testid="key-failed">
+    {{ 'COMPANIES_MODULE.KEY.FAILED_BODY' | translate: { name: company().name, email: company().admin_email } }}
   </p>
+  <button type="button" (click)="resend.emit()" [disabled]="sending()" data-testid="key-resend"
+    class="inline-flex items-center justify-center gap-2 rounded-lg border border-brand-500 px-4 py-2 text-sm font-semibold text-brand-600 transition hover:bg-brand-50 disabled:opacity-50 dark:border-brand-400 dark:text-brand-300 dark:hover:bg-brand-500/10">
+    <span class="material-symbols-outlined text-base" aria-hidden="true">forward_to_inbox</span>
+    {{ 'COMPANIES_MODULE.KEY.RESEND' | translate }}
+  </button>
+  } @else {
+  <span class="material-symbols-outlined text-4xl text-green-600 dark:text-green-400" aria-hidden="true">mark_email_read</span>
+  <p class="text-sm text-gray-700 dark:text-gray-200" data-testid="key-sent">
+    {{ 'COMPANIES_MODULE.KEY.SENT' | translate: { name: company().name, email: company().admin_email } }}
+  </p>
+  <p class="text-xs text-gray-500 dark:text-gray-400">
+    {{ 'COMPANIES_MODULE.KEY.EXPIRES' | translate }} {{ company().access_key.expires_at | date:'dd/MM/yyyy HH:mm' }}
+  </p>
+  }
 </div>
