@@ -29,11 +29,12 @@
             "ACTION_REACTIVATE": "Reactivar",
             "DAYS_LEFT": "{{days}} días",
             "TODAY": "hoy",
-            "COL_DELETES": "Se elimina"
+            "COL_DELETES": "Se elimina",
+            "ACTION_RESEND_KEY": "Reenviar clave"
         },
         "FORM": {
             "TITLE": "Registrar empresa",
-            "SUBTITLE": "Crea la empresa cliente y genera su clave de acceso de un solo uso.",
+            "SUBTITLE": "Crea la empresa cliente y envía su clave de acceso al correo administrativo.",
             "NAME": "Nombre o razón social",
             "NAME_PLACEHOLDER": "Next Audit & Consulting S.A.S.",
             "NAME_HINT": "Queda fija: el cliente la verá bloqueada en su onboarding.",
@@ -56,15 +57,18 @@
             "RETRY": "Reintentar"
         },
         "KEY": {
-            "TITLE": "Clave de acceso",
-            "ONLY_ONCE": "Copia la clave ahora: es la única vez que se muestra. Monkey solo guarda una huella y no puede recuperarla.",
-            "COMPANY": "Empresa",
-            "COPY": "Copiar",
-            "COPIED": "Copiada",
+            "TITLE": "Clave de acceso enviada",
             "EXPIRES": "Vence el",
-            "DELIVER": "Entrégala al correo administrativo; con ella el cliente crea su cuenta en Monkey Platform.",
-            "DONE": "Ya la copié",
-            "CLOSE": "Cerrar"
+            "SENT": "Enviamos la clave de acceso de {{name}} a {{email}}.",
+            "FAILED_TITLE": "El correo no salió",
+            "FAILED_BODY": "{{name}} quedó registrada, pero no pudimos enviar la clave a {{email}}. Reenvía una clave nueva; la anterior queda anulada.",
+            "RESEND": "Reenviar clave nueva",
+            "DONE": "Entendido",
+            "RESEND_SUCCESS_TITLE": "Clave enviada",
+            "RESEND_SUCCESS_MESSAGE": "Enviamos una clave nueva a {{email}}. La anterior dejó de servir.",
+            "RESEND_FAILED_TITLE": "El correo no salió",
+            "RESEND_ERROR_TITLE": "No se pudo reenviar la clave",
+            "RESEND_FAILED_MESSAGE": "No pudimos enviar la clave a {{email}}. La clave nueva ya existe: vuelve a pulsar «Reenviar clave»."
         },
         "KEY_STATUS": {
             "pending": "Clave pendiente",

@@ -542,6 +542,11 @@ textarea::placeholder {
   padding: 15px 20px 0px 20px !important;
 }
 
+/* Diálogo centrado: Syncfusion reserva a la derecha del título el sitio de la X aunque no la haya, y el encabezado quedaba corrido hacia la izquierda del contenido. */
+.mk-dialog-centered .e-dlg-header {
+  width: 100% !important;
+}
+
 .e-btn.e-outline.e-primary,
 .e-css.e-btn.e-outline.e-primary {
   border: 1px solid #cfcfcf !important

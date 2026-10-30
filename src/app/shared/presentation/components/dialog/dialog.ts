@@ -16,6 +16,10 @@ export class DialogComponent {
   @Input() showCloseIcon: boolean = true;
   @Input() isModal: boolean = true;
   @Input() allowDragging: boolean = true;
+  // Un diálogo que solo da un aviso: sin botón Cancelar, solo el principal.
+  @Input() showCancel: boolean = true;
+  // Encabezado centrado, con el icono arriba: para un diálogo que pide una sola cosa (p. ej. un código). Los botones siguen a la derecha.
+  @Input() centered: boolean = false;
 
   // Inputs de contenido
   @Input() title: string = '';

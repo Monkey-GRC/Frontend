@@ -8,6 +8,7 @@ import {
   CompanyStatus,
   CreateCompany,
   FrameworkOption,
+  IssuedAccessKey,
   Paginated,
   ReactivateCompany,
   RegisteredCompany,
@@ -60,6 +61,11 @@ export class CompanyService {
       .set('sort', '-created_at');
     if (this.statusFilter) params = params.set('status', this.statusFilter);
     return this.http.get<SuccessResponse<Paginated<Company>>>(this.apiUrl, { params });
+  }
+
+  // D99: reenviar es emitir una clave nueva (la pendiente se anula) y mandarla por correo al administrativo. Nunca viaja en la respuesta.
+  regenerateAccessKey(id: string) {
+    return this.http.post<SuccessResponse<IssuedAccessKey>>(`${this.apiUrl}/${id}/access-key/regenerate`, {});
   }
 
   // D97: archivar corta el acceso y fija cuándo se borra todo; reactivar lo deshace dentro del plazo. Ambos piden el código de quien actúa.
