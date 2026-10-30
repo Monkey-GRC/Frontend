@@ -29,11 +29,12 @@
             "ACTION_REACTIVATE": "Reactivate",
             "DAYS_LEFT": "{{days}} days",
             "TODAY": "today",
-            "COL_DELETES": "Deleted on"
+            "COL_DELETES": "Deleted on",
+            "ACTION_RESEND_KEY": "Resend key"
         },
         "FORM": {
             "TITLE": "Register company",
-            "SUBTITLE": "Create the client company and generate its single-use access key.",
+            "SUBTITLE": "Create the client company and send its access key to the administrative email.",
             "NAME": "Legal name",
             "NAME_PLACEHOLDER": "Next Audit & Consulting S.A.S.",
             "NAME_HINT": "It becomes fixed: the client will see it locked in the onboarding.",
@@ -56,15 +57,18 @@
             "RETRY": "Retry"
         },
         "KEY": {
-            "TITLE": "Access key",
-            "ONLY_ONCE": "Copy the key now: this is the only time it is shown. Monkey only keeps a fingerprint and cannot recover it.",
-            "COMPANY": "Company",
-            "COPY": "Copy",
-            "COPIED": "Copied",
+            "TITLE": "Access key sent",
             "EXPIRES": "Expires on",
-            "DELIVER": "Send it to the administrative email; the client uses it to create its account in Monkey Platform.",
-            "DONE": "I copied it",
-            "CLOSE": "Close"
+            "SENT": "We sent the access key for {{name}} to {{email}}.",
+            "FAILED_TITLE": "The email was not sent",
+            "FAILED_BODY": "{{name}} was registered, but we could not send the key to {{email}}. Resend a new key; the previous one is revoked.",
+            "RESEND": "Resend new key",
+            "DONE": "Got it",
+            "RESEND_SUCCESS_TITLE": "Key sent",
+            "RESEND_SUCCESS_MESSAGE": "We sent a new key to {{email}}. The previous one stopped working.",
+            "RESEND_FAILED_TITLE": "The email was not sent",
+            "RESEND_ERROR_TITLE": "The key could not be resent",
+            "RESEND_FAILED_MESSAGE": "We could not send the key to {{email}}. The new key already exists: press “Resend key” again."
         },
         "KEY_STATUS": {
             "pending": "Key pending",

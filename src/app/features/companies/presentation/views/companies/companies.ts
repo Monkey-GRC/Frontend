@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Company, RegisteredCompany } from '@features/companies/models/company.model';
 import { CompanyService } from '@features/companies/services/company.service';
-import { AccessKeyReveal } from '@features/companies/presentation/components/access-key-reveal/access-key-reveal';
+import { AccessKeySent } from '@features/companies/presentation/components/access-key-sent/access-key-sent';
 import { ArchiveDetails, CompanyArchiveForm } from '@features/companies/presentation/components/company-archive-form/company-archive-form';
 import { CompanyForm } from '@features/companies/presentation/components/company-form/company-form';
 import { CompanyReactivateForm, ReactivateDetails } from '@features/companies/presentation/components/company-reactivate-form/company-reactivate-form';
@@ -24,7 +24,7 @@ import { ToastService } from '@shared/services/toast.service';
     CompanyArchiveForm,
     CompanyReactivateForm,
     StepUpForm,
-    AccessKeyReveal,
+    AccessKeySent,
     DialogComponent,
     LoaderComponent,
   ],
@@ -34,9 +34,10 @@ import { ToastService } from '@shared/services/toast.service';
 export class Companies implements OnInit {
   isLoading = false;
   isFormVisible = false;
-  // La empresa recién registrada, mientras se muestra su clave. Al cerrar se descarta: la clave
-  // no se vuelve a pedir al backend (no puede: solo existe su hash).
+  // La empresa recién registrada, mientras se dice si su clave salió por correo (D99). La clave no se muestra
+  // nunca; si no salió, se reenvía una nueva.
   registered: RegisteredCompany | null = null;
+  resendingKey = false;
 
   // D97: la empresa que se está archivando o reactivando (el diálogo abierto).
   archiving: Company | null = null;
@@ -78,6 +79,38 @@ export class Companies implements OnInit {
 
   onCloseKey() {
     this.registered = null;
+  }
+
+  // D99 · Desde el resumen del registro: emite una clave nueva y la manda; el resumen refleja si salió.
+  onResendFromSummary() {
+    const company = this.registered;
+    if (!company || this.resendingKey) return;
+    this.resendingKey = true;
+    this.companyService.regenerateAccessKey(company.id).pipe(finalize(() => (this.resendingKey = false))).subscribe({
+      next: (resp) => {
+        this.registered = { ...company, access_key: resp.data! };
+        this.readCompanies(1);
+      },
+      error: (err: Error) => this.toast.showError(this.translate.instant('COMPANIES_MODULE.KEY.RESEND_ERROR_TITLE'), err.message, 6000),
+    });
+  }
+
+  // D99 · Desde la lista: reenviar la clave de una empresa que aún no la canjeó.
+  onResendKey(company: Company) {
+    if (this.resendingKey) return;
+    this.resendingKey = true;
+    this.companyService.regenerateAccessKey(company.id).pipe(finalize(() => (this.resendingKey = false))).subscribe({
+      next: (resp) => {
+        const ok = resp.data!.delivery_status === 'sent';
+        const show = ok ? this.toast.showSuccess.bind(this.toast) : this.toast.showError.bind(this.toast);
+        show(
+          this.translate.instant(ok ? 'COMPANIES_MODULE.KEY.RESEND_SUCCESS_TITLE' : 'COMPANIES_MODULE.KEY.RESEND_FAILED_TITLE'),
+          this.translate.instant(ok ? 'COMPANIES_MODULE.KEY.RESEND_SUCCESS_MESSAGE' : 'COMPANIES_MODULE.KEY.RESEND_FAILED_MESSAGE', { email: company.admin_email }),
+        );
+        this.readCompanies(1);
+      },
+      error: (err: Error) => this.toast.showError(this.translate.instant('COMPANIES_MODULE.KEY.RESEND_ERROR_TITLE'), err.message, 6000),
+    });
   }
 
   onFilterChange(archived: boolean) {

@@ -5,7 +5,7 @@
   <div class="max-w-full mx-auto space-y-4 p-4">
     <!-- ================= CONTENT ================= -->
     <div class="flex flex-col">
-      <app-company-list (pageChange)="readCompanies($event)" (filterChange)="onFilterChange($event)" (archive)="archiving = $event" (reactivate)="reactivating = $event">
+      <app-company-list (pageChange)="readCompanies($event)" (filterChange)="onFilterChange($event)" (archive)="archiving = $event" (reactivate)="reactivating = $event" (resendKey)="onResendKey($event)">
         <!-- El botón va en la fila del título de la lista: ya no hay un encabezado aparte que repita lo mismo -->
         <button listActions
           class="mk-hero-btn-solid"
@@ -20,27 +20,27 @@
 }
 
 <!-- Registro: los 3 campos del comité y el marco que se contrata (D47) -->
-<app-dialog [width]="'600px'" [title]="'COMPANIES_MODULE.FORM.TITLE' | translate"
-  [subtitle]="'COMPANIES_MODULE.FORM.SUBTITLE' | translate" [isModal]="true"
+<app-dialog [width]="'820px'" [title]="'COMPANIES_MODULE.FORM.TITLE' | translate"
+  [subtitle]="'COMPANIES_MODULE.FORM.SUBTITLE' | translate" [showCloseIcon]="false" [isModal]="true"
   [submitText]="'COMPANIES_MODULE.FORM.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.FORM.CANCEL' | translate"
   [isSubmitting]="companyForm?.sendingForm ?? false" [visible]="isFormVisible" (onClose)="onCloseForm()"
   (onSubmit)="companyForm?.onSubmit()">
   <app-company-form (registered)="onRegistered($event)" />
 </app-dialog>
 
-<!-- Clave de acceso: se muestra una sola vez -->
-<app-dialog [width]="'600px'" [title]="'COMPANIES_MODULE.KEY.TITLE' | translate" icon="key" [isModal]="true"
-  [allowDragging]="false" [submitText]="'COMPANIES_MODULE.KEY.DONE' | translate"
-  [cancelText]="'COMPANIES_MODULE.KEY.CLOSE' | translate" [visible]="!!registered" (onClose)="onCloseKey()"
+<!-- D99 · Aviso de que la clave salió por correo (o de que no salió). Solo un mensaje: sin X ni Cancelar -->
+<app-dialog [width]="'460px'" [title]="(registered?.access_key?.delivery_status === 'failed' ? 'COMPANIES_MODULE.KEY.FAILED_TITLE' : 'COMPANIES_MODULE.KEY.TITLE') | translate"
+  [isModal]="true" [allowDragging]="false" [showCloseIcon]="false" [showCancel]="false"
+  [submitText]="'COMPANIES_MODULE.KEY.DONE' | translate" [visible]="!!registered" (onClose)="onCloseKey()"
   (onSubmit)="onCloseKey()">
   @if (registered) {
-  <app-access-key-reveal [company]="registered" />
+  <app-access-key-sent [company]="registered" [sending]="resendingKey" (resend)="onResendFromSummary()" />
   }
 </app-dialog>
 
 <!-- D97 · Archivar: aprobar el formulario no lo envía; después se pide el código de seguridad. El botón se habilita al escribir la razón social exacta y completar el resto -->
 <app-dialog [width]="'640px'" [title]="'COMPANIES_MODULE.ARCHIVE.TITLE' | translate"
-  [subtitle]="'COMPANIES_MODULE.ARCHIVE.SUBTITLE' | translate" icon="inventory_2" [isModal]="true" [allowDragging]="false"
+  [subtitle]="'COMPANIES_MODULE.ARCHIVE.SUBTITLE' | translate" icon="inventory_2" [isModal]="true" [showCloseIcon]="false" [allowDragging]="false"
   [danger]="true" [submitText]="'COMPANIES_MODULE.ARCHIVE.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate"
   [submitDisabled]="!(archiveForm?.canSubmit ?? false)"
   [visible]="!!archiving" (onClose)="archiving = null" (onSubmit)="archiveForm?.onSubmit()">
@@ -49,7 +49,7 @@
 
 <!-- D97 · Reactivar: solo dentro del plazo -->
 <app-dialog [width]="'560px'" [title]="'COMPANIES_MODULE.REACTIVATE.TITLE' | translate"
-  [subtitle]="'COMPANIES_MODULE.REACTIVATE.SUBTITLE' | translate" icon="restore" [isModal]="true" [allowDragging]="false"
+  [subtitle]="'COMPANIES_MODULE.REACTIVATE.SUBTITLE' | translate" icon="restore" [isModal]="true" [showCloseIcon]="false" [allowDragging]="false"
   [submitText]="'COMPANIES_MODULE.REACTIVATE.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate"
   [submitDisabled]="!(reactivateForm?.canSubmit ?? false)"
   [visible]="!!reactivating" (onClose)="reactivating = null" (onSubmit)="reactivateForm?.onSubmit()">
@@ -58,7 +58,7 @@
 
 <!-- Segunda confirmación (D94, D97): el código de la app de autenticación de quien actúa, ya aprobada la acción -->
 <app-dialog [width]="'440px'" [title]="'STEP_UP.TITLE' | translate" [subtitle]="'STEP_UP.SUBTITLE' | translate" icon="shield_lock"
-  [isModal]="true" [allowDragging]="false" [danger]="stepUp?.kind === 'archive'"
+  [centered]="true" [showCloseIcon]="false" [isModal]="true" [allowDragging]="false" [danger]="stepUp?.kind === 'archive'"
   [submitText]="(stepUp?.kind === 'archive' ? 'STEP_UP.SUBMIT_ARCHIVE' : 'STEP_UP.SUBMIT_REACTIVATE') | translate"
   [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate" [isSubmitting]="stepUpSending"
   [submitDisabled]="!(stepUpForm?.canSubmit ?? false)" [visible]="!!stepUp" (onClose)="stepUp = null" (onSubmit)="stepUpForm?.submit()">

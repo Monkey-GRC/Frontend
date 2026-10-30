@@ -54,7 +54,18 @@ export interface CreateCompany {
     framework_codes: string[];
 }
 
-// Respuesta del registro: única vez en que la clave viaja en claro.
+// D99 · `sent`: el servicio de correo aceptó el mensaje (no garantiza que llegue). `failed`: no salió; se reenvía.
+export type AccessKeyDeliveryStatus = 'sent' | 'failed';
+
+// La clave emitida al registrar o reenviar. Nunca lleva el código: viaja por correo al administrativo (D99).
+export interface IssuedAccessKey {
+    id: string;
+    status: AccessKeyStatus;
+    expires_at: string;
+    delivery_status: AccessKeyDeliveryStatus;
+}
+
+// Respuesta del registro: la clave salió por correo, no viaja aquí.
 export interface RegisteredCompany {
     id: string;
     name: string;
@@ -64,12 +75,7 @@ export interface RegisteredCompany {
     frameworks: ContractedFramework[];
     created_at: string;
     updated_at: string;
-    access_key: {
-        id: string;
-        code: string;
-        status: AccessKeyStatus;
-        expires_at: string;
-    };
+    access_key: IssuedAccessKey;
 }
 
 export interface Paginated<T> {

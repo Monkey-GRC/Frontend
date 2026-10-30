@@ -24,11 +24,18 @@ export class CompanyList {
   filterChange = output<boolean>();
   archive = output<Company>();
   reactivate = output<Company>();
+  // D99: reenviar la clave de acceso (con una nueva) a una empresa que aún no la canjeó.
+  resendKey = output<Company>();
 
   constructor(public companyService: CompanyService) {}
 
   keyStatusClass(status: AccessKeyStatus | null): string {
     return status ? KEY_STATUS_CLASSES[status] : KEY_STATUS_CLASSES.expired;
+  }
+
+  // La clave se puede reenviar mientras la empresa esté activa y no la haya canjeado.
+  canResendKey(company: Company): boolean {
+    return company.status === 'active' && company.access_key_status !== 'used';
   }
 
   get showingArchived(): boolean {
