@@ -63,3 +63,36 @@ describe('AuthService · segundo factor (D94)', () => {
     expect(service.currentUser?.email).toBe('root@monkey.com');
   });
 });
+
+describe('AuthService · sin sesión no se consulta al servidor', () => {
+  let service: AuthService;
+  let http: HttpTestingController;
+
+  beforeEach(() => {
+    localStorage.removeItem('mk_session');
+    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting(), provideTranslateService()] });
+    service = TestBed.inject(AuthService);
+    http = TestBed.inject(HttpTestingController);
+  });
+  afterEach(() => {
+    http.verify();
+    localStorage.removeItem('mk_session');
+  });
+
+  it('sin marca de sesión validateSession responde false sin ninguna petición (no hay 401 en consola)', () => {
+    let result: boolean | undefined;
+    service.validateSession().subscribe((ok) => (result = ok));
+    http.expectNone(`${api}/me`);
+    expect(result).toBe(false);
+  });
+
+  it('con la marca sí pregunta al servidor, y si ya no hay sesión la borra', () => {
+    localStorage.setItem('mk_session', '1');
+    let result: boolean | undefined;
+    service.validateSession().subscribe((ok) => (result = ok));
+    http.expectOne(`${api}/me`).flush({ message: 'x' }, { status: 401, statusText: 'Unauthorized' });
+    http.expectOne(`${api}/refresh`).flush({ message: 'x' }, { status: 401, statusText: 'Unauthorized' });
+    expect(result).toBe(false);
+    expect(localStorage.getItem('mk_session')).toBeNull();
+  });
+});
