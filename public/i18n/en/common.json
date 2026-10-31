@@ -8,7 +8,11 @@
     "ERRORS": {
       "AUTH_PROBLEM": "An authentication problem occurred. If the error persists, contact support.",
       "UNPROCESSABLE": "Unprocessable entity",
-      "UNEXPECTED": "Unexpected error: {{message}}"
+      "UNEXPECTED": "We couldn't complete the action. Try again.",
+      "NETWORK": "We couldn't reach the server. Check your connection and try again.",
+      "RATE_LIMIT": "Too many attempts. Wait a few minutes and try again.",
+      "UNAVAILABLE": "The service is unavailable right now. Try again in a few minutes.",
+      "SERVER": "Something went wrong on our side. Try again; if it persists, contact support."
     }
   },
   "STEP_UP": {
@@ -18,5 +22,14 @@
     "HINT": "The one your app shows for your Monkey Admin account.",
     "SUBMIT_ARCHIVE": "Confirm and archive",
     "SUBMIT_REACTIVATE": "Confirm and reactivate"
+  },
+  "PAGE_TITLE": {
+    "HOME": "Home",
+    "COMPANIES": "Companies",
+    "CATALOG": "Master catalog",
+    "USERS": "User management",
+    "LOGIN": "Sign in",
+    "MFA": "Two-step verification",
+    "NOT_FOUND": "Page not found"
   }
 }
