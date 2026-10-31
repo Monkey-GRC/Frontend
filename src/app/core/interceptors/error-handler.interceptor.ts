@@ -11,30 +11,24 @@ export const errorHandlerInterceptor: HttpInterceptorFn = (req, next) => {
 };
 
 function handleHttpError(error: HttpErrorResponse, translate: TranslateService): Observable<never> {
-    let errorMessage = '';
-
-    if (error.error instanceof ErrorEvent) {
-        errorMessage = `${error.error.message}`;
-    } else {
-        errorMessage = sanitizeMessage(getServerErrorMessage(error, translate), translate);
-    }
+    const errorMessage = sanitizeMessage(getServerErrorMessage(error, translate), translate);
 
     // Se conserva el status: AuthService lo usa para distinguir un 401 (renovar sesión) del resto. Y, si el backend los manda, el código del error y sus errores por
-    // campo (ields, un 422): un formulario los muestra junto a cada campo en vez de un solo mensaje general.
+    // campo (ields, un 422): un formulario los muestra junto a cada campo en vez de un solo mensaje general.
     return throwError(() => Object.assign(new Error(errorMessage), { status: error.status, code: error.error?.error?.code, fields: error.error?.error?.fields }));
 }
 
+// El texto que el backend ya trae (viene traducido) manda; si no hay respuesta o no trae mensaje (servidor caído, un proxy, un 502), se dice qué
+// pasó con un texto propio. Nunca se muestra un código ni una plantilla sin rellenar.
 function getServerErrorMessage(error: HttpErrorResponse, translate: TranslateService): string {
-    switch (error.status) {
-        case 400: return `${error.error.message}`;
-        case 401: return `${error.error.message}`;
-        case 403: return `${error.error.message}`;
-        case 404: return `${error.error.message}`;
-        case 409: return `${error.error.message}`;
-        case 422: return error.error?.message ?? translate.instant('COMMON.ERRORS.UNPROCESSABLE');
-        case 500: return `${error.error.message}`;
-        default: return translate.instant('COMMON.ERRORS.UNEXPECTED', { message: error.error.message });
-    }
+    const body = error.error;
+    const fromServer = typeof body?.message === 'string' && body.message.trim() ? body.message : null;
+    if (error.status === 0) return translate.instant('COMMON.ERRORS.NETWORK');
+    if (error.status === 429) return fromServer ?? translate.instant('COMMON.ERRORS.RATE_LIMIT');
+    if (error.status === 502 || error.status === 503 || error.status === 504) return translate.instant('COMMON.ERRORS.UNAVAILABLE');
+    if (error.status === 422) return fromServer ?? translate.instant('COMMON.ERRORS.UNPROCESSABLE');
+    if (fromServer) return fromServer;
+    return translate.instant(error.status >= 500 ? 'COMMON.ERRORS.SERVER' : 'COMMON.ERRORS.UNEXPECTED');
 }
 
 /**

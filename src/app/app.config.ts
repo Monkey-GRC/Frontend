@@ -1,6 +1,7 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, TitleStrategy } from '@angular/router';
 
+import { PageTitleStrategy } from '@core/services/page-title.strategy';
 import { routes } from './app.routes';
 import { HttpBackend, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from '@core/interceptors/auth.interceptor';
@@ -14,12 +15,9 @@ export function HttpLoaderFactory(httpBackend: HttpBackend): MultiTranslateHttpL
     { prefix: './i18n/', suffix: '/auth.json' },
     { prefix: './i18n/', suffix: '/home.json' },
     { prefix: './i18n/', suffix: '/sidebar.json' },
-    { prefix: './i18n/', suffix: '/risk.json', optional: true },
-    { prefix: './i18n/', suffix: '/reason.json', optional: true },
     { prefix: './i18n/', suffix: '/users.json', optional: true },
-    { prefix: './i18n/', suffix: '/clients.json', optional: true },
     { prefix: './i18n/', suffix: '/companies.json', optional: true },
-{ prefix: './i18n/', suffix: '/catalog.json', optional: true },
+    { prefix: './i18n/', suffix: '/catalog.json', optional: true },
   ]);
 }
 
@@ -27,6 +25,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    { provide: TitleStrategy, useExisting: PageTitleStrategy },
     provideTranslateService({
       loader: {
         provide: TranslateLoader,

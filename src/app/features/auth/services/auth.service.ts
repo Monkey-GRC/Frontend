@@ -29,6 +29,26 @@ import { ApiResponse, SuccessResponse } from '@shared/models/api-response.model'
 // Monkey Admin es exclusiva del equipo Monkey (decisión D24): cualquier otro rol se rechaza.
 const ADMIN_ROLE = 'admin_monkey';
 
+// Marca (no secreta) de que este navegador abrió una sesión. Las cookies de sesión son httpOnly y el código no las puede ver: sin esta marca, cada
+// visita a la pantalla de acceso consultaba /auth/me y llenaba la consola de 401. La marca NO autentica nada: el servidor sigue validando la sesión
+// de verdad. Si falta o no se puede leer (modo privado), la app se comporta como antes y pregunta al servidor.
+const SESSION_HINT_KEY = 'mk_session';
+const readHint = (): boolean => {
+  try {
+    return localStorage.getItem(SESSION_HINT_KEY) === '1';
+  } catch {
+    return true;
+  }
+};
+const writeHint = (on: boolean): void => {
+  try {
+    if (on) localStorage.setItem(SESSION_HINT_KEY, '1');
+    else localStorage.removeItem(SESSION_HINT_KEY);
+  } catch {
+    // sin almacenamiento: se pregunta siempre al servidor
+  }
+};
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private readonly translate = inject(TranslateService);
@@ -123,6 +143,8 @@ export class AuthService {
      * venció, intenta un refresh (la sesión vive hasta 30 min sin actividad y 8 h en total).
      */
     validateSession(): Observable<boolean> {
+        // Sin sesión abierta en este navegador no se pregunta al servidor (evita un 401 en cada visita al login).
+        if (!this._user$.value && !readHint()) return of(false);
         return this.me().pipe(
             catchError((error: HttpErrorResponse) =>
                 error.status === 401
@@ -176,11 +198,13 @@ export class AuthService {
     }
 
     private setSession(user: User) {
+        writeHint(true);
         this._user$.next(user);
         this._isLoggedIn$.next(true);
     }
 
     private clearSession() {
+        writeHint(false);
         this._user$.next(null);
         this._isLoggedIn$.next(false);
     }

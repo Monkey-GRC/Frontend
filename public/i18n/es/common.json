@@ -8,7 +8,11 @@
     "ERRORS": {
       "AUTH_PROBLEM": "Ocurrió un problema de autenticación. Si el error persiste, contacta a soporte.",
       "UNPROCESSABLE": "Entidad no procesable",
-      "UNEXPECTED": "Error inesperado: {{message}}"
+      "UNEXPECTED": "No pudimos completar la acción. Inténtalo de nuevo.",
+      "NETWORK": "No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.",
+      "RATE_LIMIT": "Hiciste demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
+      "UNAVAILABLE": "El servicio no está disponible por ahora. Inténtalo de nuevo en unos minutos.",
+      "SERVER": "Algo salió mal de nuestro lado. Inténtalo de nuevo; si persiste, contacta a soporte."
     }
   },
   "STEP_UP": {
@@ -18,5 +22,14 @@
     "HINT": "El que muestra tu app para tu cuenta de Monkey Admin.",
     "SUBMIT_ARCHIVE": "Confirmar y archivar",
     "SUBMIT_REACTIVATE": "Confirmar y reactivar"
+  },
+  "PAGE_TITLE": {
+    "HOME": "Inicio",
+    "COMPANIES": "Empresas",
+    "CATALOG": "Catálogo maestro",
+    "USERS": "Gestión de usuarios",
+    "LOGIN": "Iniciar sesión",
+    "MFA": "Verificación en dos pasos",
+    "NOT_FOUND": "Página no encontrada"
   }
 }
