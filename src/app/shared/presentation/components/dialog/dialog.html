@@ -1,5 +1,5 @@
 <ejs-dialog [width]="width" [cssClass]="centered ? 'mk-dialog-centered' : ''" [visible]="visible" [showCloseIcon]="showCloseIcon" [isModal]="isModal"
-    [allowDragging]="allowDragging" (close)="onClose.emit()" [header]="header" [footerTemplate]="footerTemplate">
+    [allowDragging]="allowDragging" (close)="onClose.emit()" [header]="title ? header : undefined" [footerTemplate]="footerTemplate">
 
     <!-- Header personalizado -->
     <ng-template #header>

@@ -29,8 +29,7 @@
 </app-dialog>
 
 <!-- D99 · Aviso de que la clave salió por correo (o de que no salió). Solo un mensaje: sin X ni Cancelar -->
-<app-dialog [width]="'460px'" [title]="(registered?.access_key?.delivery_status === 'failed' ? 'COMPANIES_MODULE.KEY.FAILED_TITLE' : 'COMPANIES_MODULE.KEY.TITLE') | translate"
-  [isModal]="true" [allowDragging]="false" [showCloseIcon]="false" [showCancel]="false"
+<app-dialog [width]="'460px'" [isModal]="true" [allowDragging]="false" [showCloseIcon]="false" [showCancel]="false"
   [submitText]="'COMPANIES_MODULE.KEY.DONE' | translate" [visible]="!!registered" (onClose)="onCloseKey()"
   (onSubmit)="onCloseKey()">
   @if (registered) {
@@ -61,6 +60,6 @@
   [centered]="true" [showCloseIcon]="false" [isModal]="true" [allowDragging]="false" [danger]="stepUp?.kind === 'archive'"
   [submitText]="(stepUp?.kind === 'archive' ? 'STEP_UP.SUBMIT_ARCHIVE' : 'STEP_UP.SUBMIT_REACTIVATE') | translate"
   [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate" [isSubmitting]="stepUpSending"
-  [submitDisabled]="!(stepUpForm?.canSubmit ?? false)" [visible]="!!stepUp" (onClose)="stepUp = null" (onSubmit)="stepUpForm?.submit()">
+  [submitDisabled]="!(stepUpForm?.canSubmit ?? false)" [visible]="!!stepUp" (onClose)="closeStepUp()" (onSubmit)="stepUpForm?.submit()">
   <app-step-up-form [sending]="stepUpSending" (confirmed)="onStepUpConfirmed($event)" />
 </app-dialog>

@@ -122,11 +122,13 @@ export class Companies implements OnInit {
   onArchiveApproved(details: ArchiveDetails) {
     this.stepUp = { kind: 'archive', company: this.archiving!, archive: details };
     this.archiving = null;
+    this.stepUpForm?.reset();
   }
 
   onReactivateApproved(details: ReactivateDetails) {
     this.stepUp = { kind: 'reactivate', company: this.reactivating!, reactivate: details };
     this.reactivating = null;
+    this.stepUpForm?.reset();
   }
 
   // Con el código escrito se envía lo aprobado. Si falla (código equivocado, por ejemplo) el diálogo sigue abierto para volver a escribirlo.
@@ -148,7 +150,7 @@ export class Companies implements OnInit {
             date: resp.data!.archive_until ? new Date(resp.data!.archive_until).toLocaleDateString() : '',
           }),
         );
-        this.stepUp = null;
+        this.closeStepUp();
         this.readCompanies(1);
       },
       error: (err: Error) => {
@@ -156,6 +158,12 @@ export class Companies implements OnInit {
         this.toast.showError(this.translate.instant(`COMPANIES_MODULE.${key}.ERROR_TITLE`), err.message, 6000);
       },
     });
+  }
+
+  // El código es de un solo uso: al cerrar (con éxito o cancelando) el campo queda vacío para la próxima acción.
+  closeStepUp() {
+    this.stepUpForm?.clear();
+    this.stepUp = null;
   }
 
   readCompanies(page: number) {
