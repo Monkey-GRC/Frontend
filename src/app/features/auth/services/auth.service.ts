@@ -127,6 +127,16 @@ export class AuthService {
             .pipe(map((res) => res.data!.recovery_codes));
     }
 
+    /** «Olvidé mi contraseña»: pide el enlace al correo. Responde igual exista o no la cuenta (D101). */
+    forgotPassword(email: string): Observable<void> {
+        return this.http.post<void>(`${this.API}/password/forgot`, { email }).pipe(map(() => void 0));
+    }
+
+    /** Crea la contraseña nueva con el token del enlace y el segundo factor. Cierra todas las sesiones: después hay que iniciar sesión (D101). */
+    resetPassword(input: { token: string; new_password: string; code?: string; recovery_code?: string }): Observable<void> {
+        return this.http.post<void>(`${this.API}/password/reset`, input).pipe(map(() => void 0));
+    }
+
     private acceptSession(payload: AuthPayload): Observable<User> {
         const user = payload.user;
         if (user.role !== ADMIN_ROLE) {
