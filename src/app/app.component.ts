@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { NavigationProgress } from '@core/presentation/components/navigation-progress/navigation-progress';
 import { TranslateDirective, TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -8,6 +9,7 @@ import { TranslateDirective, TranslateModule, TranslatePipe, TranslateService } 
   imports: [
     RouterModule,
     TranslateModule,
+    NavigationProgress,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

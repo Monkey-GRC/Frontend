@@ -1,7 +1,8 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter, TitleStrategy } from '@angular/router';
+import { ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
+import { PreloadAllModules, provideRouter, TitleStrategy, withPreloading } from '@angular/router';
 
 import { PageTitleStrategy } from '@core/services/page-title.strategy';
+import { ThemeService } from '@core/services/theme.service';
 import { routes } from './app.routes';
 import { HttpBackend, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from '@core/interceptors/auth.interceptor';
@@ -18,13 +19,19 @@ export function HttpLoaderFactory(httpBackend: HttpBackend): MultiTranslateHttpL
     { prefix: './i18n/', suffix: '/users.json', optional: true },
     { prefix: './i18n/', suffix: '/companies.json', optional: true },
     { prefix: './i18n/', suffix: '/catalog.json', optional: true },
+    { prefix: './i18n/', suffix: '/settings.json', optional: true },
   ]);
 }
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    // El tema (claro/oscuro) se aplica al arrancar, en CUALQUIER pantalla: antes solo lo hacía el selector de tema, que no existe en las pantallas fuera del layout (Ajustes).
+    provideAppInitializer(() => {
+      inject(ThemeService);
+    }),
+    // Las pantallas se descargan en segundo plano apenas arranca la app, para que abrirlas no espere a la red (Ajustes, Volver).
+    provideRouter(routes, withPreloading(PreloadAllModules)),
     { provide: TitleStrategy, useExisting: PageTitleStrategy },
     provideTranslateService({
       loader: {
