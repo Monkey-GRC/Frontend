@@ -192,9 +192,10 @@
 
 @layer base {
 
-  /* Todo el Admin está en rem: bajar la base lo encoge de forma proporcional (texto, espacios e iconos) sin deformar nada. */
+  /* La misma base de letra que Monkey Platform (16 px, la de los navegadores): las dos apps deben verse del mismo tamaño. Antes Admin la bajaba a 15 px y todo
+     (texto, espacios e iconos, que están en rem) salía ~6 % más chico que en Platform. */
   html {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   *,
@@ -614,4 +615,15 @@ textarea::placeholder {
   clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%);
   padding-inline: 0.625rem 1.05rem;
   padding-block: 0.1875rem;
+}
+
+/* Barra fina de «navegando…» (la muestra la raíz de la app mientras una ruta tarda en abrir) */
+@keyframes navbar {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(300%);
+  }
 }
