@@ -1,11 +1,10 @@
-import { Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { ThemeToggleButtonComponent } from '@core/presentation/components/app-header/theme-toggle/theme-toggle-button.component';
+import { RouterModule } from '@angular/router';
+import { HelpMenu } from '@core/presentation/components/app-header/help-menu/help-menu';
+import { ProfileMenu } from '@core/presentation/components/app-header/profile-menu/profile-menu';
 import { SidebarService } from '@core/services/sidebar.service';
-import { AuthService } from '@features/auth/services/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
-import { LanguageToggle } from './language-toggle/language-toggle';
 
 @Component({
   selector: 'app-header',
@@ -13,16 +12,13 @@ import { LanguageToggle } from './language-toggle/language-toggle';
   imports: [
     CommonModule,
     RouterModule,
-    ThemeToggleButtonComponent,
-    LanguageToggle,
+    HelpMenu,
+    ProfileMenu,
     TranslatePipe
   ],
   templateUrl: './app-header.component.html',
 })
 export class AppHeaderComponent {
-  private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
-
   isApplicationMenuOpen = false;
   readonly isMobileOpen$;
 
@@ -30,10 +26,6 @@ export class AppHeaderComponent {
 
   constructor(public sidebarService: SidebarService) {
     this.isMobileOpen$ = this.sidebarService.isMobileOpen$;
-  }
-
-  logout(): void {
-    this.authService.logout().subscribe(() => this.router.navigateByUrl('/auth/login', { replaceUrl: true }));
   }
 
   handleToggle() {
