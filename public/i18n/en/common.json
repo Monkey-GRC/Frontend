@@ -13,13 +13,59 @@
       "RATE_LIMIT": "Too many attempts. Wait a few minutes and try again.",
       "UNAVAILABLE": "The service is unavailable right now. Try again in a few minutes.",
       "SERVER": "Something went wrong on our side. Try again; if it persists, contact support."
+    },
+    "PASSWORD": {
+      "NEW": "New password",
+      "CONFIRM": "Confirm the new password",
+      "RULES": "At least 12 characters, with an uppercase letter, a lowercase letter, a number and a symbol.",
+      "REQUIRED": "The password is required.",
+      "WEAK": "The password does not meet the requirements.",
+      "MISMATCH": "The passwords do not match.",
+      "GUIDE": {
+        "TITLE": "Your password must have:",
+        "MIN_LENGTH": "At least 12 characters",
+        "LOWERCASE": "A lowercase letter",
+        "UPPERCASE": "An uppercase letter",
+        "NUMBER": "A number",
+        "SYMBOL": "A symbol (for example ! ? # $ %)",
+        "DIFFERENT": "Be different from your current password",
+        "MATCH": "Both passwords match",
+        "MET": "met",
+        "PENDING": "pending",
+        "MISMATCH": "do not match"
+      }
+    },
+    "SECOND_FACTOR": {
+      "CODE_LABEL": "Code from your authenticator app",
+      "USE_RECOVERY": "I don’t have my phone: use a recovery code",
+      "USE_APP": "Use the code from my app",
+      "RECOVERY_LABEL": "Recovery code",
+      "RECOVERY_PLACEHOLDER": "XXXXX-XXXXX"
+    },
+    "CANCEL": "Cancel",
+    "SETTINGS": "Settings",
+    "PROFILE": {
+      "OPEN": "Open your profile menu",
+      "LANGUAGE": "Language",
+      "DARK_MODE": "Dark mode"
+    },
+    "HELP": {
+      "OPEN": "Open the help menu",
+      "TITLE": "Help",
+      "SHORTCUTS": "Keyboard shortcuts",
+      "SHORTCUT_SEARCH": "Search or type a command",
+      "SHORTCUT_CLOSE": "Close menus and windows",
+      "CONTACT": "Contact support",
+      "CONTACT_HINT": "Tell us what you need"
+    },
+    "SECOND_FACTOR_DIALOG": {
+      "DESCRIPTION": "For security, enter the code from your authenticator app.",
+      "CONFIRMING": "Confirming…"
     }
   },
   "STEP_UP": {
     "TITLE": "Confirm with your code",
     "SUBTITLE": "For security, this action asks for the code from your authenticator app.",
-    "LABEL": "6-digit code",
-    "HINT": "The one your app shows for your Monkey Admin account.",
     "SUBMIT_ARCHIVE": "Confirm and archive",
     "SUBMIT_REACTIVATE": "Confirm and reactivate"
   },
@@ -30,6 +76,11 @@
     "USERS": "User management",
     "LOGIN": "Sign in",
     "MFA": "Two-step verification",
-    "NOT_FOUND": "Page not found"
+    "NOT_FOUND": "Page not found",
+    "SETTINGS_SECURITY": "Settings · Security",
+    "FORGOT_PASSWORD": "Recover password",
+    "RESET_PASSWORD": "Create new password",
+    "SETTINGS_PASSWORD": "Settings · Password",
+    "SETTINGS_RECOVERY": "Settings · Recovery codes"
   }
 }

@@ -55,11 +55,9 @@
   <app-company-reactivate-form [company]="reactivating" (approved)="onReactivateApproved($event)" />
 </app-dialog>
 
-<!-- Segunda confirmación (D94, D97): el código de la app de autenticación de quien actúa, ya aprobada la acción -->
-<app-dialog [width]="'440px'" [title]="'STEP_UP.TITLE' | translate" [subtitle]="'STEP_UP.SUBTITLE' | translate" icon="shield_lock"
-  [centered]="true" [showCloseIcon]="false" [isModal]="true" [allowDragging]="false" [danger]="stepUp?.kind === 'archive'"
-  [submitText]="(stepUp?.kind === 'archive' ? 'STEP_UP.SUBMIT_ARCHIVE' : 'STEP_UP.SUBMIT_REACTIVATE') | translate"
-  [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate" [isSubmitting]="stepUpSending"
-  [submitDisabled]="!(stepUpForm?.canSubmit ?? false)" [visible]="!!stepUp" (onClose)="closeStepUp()" (onSubmit)="stepUpForm?.submit()">
-  <app-step-up-form [sending]="stepUpSending" (confirmed)="onStepUpConfirmed($event)" />
-</app-dialog>
+<!-- Segunda confirmación (D94, D97): el código de la app de autenticación de quien actúa, ya aprobada la acción. Es el modal genérico de verificación del segundo factor: el mismo
+     que usan las demás pantallas. Archivar es una acción grave (botón rojo); el código de recuperación no sirve aquí. -->
+<app-second-factor-dialog [open]="!!stepUp" [danger]="stepUp?.kind === 'archive'" [allowRecovery]="false" [loading]="stepUpSending" [errorMessage]="stepUpError"
+  [title]="'STEP_UP.TITLE' | translate" [description]="'STEP_UP.SUBTITLE' | translate"
+  [confirmLabel]="(stepUp?.kind === 'archive' ? 'STEP_UP.SUBMIT_ARCHIVE' : 'STEP_UP.SUBMIT_REACTIVATE') | translate"
+  (confirmed)="onStepUpConfirmed($event)" (cancelled)="closeStepUp()" />
