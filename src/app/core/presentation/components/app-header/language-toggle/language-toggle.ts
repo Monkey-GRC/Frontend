@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { changeSyncfusionLanguage } from '@config/syncfusion-locale.config';
-import { TranslateDirective, TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { LanguageService } from '@core/services/language.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-language-toggle',
@@ -16,7 +16,8 @@ export class LanguageToggle {
   currentLang = 'es';
 
   constructor(
-    private translate: TranslateService
+    private translate: TranslateService,
+    private language: LanguageService,
   ) {
     this.currentLang = localStorage.getItem('lang') || 'es';
     this.translate.use(this.currentLang);
@@ -24,8 +25,6 @@ export class LanguageToggle {
 
   toggleLanguage() {
     this.currentLang = this.currentLang === 'es' ? 'en' : 'es';
-    localStorage.setItem('lang', this.currentLang);
-    this.translate.use(this.currentLang);
-    changeSyncfusionLanguage(this.currentLang as 'en' || 'es');
+    this.language.set(this.currentLang as 'es' | 'en');
   }
 }
