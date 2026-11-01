@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { NavigationHistoryService } from '@core/services/navigation-history.service';
 import { SidebarService } from '@core/services/sidebar.service';
 import { AppHeaderComponent } from '@core/presentation/components/app-header/app-header.component';
 import { AppSidebarComponent } from '@core/presentation/components/app-sidebar/app-sidebar.component';
@@ -25,6 +26,8 @@ export class AppLayoutComponent {
   readonly isMobileOpen$;
 
   constructor(public sidebarService: SidebarService) {
+    // Empieza a recordar en qué pantalla está la persona, para que «Volver a la aplicación» de Ajustes sepa a dónde volver.
+    inject(NavigationHistoryService);
     this.isExpanded$ = this.sidebarService.isExpanded$;
     this.isHovered$ = this.sidebarService.isHovered$;
     this.isMobileOpen$ = this.sidebarService.isMobileOpen$;
