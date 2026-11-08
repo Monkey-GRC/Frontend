@@ -16,7 +16,6 @@ export function HttpLoaderFactory(httpBackend: HttpBackend): MultiTranslateHttpL
     { prefix: './i18n/', suffix: '/auth.json' },
     { prefix: './i18n/', suffix: '/home.json' },
     { prefix: './i18n/', suffix: '/sidebar.json' },
-    { prefix: './i18n/', suffix: '/users.json', optional: true },
     { prefix: './i18n/', suffix: '/companies.json', optional: true },
     { prefix: './i18n/', suffix: '/catalog.json', optional: true },
     { prefix: './i18n/', suffix: '/settings.json', optional: true },

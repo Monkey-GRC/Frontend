@@ -36,13 +36,6 @@ export const routes: Routes = [
         canActivate: [roleGuard(['admin_monkey'])],
         pathMatch: 'full',
       },
-      {
-        path: 'users',
-        title: 'PAGE_TITLE.USERS',
-        loadComponent: () => import('src/app/features/users/presentation/views/users/users').then(m => m.Users),
-        canActivate: [roleGuard(['admin_monkey'])],
-        pathMatch: 'full',
-      },
     ]
   },
   // Ajustes (desde el menú de perfil): una pantalla completa FUERA del layout de la app (sin su menú ni su encabezado), con «Volver a la aplicación». Menú por función a la
