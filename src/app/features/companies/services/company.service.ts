@@ -40,6 +40,8 @@ export class CompanyService {
       name: ['', [Validators.required, Validators.maxLength(255)]],
       admin_email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
       requires_dedicated_database: [false],
+      // D103 · Usuarios contratados: obligatorio, entero ≥ 1.
+      max_users: [null as number | null, [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)]],
     });
   }
 
@@ -61,6 +63,11 @@ export class CompanyService {
       .set('sort', '-created_at');
     if (this.statusFilter) params = params.set('status', this.statusFilter);
     return this.http.get<SuccessResponse<Paginated<Company>>>(this.apiUrl, { params });
+  }
+
+  // D103: cambiar el cupo de usuarios. 409 MAX_USERS_BELOW_CURRENT si es menor que las cuentas que ya cuentan.
+  updateMaxUsers(id: string, maxUsers: number) {
+    return this.http.patch<SuccessResponse<Company>>(`${this.apiUrl}/${id}/max-users`, { max_users: maxUsers });
   }
 
   // D99: reenviar es emitir una clave nueva (la pendiente se anula) y mandarla por correo al administrativo. Nunca viaja en la respuesta.

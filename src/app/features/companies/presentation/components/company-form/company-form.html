@@ -29,6 +29,22 @@
     </div>
     </div>
 
+    <!-- D103 · El cupo de usuarios que el cliente contrata. Lo cuentan las cuentas activas, pendientes y suspendidas de cualquier rol; las desactivadas no. -->
+    <div class="flex flex-col gap-1 md:max-w-[50%]" data-testid="max-users">
+      <label>{{ 'COMPANIES_MODULE.FORM.MAX_USERS' | translate }} <span class="text-red-500">*</span></label>
+      <ejs-textbox formControlName="max_users" type="number" min="1" step="1" placeholder="10" floatLabelType="Never" cssClass="e-outline shadow-input"></ejs-textbox>
+      <p class="text-xs text-gray-500 dark:text-gray-400">{{ 'COMPANIES_MODULE.FORM.MAX_USERS_HINT' | translate }}</p>
+      @if (hasError('max_users', 'required')) {
+      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.FORM.REQUIRED' | translate }}</p>
+      }
+      @if (hasError('max_users', 'min') || hasError('max_users', 'pattern')) {
+      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.FORM.MAX_USERS_INVALID' | translate }}</p>
+      }
+      @if (hasError('max_users', 'server')) {
+      <p class="text-xs text-rose-500" data-testid="max-users-server-error">{{ companyService.form.get('max_users')?.getError('server') }}</p>
+      }
+    </div>
+
     <!-- Marcos que Monkey ofrece (D50). Solo se contratan los disponibles (hoy SOC 2); el resto, «próximamente». -->
     <div class="flex flex-col gap-2" data-testid="frameworks">
       <label>{{ 'COMPANIES_MODULE.FORM.FRAMEWORKS' | translate }} <span class="text-red-500">*</span></label>

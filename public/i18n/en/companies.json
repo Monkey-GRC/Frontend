@@ -30,7 +30,11 @@
             "DAYS_LEFT": "{{days}} days",
             "TODAY": "today",
             "COL_DELETES": "Deleted on",
-            "ACTION_RESEND_KEY": "Resend key"
+            "ACTION_RESEND_KEY": "Resend key",
+            "COL_USERS": "Users",
+            "NO_LIMIT": "no limit",
+            "QUOTA_FULL": "Quota full",
+            "ACTION_QUOTA": "Change quota"
         },
         "FORM": {
             "TITLE": "Register company",
@@ -45,6 +49,9 @@
             "DEDICATED_WARNING": "This decision can't be reverted without migrating the data. Dedicated databases are not available yet: for now registration only supports the shared database.",
             "REQUIRED": "This field is required.",
             "INVALID_EMAIL": "Enter a valid email.",
+            "MAX_USERS": "Contracted users",
+            "MAX_USERS_HINT": "How many people the company can have in Monkey. Active, pending and suspended accounts of any role count; deactivated ones don't. It can be changed later.",
+            "MAX_USERS_INVALID": "Enter a whole number from 1 up.",
             "SUBMIT": "Register",
             "CANCEL": "Cancel",
             "INCOMPLETE_TITLE": "Incomplete form",
@@ -112,6 +119,19 @@
             "SUCCESS_MESSAGE": "{{name}} will be permanently deleted on {{date}}.",
             "ERROR_TITLE": "Could not archive",
             "CONFIRM_MISMATCH": "The legal name does not match."
+        },
+        "QUOTA": {
+            "TITLE": "Change user quota",
+            "SUBTITLE": "How many people the company can have in Monkey.",
+            "CURRENT": "{{name}} uses {{used}} of {{max}} users.",
+            "LABEL": "Contracted users",
+            "HINT": "Active, pending and suspended accounts of any role count; deactivated ones don't. It can't be lower than the accounts already counted.",
+            "BELOW_CURRENT": "It must be at least {{min}}: that many accounts already count. Deactivate some first if you need fewer.",
+            "BELOW_CURRENT_SERVER": "The quota can't be lower than the {{count}} accounts already counted. Deactivate some first.",
+            "SUBMIT": "Save quota",
+            "SUCCESS_TITLE": "Quota updated",
+            "SUCCESS_MESSAGE": "{{name}} now has a quota of {{max}} users.",
+            "ERROR_TITLE": "The quota could not be changed"
         },
         "REACTIVATE": {
             "TITLE": "Reactivate company",

@@ -1,0 +1,27 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="flex flex-col gap-4">
+    @if (company(); as c) {
+    <p class="text-sm text-gray-700 dark:text-gray-200" data-testid="quota-current">
+      {{ 'COMPANIES_MODULE.QUOTA.CURRENT' | translate: { name: c.name, used: c.users_count, max: c.max_users ?? ('COMPANIES_MODULE.LIST.NO_LIMIT' | translate) } }}
+    </p>
+    }
+
+    <div class="flex flex-col gap-1">
+      <label>{{ 'COMPANIES_MODULE.QUOTA.LABEL' | translate }} <span class="text-red-500">*</span></label>
+      <ejs-textbox formControlName="max_users" type="number" min="1" step="1" floatLabelType="Never" cssClass="e-outline shadow-input"></ejs-textbox>
+      <p class="text-xs text-gray-500 dark:text-gray-400">{{ 'COMPANIES_MODULE.QUOTA.HINT' | translate }}</p>
+      @if (belowCurrent) {
+      <p class="text-xs text-rose-500" data-testid="quota-below-current">{{ 'COMPANIES_MODULE.QUOTA.BELOW_CURRENT' | translate: { min: minAllowed } }}</p>
+      } @else if (form.controls.max_users.touched && form.controls.max_users.invalid) {
+      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.FORM.MAX_USERS_INVALID' | translate }}</p>
+      }
+    </div>
+
+    @if (error(); as message) {
+    <div class="flex items-start gap-2 rounded-lg bg-red-50 p-3 text-red-700 dark:bg-red-900/30 dark:text-red-300" role="alert" data-testid="quota-error">
+      <span class="material-symbols-outlined text-base" aria-hidden="true">error</span>
+      <p class="text-xs">{{ message }}</p>
+    </div>
+    }
+  </div>
+</form>

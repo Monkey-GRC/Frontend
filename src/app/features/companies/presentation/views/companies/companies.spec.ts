@@ -97,3 +97,76 @@ describe('Companies · segunda confirmación con el modal genérico', () => {
     expect(page.stepUpError).toBeNull();
   });
 });
+
+// D103 · Cambiar el cupo de usuarios de una empresa (MD-205).
+describe('Companies · cambiar el cupo de usuarios', () => {
+  let service: jasmine.SpyObj<CompanyService>;
+  let toast: jasmine.SpyObj<ToastService>;
+  let page: Companies;
+  const acme = { id: 'co-1', name: 'ACME', max_users: 10, users_count: 4 } as Company;
+  const rejected = (code: string, details: object, message = 'mensaje del servidor') => throwError(() => Object.assign(new Error(message), { status: 409, code, details })) as never;
+
+  beforeEach(() => {
+    service = Object.assign(jasmine.createSpyObj<CompanyService>('CompanyService', ['updateMaxUsers', 'readCompanies']), { companies: [] as Company[], page: 2 });
+    service.readCompanies.and.returnValue(reply({ data: { items: [], page: 2, total: 0, total_pages: 3 } }));
+    toast = jasmine.createSpyObj<ToastService>('ToastService', ['showSuccess', 'showError']);
+    page = new Companies(service, toast, { instant: (key: string, params?: object) => key + (params ? JSON.stringify(params) : '') } as unknown as TranslateService);
+  });
+
+  it('opens with no previous error and sends the new quota for THAT company', () => {
+    service.updateMaxUsers.and.returnValue(reply({ data: { ...acme, max_users: 25 } }));
+    page.quotaError = 'viejo';
+    page.onOpenQuota(acme);
+    expect(page.changingQuota).toBe(acme);
+    expect(page.quotaError).toBeNull();
+    page.onQuotaApproved(25);
+    expect(service.updateMaxUsers).toHaveBeenCalledOnceWith('co-1', 25);
+  });
+
+  it('on success tells it, closes the dialog and reloads the SAME page of the list', () => {
+    service.updateMaxUsers.and.returnValue(reply({ data: acme }));
+    page.onOpenQuota(acme);
+    page.onQuotaApproved(25);
+    expect(toast.showSuccess).toHaveBeenCalledTimes(1);
+    expect(page.changingQuota).toBeNull();
+    expect(page.quotaSending).toBeFalse();
+    expect(service.readCompanies).toHaveBeenCalledWith(2);
+  });
+
+  it('when the quota is lower than what already counts (409) it stays open and says the number', () => {
+    service.updateMaxUsers.and.returnValue(rejected('MAX_USERS_BELOW_CURRENT', { max_users: 2, users_count: 4 }));
+    page.onOpenQuota(acme);
+    page.onQuotaApproved(2);
+    expect(page.changingQuota).toBe(acme);
+    expect(page.quotaError).toContain('BELOW_CURRENT_SERVER');
+    expect(page.quotaError).toContain('"count":4');
+    expect(page.quotaSending).toBeFalse();
+    expect(toast.showSuccess).not.toHaveBeenCalled();
+    expect(service.readCompanies).not.toHaveBeenCalled();
+  });
+
+  it('any other failure also stays open, with the reason the server gave', () => {
+    service.updateMaxUsers.and.returnValue(rejected('INTERNAL_ERROR', {}, 'No se pudo guardar.'));
+    page.onOpenQuota(acme);
+    page.onQuotaApproved(20);
+    expect(page.quotaError).toBe('No se pudo guardar.');
+    expect(page.changingQuota).toBe(acme);
+  });
+
+  it('forgets the company and the error when it is closed, but not while it is saving', () => {
+    page.onOpenQuota(acme);
+    page.quotaError = 'algo';
+    page.quotaSending = true;
+    page.onCloseQuota();
+    expect(page.changingQuota).toBe(acme);
+    page.quotaSending = false;
+    page.onCloseQuota();
+    expect(page.changingQuota).toBeNull();
+    expect(page.quotaError).toBeNull();
+  });
+
+  it('sends nothing when no company is open', () => {
+    page.onQuotaApproved(5);
+    expect(service.updateMaxUsers).not.toHaveBeenCalled();
+  });
+});

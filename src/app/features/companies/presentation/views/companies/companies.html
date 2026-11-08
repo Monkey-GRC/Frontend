@@ -5,7 +5,7 @@
   <div class="max-w-full mx-auto space-y-4 p-4">
     <!-- ================= CONTENT ================= -->
     <div class="flex flex-col">
-      <app-company-list (pageChange)="readCompanies($event)" (filterChange)="onFilterChange($event)" (archive)="archiving = $event" (reactivate)="reactivating = $event" (resendKey)="onResendKey($event)">
+      <app-company-list (pageChange)="readCompanies($event)" (filterChange)="onFilterChange($event)" (archive)="archiving = $event" (reactivate)="reactivating = $event" (resendKey)="onResendKey($event)" (changeQuota)="onOpenQuota($event)">
         <!-- El botón va en la fila del título de la lista: ya no hay un encabezado aparte que repita lo mismo -->
         <button listActions
           class="mk-hero-btn-solid"
@@ -35,6 +35,15 @@
   @if (registered) {
   <app-access-key-sent [company]="registered" [sending]="resendingKey" (resend)="onResendFromSummary()" />
   }
+</app-dialog>
+
+<!-- D103 · Cambiar el cupo de usuarios de una empresa -->
+<app-dialog [width]="'520px'" [title]="'COMPANIES_MODULE.QUOTA.TITLE' | translate"
+  [subtitle]="'COMPANIES_MODULE.QUOTA.SUBTITLE' | translate" icon="group" [isModal]="true" [showCloseIcon]="false" [allowDragging]="false"
+  [submitText]="'COMPANIES_MODULE.QUOTA.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate"
+  [submitDisabled]="!(quotaForm?.canSubmit ?? false)" [isSubmitting]="quotaSending"
+  [visible]="!!changingQuota" (onClose)="onCloseQuota()" (onSubmit)="quotaForm?.onSubmit()">
+  <app-company-quota-form [company]="changingQuota" [error]="quotaError" (approved)="onQuotaApproved($event)" />
 </app-dialog>
 
 <!-- D97 · Archivar: aprobar el formulario no lo envía; después se pide el código de seguridad. El botón se habilita al escribir la razón social exacta y completar el resto -->

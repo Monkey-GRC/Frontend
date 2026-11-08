@@ -30,7 +30,11 @@
             "DAYS_LEFT": "{{days}} días",
             "TODAY": "hoy",
             "COL_DELETES": "Se elimina",
-            "ACTION_RESEND_KEY": "Reenviar clave"
+            "ACTION_RESEND_KEY": "Reenviar clave",
+            "COL_USERS": "Usuarios",
+            "NO_LIMIT": "sin tope",
+            "QUOTA_FULL": "Cupo completo",
+            "ACTION_QUOTA": "Cambiar cupo"
         },
         "FORM": {
             "TITLE": "Registrar empresa",
@@ -45,6 +49,9 @@
             "DEDICATED_WARNING": "Esta decisión no se revierte sin migrar los datos. La base dedicada todavía no está disponible: por ahora el registro solo admite la base compartida.",
             "REQUIRED": "Este campo es obligatorio.",
             "INVALID_EMAIL": "Ingresa un correo válido.",
+            "MAX_USERS": "Usuarios contratados",
+            "MAX_USERS_HINT": "Cuántas personas puede tener la empresa en Monkey. Cuentan las cuentas activas, pendientes y suspendidas, de cualquier rol; las desactivadas no. Se puede cambiar después.",
+            "MAX_USERS_INVALID": "Ingresa un número entero de 1 en adelante.",
             "SUBMIT": "Registrar",
             "CANCEL": "Cancelar",
             "INCOMPLETE_TITLE": "Formulario incompleto",
@@ -112,6 +119,19 @@
             "SUCCESS_MESSAGE": "{{name}} se borrará definitivamente el {{date}}.",
             "ERROR_TITLE": "No se pudo archivar",
             "CONFIRM_MISMATCH": "La razón social no coincide."
+        },
+        "QUOTA": {
+            "TITLE": "Cambiar cupo de usuarios",
+            "SUBTITLE": "Cuántas personas puede tener la empresa en Monkey.",
+            "CURRENT": "{{name}} usa {{used}} de {{max}} usuarios.",
+            "LABEL": "Usuarios contratados",
+            "HINT": "Cuentan las cuentas activas, pendientes y suspendidas, de cualquier rol; las desactivadas no. No puede ser menor que las cuentas que ya cuentan.",
+            "BELOW_CURRENT": "Debe ser al menos {{min}}: ya hay esa cantidad de cuentas que cuentan. Desactiva alguna primero si necesitas menos.",
+            "BELOW_CURRENT_SERVER": "El cupo no puede ser menor que las {{count}} cuentas que ya cuentan. Desactiva alguna primero.",
+            "SUBMIT": "Guardar cupo",
+            "SUCCESS_TITLE": "Cupo actualizado",
+            "SUCCESS_MESSAGE": "{{name}} ahora tiene un cupo de {{max}} usuarios.",
+            "ERROR_TITLE": "No se pudo cambiar el cupo"
         },
         "REACTIVATE": {
             "TITLE": "Reactivar empresa",
