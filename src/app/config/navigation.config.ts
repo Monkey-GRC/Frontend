@@ -44,13 +44,6 @@ export const NAV_ITEMS: NavItem[] = [
         section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION",
         roles: ['admin_monkey'],
     },
-    {
-        icon: 'manage_accounts',
-        name: "GRC_FRAMEWORK.USERS",
-        path: "/users",
-        section: "GRC_FRAMEWORK.MODULE_NAME.PARAMETRIZATION",
-        roles: ['admin_monkey'],
-    },
 ];
 
 // Funciones helper para trabajar con la navegación
