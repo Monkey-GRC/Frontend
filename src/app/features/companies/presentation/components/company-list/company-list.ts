@@ -26,6 +26,8 @@ export class CompanyList {
   reactivate = output<Company>();
   // D99: reenviar la clave de acceso (con una nueva) a una empresa que aún no la canjeó.
   resendKey = output<Company>();
+  // D103: cambiar el cupo de usuarios; el diálogo y la llamada los resuelve la vista.
+  changeQuota = output<Company>();
 
   constructor(public companyService: CompanyService) {}
 
@@ -36,6 +38,11 @@ export class CompanyList {
   // La clave se puede reenviar mientras la empresa esté activa y no la haya canjeado.
   canResendKey(company: Company): boolean {
     return company.status === 'active' && company.access_key_status !== 'used';
+  }
+
+  // D103 · El cupo está lleno cuando las cuentas que cuentan ya igualan (o pasan) lo contratado; sin tope (`null`) nunca se llena.
+  quotaFull(company: Company): boolean {
+    return company.max_users !== null && company.users_count >= company.max_users;
   }
 
   get showingArchived(): boolean {

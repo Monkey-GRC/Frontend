@@ -15,6 +15,8 @@ const company = (over: Partial<Company> = {}): Company => ({
     access_key_status: 'used' as AccessKeyStatus,
     access_key_expires_at: null,
     onboarding_completed: true,
+    max_users: 10,
+    users_count: 3,
     created_at: daysAgo(100),
     deactivated_at: null,
     archive_until: null,

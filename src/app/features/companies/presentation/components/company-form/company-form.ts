@@ -90,13 +90,14 @@ export class CompanyForm implements OnInit {
     }
 
     this.sendingForm = true;
-    const { name, admin_email, requires_dedicated_database } = form.getRawValue();
+    const { name, admin_email, requires_dedicated_database, max_users } = form.getRawValue();
     this.companyService
       .createCompany({
         name: name.trim(),
         admin_email: admin_email.trim().toLowerCase(),
         requires_dedicated_database: !!requires_dedicated_database,
         framework_codes: this.selectedFrameworks,
+        max_users: Number(max_users),
       })
       .pipe(finalize(() => (this.sendingForm = false)))
       .subscribe({
@@ -105,7 +106,16 @@ export class CompanyForm implements OnInit {
           this.loadFrameworks();
           this.registered.emit(resp.data!);
         },
-        error: (err: Error) => {
+        error: (err: Error & { fields?: { field: string; message: string }[] }) => {
+          // D103 · Un 422 sobre el cupo se muestra junto al campo, no solo en un aviso.
+          const maxUsers = err.fields?.find((f) => f.field === 'max_users');
+          if (maxUsers) {
+            const control = form.get('max_users');
+            control?.setErrors({ server: maxUsers.message });
+            control?.markAsTouched();
+            this.cdr.markForCheck();
+            return;
+          }
           this.toast.showError(this.translate.instant('COMPANIES_MODULE.FORM.ERROR_TITLE'), err.message, 6000);
         },
       });

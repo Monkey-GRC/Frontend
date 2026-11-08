@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Company, RegisteredCompany } from '@features/companies/models/company.model';
+import { Company, MAX_USERS_BELOW_CURRENT, MaxUsersBelowCurrent, RegisteredCompany } from '@features/companies/models/company.model';
+import { CompanyQuotaForm } from '@features/companies/presentation/components/company-quota-form/company-quota-form';
 import { CompanyService } from '@features/companies/services/company.service';
 import { AccessKeySent } from '@features/companies/presentation/components/access-key-sent/access-key-sent';
 import { ArchiveDetails, CompanyArchiveForm } from '@features/companies/presentation/components/company-archive-form/company-archive-form';
@@ -23,6 +24,7 @@ import { ToastService } from '@shared/services/toast.service';
     CompanyForm,
     CompanyArchiveForm,
     CompanyReactivateForm,
+    CompanyQuotaForm,
     SecondFactorDialog,
     AccessKeySent,
     DialogComponent,
@@ -43,6 +45,12 @@ export class Companies implements OnInit {
   archiving: Company | null = null;
   reactivating: Company | null = null;
 
+  // D103: la empresa cuyo cupo de usuarios se está cambiando (el diálogo abierto) y lo que dijo el servidor si lo rechazó.
+  changingQuota: Company | null = null;
+  quotaSending = false;
+  quotaError: string | null = null;
+
+  @ViewChild(CompanyQuotaForm) quotaForm?: CompanyQuotaForm;
   @ViewChild(CompanyForm) companyForm?: CompanyForm;
   // D97: tras aprobar el formulario se pide el código de seguridad; aquí queda lo aprobado mientras se escribe.
   stepUp: { kind: 'archive' | 'reactivate'; company: Company; archive?: ArchiveDetails; reactivate?: ReactivateDetails } | null = null;
@@ -111,6 +119,41 @@ export class Companies implements OnInit {
         this.readCompanies(1);
       },
       error: (err: Error) => this.toast.showError(this.translate.instant('COMPANIES_MODULE.KEY.RESEND_ERROR_TITLE'), err.message, 6000),
+    });
+  }
+
+  onOpenQuota(company: Company) {
+    this.quotaError = null;
+    this.changingQuota = company;
+  }
+
+  onCloseQuota() {
+    if (this.quotaSending) return;
+    this.changingQuota = null;
+    this.quotaError = null;
+  }
+
+  // D103 · Guarda el cupo nuevo. Si es menor que las cuentas que ya cuentan (409), el diálogo sigue abierto y dice el número; cualquier otro fallo, también con su motivo.
+  onQuotaApproved(maxUsers: number) {
+    const company = this.changingQuota;
+    if (!company || this.quotaSending) return;
+    this.quotaSending = true;
+    this.quotaError = null;
+    this.companyService.updateMaxUsers(company.id, maxUsers).pipe(finalize(() => (this.quotaSending = false))).subscribe({
+      next: () => {
+        this.toast.showSuccess(
+          this.translate.instant('COMPANIES_MODULE.QUOTA.SUCCESS_TITLE'),
+          this.translate.instant('COMPANIES_MODULE.QUOTA.SUCCESS_MESSAGE', { name: company.name, max: maxUsers }),
+        );
+        this.changingQuota = null;
+        this.readCompanies(this.companyService.page);
+      },
+      error: (err: Error & { code?: string; details?: Partial<MaxUsersBelowCurrent> }) => {
+        this.quotaError =
+          err.code === MAX_USERS_BELOW_CURRENT && typeof err.details?.users_count === 'number'
+            ? this.translate.instant('COMPANIES_MODULE.QUOTA.BELOW_CURRENT_SERVER', { count: err.details.users_count })
+            : err.message || this.translate.instant('COMPANIES_MODULE.QUOTA.ERROR_TITLE');
+      },
     });
   }
 

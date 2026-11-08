@@ -39,6 +39,10 @@ export interface Company {
     access_key_expires_at: string | null;
     onboarding_completed: boolean;
     created_at: string;
+    // D103 · El cupo de usuarios contratado y cuántas cuentas cuentan hoy (activas, pendientes y suspendidas, de cualquier rol; las inactivas no).
+    // `max_users` nulo = empresa anterior al cupo, sin tope.
+    max_users: number | null;
+    users_count: number;
     // D97: solo una empresa archivada trae estos campos.
     deactivated_at: string | null;
     archive_until: string | null;
@@ -52,6 +56,15 @@ export interface CreateCompany {
     requires_dedicated_database: boolean;
     admin_email: string;
     framework_codes: string[];
+    // D103 · Usuarios contratados: obligatorio, entero ≥ 1.
+    max_users: number;
+}
+
+// D103 · El cupo menor que las cuentas que ya cuentan responde 409 MAX_USERS_BELOW_CURRENT con estos dos números.
+export const MAX_USERS_BELOW_CURRENT = 'MAX_USERS_BELOW_CURRENT';
+export interface MaxUsersBelowCurrent {
+    max_users: number;
+    users_count: number;
 }
 
 // D99 · `sent`: el servicio de correo aceptó el mensaje (no garantiza que llegue). `failed`: no salió; se reenvía.
@@ -73,6 +86,8 @@ export interface RegisteredCompany {
     isolation_strategy: IsolationStrategy;
     status: CompanyStatus;
     frameworks: ContractedFramework[];
+    max_users?: number | null;
+    users_count?: number;
     created_at: string;
     updated_at: string;
     access_key: IssuedAccessKey;
