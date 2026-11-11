@@ -1,65 +1,7 @@
-<div class="mk-card overflow-x-auto">
-  <table class="w-full min-w-[48rem] text-left text-sm">
-    <caption class="sr-only">{{ captionKey() | translate }}</caption>
-    <thead>
-      <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:border-gray-800 dark:bg-white/5 dark:text-gray-300">
-        @for (column of columns(); track column.key) {
-        <th scope="col" class="px-4 py-2" [class.text-right]="column.kind === 'count'">{{ column.labelKey | translate }}</th>
-        }
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-      @for (row of rows(); track row.id) {
-      <tr class="align-top transition-colors" [attr.data-row]="row.id"
-        [ngClass]="{
-          'cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.03]': clickable(),
-          'bg-primary/5': selectedId() === row.id,
-          'opacity-60': row['is_active'] === false
-        }"
-        [attr.tabindex]="clickable() ? 0 : null" [attr.aria-selected]="selectedId() === row.id"
-        (click)="clickable() && rowClick.emit(row)" (keydown.enter)="clickable() && rowClick.emit(row)">
-        @for (column of columns(); track column.key) {
-        <td class="px-4 py-2" [class.text-right]="column.kind === 'count'">
-          @switch (column.kind) {
-          @case ('code') {
-          <span class="font-mono text-xs font-semibold text-gray-800 dark:text-gray-100">{{ row[column.key] }}</span>
-          }
-          @case ('origin') {
-          <span class="inline-block rounded-full px-2 py-1 text-xs font-medium" [ngClass]="originClass($any(row[column.key]))">
-            {{ originLabel(row[column.key]) }}
-          </span>
-          }
-          @case ('active') {
-          <span class="inline-block rounded-full px-2 py-1 text-xs font-medium"
-            [ngClass]="row[column.key] ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400'">
-            {{ (row[column.key] ? 'CATALOG_MODULE.STATE.ACTIVE' : 'CATALOG_MODULE.STATE.INACTIVE') | translate }}
-          </span>
-          }
-          @case ('count') {
-          <span class="text-gray-800 dark:text-gray-100">{{ row[column.key] }}</span>
-          }
-          @default {
-          <span class="text-gray-800 dark:text-gray-100">{{ text(row, column) }}</span>
-          }
-          }
-        </td>
-        }
-      </tr>
-      }
-    </tbody>
-  </table>
-</div>
-
-@if (totalPages() > 1) {
-<div class="mt-4 flex items-center justify-end gap-3 text-sm text-gray-600 dark:text-gray-300">
-  <button type="button" class="rounded border border-gray-300 px-3 py-1 disabled:opacity-40 dark:border-gray-600" data-prev
-    [disabled]="page() <= 1" (click)="pageChange.emit(page() - 1)">
-    {{ 'CATALOG_MODULE.PREV' | translate }}
-  </button>
-  <span>{{ page() }} / {{ totalPages() }}</span>
-  <button type="button" class="rounded border border-gray-300 px-3 py-1 disabled:opacity-40 dark:border-gray-600" data-next
-    [disabled]="page() >= totalPages()" (click)="pageChange.emit(page() + 1)">
-    {{ 'CATALOG_MODULE.NEXT' | translate }}
-  </button>
-</div>
-}
+<app-data-table [captionKey]="captionKey()" [columns]="tableColumns()" [rows]="rows()" [rowKey]="rowKey" [page]="pageInfo()" [pageSizes]="[]"
+  [clickable]="clickable()" [rowLabel]="rowLabel" emptyIcon="" (pageChange)="pageChange.emit($event)" (rowClick)="rowClick.emit($event)">
+  <ng-template appCell="code" let-row><app-tag [text]="codeOf(row)" /></ng-template>
+  <ng-template appCell="is_active" let-row>
+    <app-status-indicator [tone]="statusTone(row)" [labelKey]="statusKey(row)" />
+  </ng-template>
+</app-data-table>

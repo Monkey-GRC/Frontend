@@ -17,8 +17,6 @@
             "ONBOARDED": "Onboarding completed",
             "NOT_ONBOARDED": "Onboarding pending",
             "KEY_EXPIRES": "Key expires",
-            "PREV": "Previous",
-            "NEXT": "Next",
             "LOAD_ERROR": "Companies could not be loaded",
             "FILTER_LABEL": "Filter companies",
             "FILTER_ACTIVE": "Active",

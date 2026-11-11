@@ -1,7 +1,7 @@
 {
   "CATALOG_MODULE": {
     "TITLE": "Master catalog",
-    "INTRO": "The frameworks Monkey offers and what is inside each one: controls, risks, causes, tests and required evidence. This is the general catalog, not a company's. For now it is read-only.",
+    "INTRO": "Monkey's general catalog: controls, risks, causes, tests and required evidence.",
     "FRAMEWORKS": "Frameworks",
     "COUNTS": "{{requirements}} requirements · {{controls}} controls · {{tests}} tests",
     "AVAILABILITY": {
@@ -24,7 +24,6 @@
       "ALL": "All"
     },
     "SCOPE": {
-      "FRAMEWORK": "{{name}}",
       "ALL": "The whole catalog",
       "UNLINKED": "Without a requirement (not in any framework)"
     },
@@ -107,8 +106,6 @@
     "RETRY": "Retry",
     "EMPTY": "No results with those filters.",
     "TOTAL": "{{total}} results",
-    "PREV": "Previous",
-    "NEXT": "Next",
     "FORM": {
       "NEW": {
         "CONTROL": "New control",
@@ -176,7 +173,8 @@
     "PICKER": {
       "FRAMEWORK": "Framework",
       "REQUIREMENT": "Requirement",
-      "EMPTY": "Nothing to offer with that search."
+      "EMPTY": "Nothing to offer with that search.",
+      "CAPTION": "Items to link"
     }
   }
 }

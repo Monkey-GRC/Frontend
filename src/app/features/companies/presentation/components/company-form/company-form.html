@@ -2,102 +2,97 @@
   <div class="flex flex-col gap-5">
     <div class="grid gap-5 md:grid-cols-2">
     <div class="flex flex-col gap-1">
-      <label>{{ 'COMPANIES_MODULE.FORM.NAME' | translate }} <span class="text-red-500">*</span></label>
-      <ejs-textbox [placeholder]="'COMPANIES_MODULE.FORM.NAME_PLACEHOLDER' | translate" formControlName="name"
-        floatLabelType="Never" cssClass="e-outline shadow-input"></ejs-textbox>
-      <p class="text-xs text-gray-500 dark:text-gray-400">
+      <label for="company-name">{{ 'COMPANIES_MODULE.FORM.NAME' | translate }} <span class="text-bad-ink">*</span></label>
+      <input id="company-name" type="text" [placeholder]="'COMPANIES_MODULE.FORM.NAME_PLACEHOLDER' | translate" formControlName="name" class="mk-input" />
+      <p class="text-xs text-ink-muted">
         {{ 'COMPANIES_MODULE.FORM.NAME_HINT' | translate }}
       </p>
       @if (hasError('name', 'required')) {
-      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.FORM.REQUIRED' | translate }}</p>
+      <p class="text-xs text-bad-ink">{{ 'COMPANIES_MODULE.FORM.REQUIRED' | translate }}</p>
       }
     </div>
 
     <div class="flex flex-col gap-1">
-      <label>{{ 'COMPANIES_MODULE.FORM.ADMIN_EMAIL' | translate }} <span class="text-red-500">*</span></label>
-      <ejs-textbox placeholder="contacto@empresa.com" formControlName="admin_email" floatLabelType="Never"
-        cssClass="e-outline shadow-input"></ejs-textbox>
-      <p class="text-xs text-gray-500 dark:text-gray-400">
+      <label for="company-admin-email">{{ 'COMPANIES_MODULE.FORM.ADMIN_EMAIL' | translate }} <span class="text-bad-ink">*</span></label>
+      <input id="company-admin-email" type="text" placeholder="contacto@empresa.com" formControlName="admin_email" class="mk-input" />
+      <p class="text-xs text-ink-muted">
         {{ 'COMPANIES_MODULE.FORM.ADMIN_EMAIL_HINT' | translate }}
       </p>
       @if (hasError('admin_email', 'required')) {
-      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.FORM.REQUIRED' | translate }}</p>
+      <p class="text-xs text-bad-ink">{{ 'COMPANIES_MODULE.FORM.REQUIRED' | translate }}</p>
       }
       @if (hasError('admin_email', 'email')) {
-      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.FORM.INVALID_EMAIL' | translate }}</p>
+      <p class="text-xs text-bad-ink">{{ 'COMPANIES_MODULE.FORM.INVALID_EMAIL' | translate }}</p>
       }
     </div>
     </div>
 
     <!-- D103 · El cupo de usuarios que el cliente contrata. Lo cuentan las cuentas activas, pendientes y suspendidas de cualquier rol; las desactivadas no. -->
     <div class="flex flex-col gap-1 md:max-w-[50%]" data-testid="max-users">
-      <label>{{ 'COMPANIES_MODULE.FORM.MAX_USERS' | translate }} <span class="text-red-500">*</span></label>
-      <ejs-textbox formControlName="max_users" type="number" min="1" step="1" placeholder="10" floatLabelType="Never" cssClass="e-outline shadow-input"></ejs-textbox>
-      <p class="text-xs text-gray-500 dark:text-gray-400">{{ 'COMPANIES_MODULE.FORM.MAX_USERS_HINT' | translate }}</p>
+      <label for="company-max-users">{{ 'COMPANIES_MODULE.FORM.MAX_USERS' | translate }} <span class="text-bad-ink">*</span></label>
+      <input id="company-max-users" type="number" min="1" step="1" placeholder="10" formControlName="max_users" class="mk-input" />
+      <p class="text-xs text-ink-muted">{{ 'COMPANIES_MODULE.FORM.MAX_USERS_HINT' | translate }}</p>
       @if (hasError('max_users', 'required')) {
-      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.FORM.REQUIRED' | translate }}</p>
+      <p class="text-xs text-bad-ink">{{ 'COMPANIES_MODULE.FORM.REQUIRED' | translate }}</p>
       }
       @if (hasError('max_users', 'min') || hasError('max_users', 'pattern')) {
-      <p class="text-xs text-rose-500">{{ 'COMPANIES_MODULE.FORM.MAX_USERS_INVALID' | translate }}</p>
+      <p class="text-xs text-bad-ink">{{ 'COMPANIES_MODULE.FORM.MAX_USERS_INVALID' | translate }}</p>
       }
       @if (hasError('max_users', 'server')) {
-      <p class="text-xs text-rose-500" data-testid="max-users-server-error">{{ companyService.form.get('max_users')?.getError('server') }}</p>
+      <p class="text-xs text-bad-ink" data-testid="max-users-server-error">{{ companyService.form.get('max_users')?.getError('server') }}</p>
       }
     </div>
 
     <!-- Marcos que Monkey ofrece (D50). Solo se contratan los disponibles (hoy SOC 2); el resto, «próximamente». -->
     <div class="flex flex-col gap-2" data-testid="frameworks">
-      <label>{{ 'COMPANIES_MODULE.FORM.FRAMEWORKS' | translate }} <span class="text-red-500">*</span></label>
+      <span>{{ 'COMPANIES_MODULE.FORM.FRAMEWORKS' | translate }} <span class="text-bad-ink">*</span></span>
       <div class="grid gap-3 md:grid-cols-2">
       @for (f of frameworks; track f.code) {
       <button type="button" (click)="toggleFramework(f)" [attr.aria-pressed]="isSelected(f.code)"
         [disabled]="!isAvailable(f)"
-        class="flex items-start gap-3 rounded-xl border p-3.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-60"
-        [ngClass]="isSelected(f.code)
-          ? 'border-brand-500 bg-brand-50 dark:border-brand-400 dark:bg-brand-500/10'
-          : 'border-gray-200 bg-white hover:border-brand-300 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600'">
-        <span class="material-symbols-outlined mt-0.5 text-xl" [ngClass]="isSelected(f.code) ? 'text-brand-500 dark:text-brand-400' : 'text-gray-400'">
+        class="flex items-start gap-3 rounded-control border p-3.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-action/40 disabled:cursor-not-allowed disabled:bg-tint disabled:text-ink-faint"
+        [ngClass]="isSelected(f.code) ? 'border-action bg-tint' : 'border-line bg-surface hover:bg-tint'">
+        <span class="material-symbols-outlined mt-0.5 text-xl" [ngClass]="isSelected(f.code) ? 'text-action' : 'text-ink-faint'" aria-hidden="true">
           {{ !isAvailable(f) ? 'lock' : isSelected(f.code) ? 'check_circle' : 'radio_button_unchecked' }}
         </span>
         <span class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-900 dark:text-white">
+          <span class="text-sm font-medium text-ink">
             {{ f.label }}
             @if (!isAvailable(f)) {
-            <span class="ml-1 text-xs font-normal text-gray-500 dark:text-gray-400">
+            <span class="ml-1 text-xs font-normal text-ink-muted">
               ({{ 'COMPANIES_MODULE.FORM.FRAMEWORK_SOON' | translate }})
             </span>
             }
           </span>
-          <span class="text-xs text-gray-500 dark:text-gray-400">{{ f.description }}</span>
+          <span class="text-xs text-ink-muted">{{ f.description }}</span>
         </span>
       </button>
       }
       </div>
       @if (frameworksFailed) {
-      <p class="text-xs text-rose-500">
+      <p class="text-xs text-bad-ink">
         {{ 'COMPANIES_MODULE.FORM.FRAMEWORKS_ERROR' | translate }}
         <button type="button" class="underline" (click)="loadFrameworks()">{{ 'COMPANIES_MODULE.FORM.RETRY' | translate }}</button>
       </p>
       } @else {
-      <p class="text-xs text-gray-500 dark:text-gray-400">{{ 'COMPANIES_MODULE.FORM.FRAMEWORKS_HINT' | translate }}</p>
+      <p class="text-xs text-ink-muted">{{ 'COMPANIES_MODULE.FORM.FRAMEWORKS_HINT' | translate }}</p>
       }
     </div>
 
-    <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-gray-200 bg-white p-3.5 transition hover:border-brand-300 dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600">
-      <input type="checkbox" formControlName="requires_dedicated_database" class="mt-1 h-4 w-4 accent-brand-500" />
+    <label class="flex cursor-pointer items-start gap-3 rounded-control border border-line bg-surface p-3.5 transition hover:bg-tint">
+      <input type="checkbox" formControlName="requires_dedicated_database" class="mt-1 h-4 w-4 accent-action" />
       <span class="flex flex-col gap-1">
-        <span class="text-sm font-medium text-gray-900 dark:text-white">
+        <span class="text-sm font-medium text-ink">
           {{ 'COMPANIES_MODULE.FORM.DEDICATED' | translate }}
         </span>
-        <span class="text-xs text-gray-500 dark:text-gray-400">
+        <span class="text-xs text-ink-muted">
           {{ 'COMPANIES_MODULE.FORM.DEDICATED_HINT' | translate }}
         </span>
       </span>
     </label>
 
     @if (requiresDedicated) {
-    <div class="flex items-start gap-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 p-3 text-amber-800 dark:text-amber-300">
-      <span class="material-symbols-outlined text-base">warning</span>
+    <div class="mk-surface-state-warn p-3 text-ink" role="note">
       <p class="text-xs">{{ 'COMPANIES_MODULE.FORM.DEDICATED_WARNING' | translate }}</p>
     </div>
     }

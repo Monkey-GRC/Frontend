@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { Company } from '@features/companies/models/company.model';
-import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
+import { Company } from '@shared/models/company.model';
 
 // D103 · Cambiar el cupo de usuarios de una empresa. El botón de guardar vive en el diálogo; esta pieza expone `canSubmit` y `onSubmit()` como el resto de los formularios de
 // Monkey Admin. La vista hace la llamada y, si el servidor rechaza el cupo (409 MAX_USERS_BELOW_CURRENT), pasa el motivo en `error` para mostrarlo aquí dentro.
 @Component({
   selector: 'app-company-quota-form',
-  imports: [ReactiveFormsModule, TranslateModule, TextBoxModule],
+  imports: [ReactiveFormsModule, TranslateModule],
   templateUrl: './company-quota-form.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -57,11 +56,17 @@ export class CompanyQuotaForm implements OnInit {
     return this.form.valid && this.value !== null && !this.belowCurrent && this.value !== this.company()?.max_users;
   }
 
+  // Con datos escritos sin enviar: el modal que lo contiene no se cierra solo con Esc ni con un clic fuera.
+  get dirty(): boolean {
+    return this.form.dirty;
+  }
+
   onSubmit(): void {
-    if (!this.canSubmit) {
+    const value = this.value;
+    if (!this.canSubmit || value === null) {
       this.form.markAllAsTouched();
       return;
     }
-    this.approved.emit(this.value!);
+    this.approved.emit(value);
   }
 }

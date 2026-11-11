@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges, input, output } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges, input, output, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { ApiError, CauseDetail, ControlDetail, EvidenceTemplateRow, FormKind, RiskDetail, TestDetail } from '@features/catalog/models/catalog.model';
@@ -7,6 +7,9 @@ import { CatalogOptionsService } from '@features/catalog/services/catalog-option
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { ItemPicker, Pick, PickKind } from '@features/catalog/presentation/components/item-picker/item-picker';
 import { OptionName } from '@features/catalog/models/catalog.model';
+import { SideDrawer } from '@shared/presentation/components/side-drawer/side-drawer';
+import { StatusIndicator } from '@shared/presentation/components/status-indicator/status-indicator';
+import { targetValue, targetChecked } from '@shared/presentation/utils/event-target';
 
 export type DetailKind = 'controls' | 'risks' | 'causes' | 'tests' | 'evidence-templates';
 type Detail = ControlDetail | RiskDetail | CauseDetail | TestDetail | EvidenceTemplateRow;
@@ -28,11 +31,16 @@ export interface EditRequest {
 // reactiva, y se vincula o desvincula con lo relacionado (contracts/modules/monkey-admin-catalog.md). Dar de baja no borra; desvincular borra solo la relación.
 @Component({
   selector: 'app-catalog-detail',
-  imports: [CommonModule, TranslateModule, ItemPicker],
+  imports: [NgTemplateOutlet, TranslateModule, ItemPicker, SideDrawer, StatusIndicator],
   templateUrl: './catalog-detail.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class CatalogDetail implements OnChanges {
+  private readonly catalog = inject(CatalogService);
+  readonly options = inject(CatalogOptionsService);
+
+  protected readonly targetValue = targetValue;
+  protected readonly targetChecked = targetChecked;
   readonly kind = input.required<DetailKind>();
   readonly itemId = input.required<string>();
   readonly closed = output<void>();
@@ -51,11 +59,6 @@ export class CatalogDetail implements OnChanges {
   confirmingDeactivate = false;
   busy = false;
   error: string | null = null;
-
-  constructor(
-    private readonly catalog: CatalogService,
-    readonly options: CatalogOptionsService,
-  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['kind'] || changes['itemId']) {
@@ -216,6 +219,19 @@ export class CatalogDetail implements OnChanges {
   }
 
   /** Los campos del comité de una prueba, en el orden en que se leen. Las listas (`step_by_step`…) salen como lista. */
+  // The template reads the detail by kind: each `@case` gets the type that `kind()` promises (never `$any`).
+  protected asControl(d: Detail): ControlDetail { return d as ControlDetail; }
+  protected asRisk(d: Detail): RiskDetail { return d as RiskDetail; }
+  protected asCause(d: Detail): CauseDetail { return d as CauseDetail; }
+  protected asEvidenceTemplate(d: Detail): EvidenceTemplateRow { return d as EvidenceTemplateRow; }
+  protected asTest(d: Detail): TestDetail { return d as TestDetail; }
+
+  /** The heading of the detail: risks, causes and controls carry a `name`; the rest only a `description`. */
+  protected titleOf(d: Detail): string {
+    const named = d as { name?: string; description?: string };
+    return named.name ?? named.description ?? '';
+  }
+
   committeeFields(test: TestDetail): { key: string; value: unknown; list: boolean }[] {
     return Object.entries(test.committee).map(([key, value]) => ({ key, value, list: Array.isArray(value) }));
   }

@@ -1,95 +1,76 @@
-<div class="fixed inset-0 z-[99999] flex justify-end" role="dialog" aria-modal="true" [attr.aria-label]="('CATALOG_MODULE.FORM.' + (mode() === 'create' ? 'CREATE' : 'EDIT') + '.' + kind().toUpperCase()) | translate">
-  <button type="button" class="absolute inset-0 bg-black/40" [attr.aria-label]="'CATALOG_MODULE.FORM.CANCEL' | translate" (click)="cancelled.emit()"></button>
+<app-side-drawer [open]="true" [titleKey]="'CATALOG_MODULE.FORM.' + (mode() === 'create' ? 'CREATE' : 'EDIT') + '.' + kind().toUpperCase()" size="lg"
+  [dismissible]="!sending" [guarded]="changed" (closed)="cancelled.emit()">
 
-  <form class="relative flex h-full w-full max-w-2xl flex-col overflow-y-auto bg-white p-6 shadow-xl dark:bg-gray-900" data-form (submit)="$event.preventDefault(); save()" novalidate>
-    <div class="mb-4 flex items-start justify-between gap-4">
-      <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ ('CATALOG_MODULE.FORM.' + (mode() === 'create' ? 'CREATE' : 'EDIT') + '.' + kind().toUpperCase()) | translate }}</h2>
-      <button type="button" (click)="cancelled.emit()" class="rounded p-1 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10" [attr.aria-label]="'CATALOG_MODULE.FORM.CANCEL' | translate">
-        <span class="material-symbols-outlined" aria-hidden="true">close</span>
-      </button>
-    </div>
-
+  <form id="catalog-form" class="flex flex-col gap-4" data-form (submit)="$event.preventDefault(); save()" novalidate>
     @if (banner) {
-    <div class="mb-4 flex items-start gap-2 rounded-xl bg-red-50 p-3.5 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-200 dark:border-red-800" role="alert" data-banner>
-      <span class="material-symbols-outlined text-base" aria-hidden="true">error</span><span>{{ banner }}</span>
+    <div class="mk-surface-state-bad p-3 text-sm text-ink" role="alert" data-banner>
+      <span>{{ banner }}</span>
     </div>
     }
 
-    <div class="flex flex-col gap-4">
-      @for (f of mainFields; track f.key) {
-      <label class="flex flex-col gap-1 text-sm font-medium text-gray-800 dark:text-gray-100">
-        <span>{{ 'CATALOG_MODULE.FORM.FIELD.' + f.key.toUpperCase() | translate }}@if (f.required) { <span class="text-red-600" aria-hidden="true">*</span> }</span>
-        @switch (f.control) {
-        @case ('textarea') {
-        <textarea rows="4" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, $any($event.target).value)" [disabled]="sending"
-          class="rounded-lg border bg-white px-3 py-2 text-sm font-normal text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:bg-gray-800 dark:text-white"
-          [ngClass]="errors[f.key] ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'"></textarea>
-        }
-        @case ('lines') {
-        <textarea rows="4" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, $any($event.target).value)" [disabled]="sending" [placeholder]="'CATALOG_MODULE.FORM.LINES_HINT' | translate"
-          class="rounded-lg border bg-white px-3 py-2 text-sm font-normal text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:bg-gray-800 dark:text-white"
-          [ngClass]="errors[f.key] ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'"></textarea>
-        }
-        @case ('select') {
-        <select [attr.data-field]="f.key" (change)="set(f.key, $any($event.target).value)" [disabled]="sending"
-          class="h-10 rounded-lg border bg-white px-2 text-sm font-normal text-gray-900 dark:bg-gray-800 dark:text-white"
-          [ngClass]="errors[f.key] ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'">
-          @if (!f.initial) { <option value="" [selected]="!values[f.key]">{{ 'CATALOG_MODULE.FORM.CHOOSE' | translate }}</option> }
-          @for (o of optionsOf(f); track o.value) {
-          <option [value]="o.value" [selected]="values[f.key] === o.value">{{ o.label }}</option>
-          }
-        </select>
-        }
-        @default {
-        <input type="text" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, $any($event.target).value)" [disabled]="sending"
-          [placeholder]="(f.key === 'code' && !f.required ? 'CATALOG_MODULE.FORM.CODE_AUTO' : '') | translate"
-          class="h-10 rounded-lg border bg-white px-3 text-sm font-normal text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:bg-gray-800 dark:text-white"
-          [ngClass]="errors[f.key] ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'" />
-        }
-        }
-        @if (errors[f.key]) { <span class="text-xs font-normal text-red-600" [attr.data-error]="f.key">{{ errors[f.key] }}</span> }
-      </label>
+    @for (f of mainFields; track f.key) {
+    <label [attr.for]="'catalog-field-' + f.key" class="flex flex-col gap-1 text-sm font-medium text-ink">
+      <span>{{ 'CATALOG_MODULE.FORM.FIELD.' + f.key.toUpperCase() | translate }}@if (f.required) { <span class="text-bad-ink" aria-hidden="true">*</span> }</span>
+      @switch (f.control) {
+      @case ('textarea') {
+      <textarea rows="4" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [disabled]="sending"
+        class="mk-input !h-auto py-2 font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null"></textarea>
       }
-
-      @if (committeeFields.length) {
-      <section class="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
-        <button type="button" (click)="committeeOpen = !committeeOpen" [attr.aria-expanded]="committeeOpen" data-committee-toggle
-          class="flex w-full items-center justify-between text-left text-sm font-semibold text-gray-900 dark:text-white">
-          {{ 'CATALOG_MODULE.FORM.COMMITTEE' | translate }}
-          <span class="material-symbols-outlined" aria-hidden="true">{{ committeeOpen ? 'expand_less' : 'expand_more' }}</span>
-        </button>
-        <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">{{ 'CATALOG_MODULE.FORM.COMMITTEE_HINT' | translate }}</p>
-        @if (committeeOpen) {
-        <div class="mt-3 flex flex-col gap-4">
-          @for (f of committeeFields; track f.key) {
-          <label class="flex flex-col gap-1 text-sm font-medium text-gray-800 dark:text-gray-100">
-            {{ 'CATALOG_MODULE.TEST_FIELD.' + f.key.toUpperCase() | translate }}
-            @if (f.control === 'text') {
-            <input type="text" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, $any($event.target).value)" [disabled]="sending"
-              class="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm font-normal text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white" />
-            } @else {
-            <textarea rows="3" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, $any($event.target).value)" [disabled]="sending"
-              [placeholder]="f.control === 'lines' ? ('CATALOG_MODULE.FORM.LINES_HINT' | translate) : ''"
-              class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-normal text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"></textarea>
-            }
-            @if (errors[f.key]) { <span class="text-xs font-normal text-red-600" [attr.data-error]="f.key">{{ errors[f.key] }}</span> }
-          </label>
-          }
-        </div>
-        }
-      </section>
+      @case ('lines') {
+      <textarea rows="4" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [disabled]="sending" [placeholder]="'CATALOG_MODULE.FORM.LINES_HINT' | translate"
+        class="mk-input !h-auto py-2 font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null"></textarea>
       }
-    </div>
+      @case ('select') {
+      <select [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" (change)="set(f.key, targetValue($event))" [disabled]="sending"
+        class="mk-input font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null">
+        @if (!f.initial) { <option value="" [selected]="!values[f.key]">{{ 'CATALOG_MODULE.FORM.CHOOSE' | translate }}</option> }
+        @for (o of optionsOf(f); track o.value) {
+        <option [value]="o.value" [selected]="values[f.key] === o.value">{{ o.label }}</option>
+        }
+      </select>
+      }
+      @default {
+      <input type="text" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [disabled]="sending"
+        [placeholder]="(f.key === 'code' && !f.required ? 'CATALOG_MODULE.FORM.CODE_AUTO' : '') | translate"
+        class="mk-input font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null" />
+      }
+      }
+      @if (errors[f.key]) { <span class="text-xs font-normal text-bad-ink" [attr.data-error]="f.key">{{ errors[f.key] }}</span> }
+    </label>
+    }
 
-    <div class="mt-4 flex items-center justify-end gap-3 border-t border-gray-200 pt-4 dark:border-gray-700">
-      <button type="button" (click)="cancelled.emit()" [disabled]="sending" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-white dark:hover:bg-white/10">
-        {{ 'CATALOG_MODULE.FORM.CANCEL' | translate }}
+    @if (committeeFields.length) {
+    <section class="border-t border-line pt-3">
+      <button type="button" (click)="committeeOpen = !committeeOpen" [attr.aria-expanded]="committeeOpen" data-committee-toggle
+        class="flex w-full items-center justify-between text-left text-sm font-semibold text-ink">
+        {{ 'CATALOG_MODULE.FORM.COMMITTEE' | translate }}
+        <span class="material-symbols-rounded text-ink-muted" aria-hidden="true">{{ committeeOpen ? 'expand_less' : 'expand_more' }}</span>
       </button>
-      <button type="submit" data-save [disabled]="sending || (mode() === 'edit' && !changed)"
-        class="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50">
-        @if (sending) { <span class="material-symbols-outlined animate-spin text-base" aria-hidden="true">progress_activity</span> }
-        {{ (mode() === 'create' ? 'CATALOG_MODULE.FORM.CREATE_SUBMIT' : 'CATALOG_MODULE.FORM.SAVE') | translate }}
-      </button>
-    </div>
+      <p class="mt-1 text-xs text-ink-muted">{{ 'CATALOG_MODULE.FORM.COMMITTEE_HINT' | translate }}</p>
+      @if (committeeOpen) {
+      <div class="mt-3 flex flex-col gap-4">
+        @for (f of committeeFields; track f.key) {
+        <label [attr.for]="'catalog-field-' + f.key" class="flex flex-col gap-1 text-sm font-medium text-ink">
+          {{ 'CATALOG_MODULE.TEST_FIELD.' + f.key.toUpperCase() | translate }}
+          @if (f.control === 'text') {
+          <input type="text" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [disabled]="sending"
+            class="mk-input font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null" />
+          } @else {
+          <textarea rows="3" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [disabled]="sending"
+            [placeholder]="f.control === 'lines' ? ('CATALOG_MODULE.FORM.LINES_HINT' | translate) : ''"
+            class="mk-input !h-auto py-2 font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null"></textarea>
+          }
+          @if (errors[f.key]) { <span class="text-xs font-normal text-bad-ink" [attr.data-error]="f.key">{{ errors[f.key] }}</span> }
+        </label>
+        }
+      </div>
+      }
+    </section>
+    }
   </form>
-</div>
+
+  <button actions type="button" (click)="cancelled.emit()" [disabled]="sending" class="mk-btn-secondary">{{ 'CATALOG_MODULE.FORM.CANCEL' | translate }}</button>
+  <button actions type="submit" form="catalog-form" data-save [disabled]="sending || (mode() === 'edit' && !changed)" class="mk-btn">
+    {{ (mode() === 'create' ? 'CATALOG_MODULE.FORM.CREATE_SUBMIT' : 'CATALOG_MODULE.FORM.SAVE') | translate }}
+  </button>
+</app-side-drawer>

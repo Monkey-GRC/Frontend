@@ -60,7 +60,7 @@ describe('Catalog (Monkey Admin)', () => {
 
     it('asks for the controls without a requirement (CPL-1) without a framework', () => {
         setup();
-        choose('[data-scope]', 'unlinked');
+        choose('[data-scope] select', 'unlinked');
         const last = api.controls.calls.mostRecent().args[0];
         expect(last.unlinked).toBeTrue();
         expect(last.framework_id).toBeUndefined();
@@ -68,7 +68,7 @@ describe('Catalog (Monkey Admin)', () => {
 
     it('asks for the whole catalog without a framework or a link filter', () => {
         setup();
-        choose('[data-scope]', 'all');
+        choose('[data-scope] select', 'all');
         const last = api.controls.calls.mostRecent().args[0];
         expect(last.framework_id).toBeUndefined();
         expect(last.unlinked).toBeUndefined();
@@ -86,7 +86,7 @@ describe('Catalog (Monkey Admin)', () => {
     it('waits for the user to stop typing before searching, and goes back to the first page', fakeAsync(() => {
         setup();
         api.controls.calls.reset();
-        const input = el().querySelector<HTMLInputElement>('[data-search]')!;
+        const input = el().querySelector<HTMLInputElement>('[data-table-search]')!;
         for (const text of ['c', 'ca', 'cap']) {
             input.value = text;
             input.dispatchEvent(new Event('input'));
@@ -100,7 +100,7 @@ describe('Catalog (Monkey Admin)', () => {
 
     it('changes the list when another tab is picked, and the risks, causes and tests are not tied to a framework', () => {
         setup();
-        el().querySelector<HTMLButtonElement>('[data-tab="risks"]')!.click();
+        el().querySelector<HTMLButtonElement>('#tab-risks')!.click();
         fixture.detectChanges();
         expect(api.risks).toHaveBeenCalled();
         expect(api.risks.calls.mostRecent().args[0].framework_id).toBeUndefined();
@@ -111,29 +111,29 @@ describe('Catalog (Monkey Admin)', () => {
     it('offers the dimension filter only on the tests', () => {
         setup();
         expect(el().querySelector('[data-dimension]')).toBeNull();
-        el().querySelector<HTMLButtonElement>('[data-tab="tests"]')!.click();
+        el().querySelector<HTMLButtonElement>('#tab-tests')!.click();
         fixture.detectChanges();
-        choose('[data-dimension]', 'server');
+        choose('[data-dimension] select', 'server');
         expect(api.tests.calls.mostRecent().args[0].dimension).toBe('server');
     });
 
     it('sends the state and origin filters, keeping false as a real value', () => {
         setup();
-        choose('[data-state]', 'inactive');
+        choose('[data-state] select', 'inactive');
         expect(api.controls.calls.mostRecent().args[0].is_active).toBeFalse();
-        choose('[data-origin]', 'monkey_admin');
+        choose('[data-origin] select', 'monkey_admin');
         expect(api.controls.calls.mostRecent().args[0].origin).toBe('monkey_admin');
     });
 
     it('opens the detail of a row and closes it', () => {
         setup();
         api.control.and.returnValue(of({ ...CONTROL, description: 'd', source_ref: null, points_of_focus: [], dimensions: [], tests: [], evidence_templates: [], policies: [], causes: [] }) as never);
-        el().querySelector<HTMLElement>('[data-row="c1"]')!.click();
+        el().querySelector<HTMLElement>('tbody tr')!.click();
         fixture.detectChanges();
         expect(api.control).toHaveBeenCalledWith('c1');
         expect(el().querySelector('[data-detail]')).not.toBeNull();
         expect(el().querySelector('[data-unlinked]')).not.toBeNull();
-        el().querySelector<HTMLButtonElement>('[data-close]')!.click();
+        el().querySelector<HTMLButtonElement>('app-catalog-detail button[aria-label="COMMON.CLOSE"]')!.click();
         fixture.detectChanges();
         expect(el().querySelector('[data-detail]')).toBeNull();
     });
@@ -142,9 +142,9 @@ describe('Catalog (Monkey Admin)', () => {
         setup();
         api.evidenceTemplates.and.returnValue(page([{ id: 'e1', code: 'DOC-001', description: 'Acta', dimension: 'policy', origin: 'committee', is_active: true, controls_count: 2 }]));
         api.evidenceTemplate.and.returnValue(of({ id: 'e1', code: 'DOC-001', description: 'Acta', dimension: 'policy', origin: 'committee', is_active: true, controls_count: 2 }) as never);
-        el().querySelector<HTMLButtonElement>('[data-tab="evidence-templates"]')!.click();
+        el().querySelector<HTMLButtonElement>('#tab-evidence-templates')!.click();
         fixture.detectChanges();
-        el().querySelector<HTMLElement>('[data-row="e1"]')!.click();
+        el().querySelector<HTMLElement>('tbody tr')!.click();
         fixture.detectChanges();
         expect(api.evidenceTemplate).toHaveBeenCalledWith('e1');
         expect(el().querySelector('[data-detail]')).not.toBeNull();
@@ -155,7 +155,7 @@ describe('Catalog (Monkey Admin)', () => {
         const label = () => el().querySelector('[data-new]')!.textContent ?? '';
         expect(label()).toContain('CATALOG_MODULE.FORM.NEW.CONTROL');
         for (const [tab, kind] of [['risks', 'RISK'], ['causes', 'CAUSE'], ['tests', 'TEST'], ['evidence-templates', 'TEMPLATE']] as const) {
-            el().querySelector<HTMLButtonElement>(`[data-tab="${tab}"]`)!.click();
+            el().querySelector<HTMLButtonElement>(`#tab-${tab}`)!.click();
             fixture.detectChanges();
             expect(label()).toContain(`CATALOG_MODULE.FORM.NEW.${kind}`);
         }
@@ -181,7 +181,7 @@ describe('Catalog (Monkey Admin)', () => {
         fixture.componentInstance.startEdit({ kind: 'risk', id: 'r1', initial: { name: 'Riesgo' } });
         fixture.detectChanges();
         expect(fixture.componentInstance.form).toEqual({ mode: 'edit', kind: 'risk', id: 'r1', initial: { name: 'Riesgo' } });
-        el().querySelector<HTMLButtonElement>('[data-form] button[type="button"]')!.click();
+        el().querySelector<HTMLButtonElement>('app-catalog-form button.mk-btn-secondary')!.click();
         fixture.detectChanges();
         expect(fixture.componentInstance.form).toBeNull();
     });
@@ -189,10 +189,10 @@ describe('Catalog (Monkey Admin)', () => {
     it('says so when nothing matches, and offers to retry when the catalog cannot be read', () => {
         setup();
         api.controls.and.returnValue(page([]));
-        choose('[data-origin]', 'monkey_admin');
+        choose('[data-origin] select', 'monkey_admin');
         expect(el().querySelector('[data-empty]')).not.toBeNull();
         api.controls.and.returnValue(throwError(() => new Error('down')));
-        choose('[data-origin]', 'committee');
+        choose('[data-origin] select', 'committee');
         expect(el().querySelector('[data-error]')).not.toBeNull();
         api.controls.and.returnValue(page([CONTROL]));
         el().querySelector<HTMLButtonElement>('[data-retry]')!.click();
@@ -204,7 +204,7 @@ describe('Catalog (Monkey Admin)', () => {
     it('goes to the page that was asked for', () => {
         setup();
         api.controls.and.returnValue(page([CONTROL], 60, 3));
-        choose('[data-origin]', 'committee');
+        choose('[data-origin] select', 'committee');
         el().querySelector<HTMLButtonElement>('[data-next]')!.click();
         fixture.detectChanges();
         expect(api.controls.calls.mostRecent().args[0].page).toBe(2);

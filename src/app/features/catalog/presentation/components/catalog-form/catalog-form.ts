@@ -1,10 +1,11 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, input, output, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ApiError, CatalogOption, FormKind } from '@features/catalog/models/catalog.model';
 import { CatalogOptionsService } from '@features/catalog/services/catalog-options.service';
 import { CatalogService } from '@features/catalog/services/catalog.service';
+import { SideDrawer } from '@shared/presentation/components/side-drawer/side-drawer';
 import { CODE_PATTERN, FORM_FIELDS, FieldDef } from './catalog-form.config';
+import { targetValue } from '@shared/presentation/utils/event-target';
 
 type Values = Record<string, string>;
 
@@ -12,11 +13,16 @@ type Values = Record<string, string>;
 // (`catalog-form.config.ts`). Al editar solo se manda lo que cambió. El backend es quien manda: sus errores por campo se muestran junto a cada campo.
 @Component({
   selector: 'app-catalog-form',
-  imports: [CommonModule, TranslateModule],
+  imports: [TranslateModule, SideDrawer],
   templateUrl: './catalog-form.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class CatalogForm implements OnInit {
+  private readonly catalog = inject(CatalogService);
+  private readonly options = inject(CatalogOptionsService);
+  private readonly translate = inject(TranslateService);
+
+  protected readonly targetValue = targetValue;
   readonly kind = input.required<FormKind>();
   readonly mode = input.required<'create' | 'edit'>();
   /** Al editar: el id del elemento y sus valores actuales (tal como los devuelve el detalle). */
@@ -33,12 +39,6 @@ export class CatalogForm implements OnInit {
   banner: string | null = null;
   sending = false;
   committeeOpen = false;
-
-  constructor(
-    private readonly catalog: CatalogService,
-    private readonly options: CatalogOptionsService,
-    private readonly translate: TranslateService,
-  ) {}
 
   ngOnInit(): void {
     for (const field of this.fields) {

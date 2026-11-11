@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
-import { Company } from '@features/companies/models/company.model';
+import { Company } from '@shared/models/company.model';
 import { CompanyQuotaForm } from './company-quota-form';
 
 const company = (over: Partial<Company> = {}) => ({ id: 'co-1', name: 'ACME', max_users: 10, users_count: 4, ...over }) as Company;

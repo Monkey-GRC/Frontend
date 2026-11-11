@@ -3,42 +3,50 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { AccessKeyStatus } from '@features/companies/models/company.model';
-import { AttentionReason, HomeMetrics, KeyBucket, RECENT_DAYS, computeHomeMetrics } from '@features/common/models/home-metrics.model';
+import { AccessKeyStatus, Company } from '@shared/models/company.model';
+import { AttentionItem, AttentionReason, FrameworkCount, HomeMetrics, KeyBucket, RECENT_DAYS, computeHomeMetrics } from '@features/common/models/home-metrics.model';
 import { HomeMetricsService } from '@features/common/services/home-metrics.service';
+import { Card } from '@shared/presentation/components/card/card';
+import { DataTable, TableColumn } from '@shared/presentation/components/data-table/data-table';
+import { TableCell } from '@shared/presentation/components/data-table/data-table';
+import { Donut } from '@shared/presentation/components/donut/donut';
+import { EmptyState } from '@shared/presentation/components/empty-state/empty-state';
 import { PageHeader } from '@shared/presentation/components/page-header/page-header';
+import { Section } from '@shared/presentation/components/section/section';
+import { StatusIndicator, StatusTone } from '@shared/presentation/components/status-indicator/status-indicator';
 
 type Stage = 'loading' | 'error' | 'ready';
 
 interface KeySegment {
     bucket: KeyBucket;
     labelKey: string;
-    icon: string;
-    // Colores validados con el verificador de paletas (claro y oscuro). «Revocada» y «sin clave» van en gris neutro.
+    // Relleno por token: «usada» es estado ok, «vencida» avisa (warn) y el resto es neutro; cada fila lleva su nombre, su cifra y su porcentaje, así que el color no va solo.
     fill: string;
+    tone: StatusTone;
     count: number;
     percent: number;
 }
 
-const KEY_LOOKS: { bucket: KeyBucket; labelKey: string; icon: string; fill: string }[] = [
-    { bucket: 'used', labelKey: 'HOME.KEYS.USED', icon: 'check_circle', fill: 'bg-[#15803d] dark:bg-[#2aa05a]' },
-    { bucket: 'pending', labelKey: 'HOME.KEYS.PENDING', icon: 'schedule', fill: 'bg-[#046cc4] dark:bg-[#3b82f6]' },
-    { bucket: 'expired', labelKey: 'HOME.KEYS.EXPIRED', icon: 'timer_off', fill: 'bg-[#d97706] dark:bg-[#c4800c]' },
-    { bucket: 'revoked', labelKey: 'HOME.KEYS.REVOKED', icon: 'block', fill: 'bg-gray-400 dark:bg-gray-500' },
-    { bucket: 'none', labelKey: 'HOME.KEYS.NONE', icon: 'remove_circle_outline', fill: 'bg-gray-300 dark:bg-gray-600' },
+const KEY_LOOKS: { bucket: KeyBucket; labelKey: string; fill: string; tone: StatusTone }[] = [
+    { bucket: 'used', labelKey: 'HOME.KEYS.USED', fill: 'bg-ok', tone: 'ok' },
+    { bucket: 'pending', labelKey: 'HOME.KEYS.PENDING', fill: 'bg-neutral', tone: 'neutral' },
+    { bucket: 'expired', labelKey: 'HOME.KEYS.EXPIRED', fill: 'bg-warn', tone: 'warn' },
+    { bucket: 'revoked', labelKey: 'HOME.KEYS.REVOKED', fill: 'bg-ink-faint', tone: 'neutral' },
+    { bucket: 'none', labelKey: 'HOME.KEYS.NONE', fill: 'bg-tint-strong', tone: 'neutral' },
 ];
 
-const ATTENTION_ICON: Record<AttentionReason, { icon: string; tone: string }> = {
-    key_expired: { icon: 'timer_off', tone: 'text-[#b45309] dark:text-[#e0a030]' },
-    onboarding_pending: { icon: 'hourglass_empty', tone: 'text-[#046cc4] dark:text-[#5a9efe]' },
-    suspended: { icon: 'pause_circle', tone: 'text-gray-600 dark:text-gray-300' },
+const ATTENTION_TONE: Record<AttentionReason, StatusTone> = { key_expired: 'warn', onboarding_pending: 'neutral', suspended: 'neutral' };
+const ATTENTION_LABEL: Record<AttentionReason, string> = {
+    key_expired: 'HOME.ATTENTION.KEY_EXPIRED',
+    onboarding_pending: 'HOME.ATTENTION.ONBOARDING_PENDING',
+    suspended: 'HOME.ATTENTION.SUSPENDED',
 };
 
 // El home de Monkey Admin: un resumen de las empresas con lo que ya devuelve el backend (`GET /v1/companies`). Las tarjetas de arriba dan las
 // cifras que se leen de un vistazo; debajo, el estado de las claves de acceso, lo que pide atención, las últimas altas y los marcos contratados.
 @Component({
     selector: 'app-home',
-    imports: [PageHeader, TranslateModule, RouterLink],
+    imports: [PageHeader, TranslateModule, RouterLink, Card, Section, Donut, EmptyState, DataTable, TableCell, StatusIndicator],
     templateUrl: './home.html',
     styleUrl: './home.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,18 +65,37 @@ export class Home implements OnInit {
         initialValue: this.translate.currentLang || localStorage.getItem('lang') || 'es',
     });
 
-    readonly attentionIcon = ATTENTION_ICON;
+    readonly keyColumns: TableColumn<KeySegment>[] = [
+        { key: 'label', headerKey: 'HOME.KEYS.TITLE' },
+        { key: 'count', headerKey: 'HOME.KEYS.TITLE', align: 'right' },
+        { key: 'percent', headerKey: 'HOME.KEYS.TITLE', align: 'right', class: 'w-16' },
+    ];
+    readonly attentionColumns: TableColumn<AttentionItem>[] = [{ key: 'company', headerKey: 'HOME.ATTENTION.TITLE' }];
+    readonly recentColumns: TableColumn<Company>[] = [
+        { key: 'name', headerKey: 'HOME.RECENT.COL_COMPANY' },
+        { key: 'date', headerKey: 'HOME.RECENT.COL_DATE' },
+        { key: 'key', headerKey: 'HOME.RECENT.COL_KEY' },
+    ];
+    readonly frameworkColumns: TableColumn<FrameworkCount>[] = [
+        { key: 'name', headerKey: 'HOME.FRAMEWORKS.TITLE' },
+        { key: 'count', headerKey: 'HOME.FRAMEWORKS.TITLE', align: 'right' },
+    ];
+    readonly keyRowKey = (s: KeySegment) => s.bucket;
+    readonly attentionRowKey = (item: AttentionItem) => item.company.id;
+    readonly recentRowKey = (c: Company) => c.id;
+    readonly frameworkRowKey = (f: FrameworkCount) => f.code;
     readonly recentDays = RECENT_DAYS;
     // Las cifras son parciales si hay más empresas que las que se alcanzaron a leer.
-    readonly partial = computed(() => !!this.metrics() && this.total() > this.metrics()!.total);
+    readonly partial = computed(() => {
+      const metrics = this.metrics();
+      return !!metrics && this.total() > metrics.total;
+    });
 
     readonly keySegments = computed<KeySegment[]>(() => {
         const m = this.metrics();
         if (!m || m.total === 0) return [];
         return KEY_LOOKS.map((look) => ({ ...look, count: m.keys[look.bucket], percent: Math.round((m.keys[look.bucket] / m.total) * 100) })).filter((s) => s.count > 0);
     });
-
-    readonly maxFramework = computed(() => Math.max(1, ...(this.metrics()?.frameworks ?? []).map((f) => f.count)));
 
     ngOnInit(): void {
         this.load();
@@ -87,16 +114,21 @@ export class Home implements OnInit {
         });
     }
 
-    percent(part: number, whole: number): number {
-        return whole > 0 ? (part / whole) * 100 : 0;
+    toneOf(reason: AttentionReason): StatusTone {
+        return ATTENTION_TONE[reason];
     }
 
-    keyStatusLabel(status: AccessKeyStatus | null): string {
-        return KEY_LOOKS.find((l) => l.bucket === (status ?? 'none'))!.labelKey;
+    labelOf(reason: AttentionReason): string {
+        return ATTENTION_LABEL[reason];
+    }
+
+    // Parte de un todo como porcentaje entero (truncado, como lo entrega el backend en el resto del producto).
+    share(part: number, whole: number): number {
+        return whole > 0 ? Math.floor((part / whole) * 100) : 0;
     }
 
     keyStatusLook(status: AccessKeyStatus | null) {
-        return KEY_LOOKS.find((l) => l.bucket === (status ?? 'none'))!;
+        return KEY_LOOKS.find((l) => l.bucket === (status ?? 'none')) ?? KEY_LOOKS[KEY_LOOKS.length - 1];
     }
 
     date(value: string): string {

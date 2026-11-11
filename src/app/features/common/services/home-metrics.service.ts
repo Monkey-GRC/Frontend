@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map, switchMap, of } from 'rxjs';
 import { environment } from '@environments/environment';
-import { Company, Paginated } from '@features/companies/models/company.model';
+import { Company, Paginated } from '@shared/models/company.model';
 import { SuccessResponse } from '@shared/models/api-response.model';
 
 const PAGE_SIZE = 100; // el máximo que admite el backend

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Company, MAX_USERS_BELOW_CURRENT, MaxUsersBelowCurrent, RegisteredCompany } from '@features/companies/models/company.model';
+import { Company, MAX_USERS_BELOW_CURRENT, MaxUsersBelowCurrent, RegisteredCompany } from '@shared/models/company.model';
 import { CompanyQuotaForm } from '@features/companies/presentation/components/company-quota-form/company-quota-form';
 import { CompanyService } from '@features/companies/services/company.service';
 import { AccessKeySent } from '@features/companies/presentation/components/access-key-sent/access-key-sent';
@@ -10,10 +10,11 @@ import { CompanyForm } from '@features/companies/presentation/components/company
 import { CompanyReactivateForm, ReactivateDetails } from '@features/companies/presentation/components/company-reactivate-form/company-reactivate-form';
 import { CompanyList } from '@features/companies/presentation/components/company-list/company-list';
 import { SecondFactorAnswer, SecondFactorDialog } from '@shared/presentation/components/second-factor-dialog/second-factor-dialog';
-import { DialogComponent } from '@shared/presentation/components/dialog/dialog';
-import { LoaderComponent } from '@shared/presentation/components/loader/loader.component';
+import { unwrapData } from '@shared/domain/utils/unwrap-response';
+import { Modal } from '@shared/presentation/components/modal/modal';
+import { LoadingSpinner } from '@shared/presentation/components/loading-spinner/loading-spinner';
 import { finalize } from 'rxjs';
-import { ToastService } from '@shared/services/toast.service';
+import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
 
 @Component({
   selector: 'app-companies',
@@ -27,13 +28,17 @@ import { ToastService } from '@shared/services/toast.service';
     CompanyQuotaForm,
     SecondFactorDialog,
     AccessKeySent,
-    DialogComponent,
-    LoaderComponent,
+    Modal,
+    LoadingSpinner,
   ],
   templateUrl: './companies.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class Companies implements OnInit {
+  companyService = inject(CompanyService);
+  private toast = inject(ToastService);
+  private translate = inject(TranslateService);
+
   isLoading = false;
   isFormVisible = false;
   // La empresa recién registrada, mientras se dice si su clave salió por correo (D99). La clave no se muestra
@@ -53,19 +58,16 @@ export class Companies implements OnInit {
   @ViewChild(CompanyQuotaForm) quotaForm?: CompanyQuotaForm;
   @ViewChild(CompanyForm) companyForm?: CompanyForm;
   // D97: tras aprobar el formulario se pide el código de seguridad; aquí queda lo aprobado mientras se escribe.
-  stepUp: { kind: 'archive' | 'reactivate'; company: Company; archive?: ArchiveDetails; reactivate?: ReactivateDetails } | null = null;
+  stepUp:
+    | { kind: 'archive'; company: Company; archive: ArchiveDetails }
+    | { kind: 'reactivate'; company: Company; reactivate: ReactivateDetails }
+    | null = null;
   stepUpSending = false;
   // Lo que dijo el servidor si rechazó el código (se muestra dentro del modal, que sigue abierto).
   stepUpError: string | null = null;
 
   @ViewChild(CompanyArchiveForm) archiveForm?: CompanyArchiveForm;
   @ViewChild(CompanyReactivateForm) reactivateForm?: CompanyReactivateForm;
-
-  constructor(
-    public companyService: CompanyService,
-    private toast: ToastService,
-    private translate: TranslateService,
-  ) {}
 
   ngOnInit(): void {
     this.readCompanies(1);
@@ -95,9 +97,9 @@ export class Companies implements OnInit {
     const company = this.registered;
     if (!company || this.resendingKey) return;
     this.resendingKey = true;
-    this.companyService.regenerateAccessKey(company.id).pipe(finalize(() => (this.resendingKey = false))).subscribe({
-      next: (resp) => {
-        this.registered = { ...company, access_key: resp.data! };
+    this.companyService.regenerateAccessKey(company.id).pipe(unwrapData(), finalize(() => (this.resendingKey = false))).subscribe({
+      next: (accessKey) => {
+        this.registered = { ...company, access_key: accessKey };
         this.readCompanies(1);
       },
       error: (err: Error) => this.toast.showError(this.translate.instant('COMPANIES_MODULE.KEY.RESEND_ERROR_TITLE'), err.message, 6000),
@@ -108,9 +110,9 @@ export class Companies implements OnInit {
   onResendKey(company: Company) {
     if (this.resendingKey) return;
     this.resendingKey = true;
-    this.companyService.regenerateAccessKey(company.id).pipe(finalize(() => (this.resendingKey = false))).subscribe({
-      next: (resp) => {
-        const ok = resp.data!.delivery_status === 'sent';
+    this.companyService.regenerateAccessKey(company.id).pipe(unwrapData(), finalize(() => (this.resendingKey = false))).subscribe({
+      next: (key) => {
+        const ok = key.delivery_status === 'sent';
         const show = ok ? this.toast.showSuccess.bind(this.toast) : this.toast.showError.bind(this.toast);
         show(
           this.translate.instant(ok ? 'COMPANIES_MODULE.KEY.RESEND_SUCCESS_TITLE' : 'COMPANIES_MODULE.KEY.RESEND_FAILED_TITLE'),
@@ -164,13 +166,17 @@ export class Companies implements OnInit {
   }
 
   onArchiveApproved(details: ArchiveDetails) {
-    this.stepUp = { kind: 'archive', company: this.archiving!, archive: details };
+    const company = this.archiving;
+    if (!company) return;
+    this.stepUp = { kind: 'archive', company, archive: details };
     this.archiving = null;
     this.stepUpError = null;
   }
 
   onReactivateApproved(details: ReactivateDetails) {
-    this.stepUp = { kind: 'reactivate', company: this.reactivating!, reactivate: details };
+    const company = this.reactivating;
+    if (!company) return;
+    this.stepUp = { kind: 'reactivate', company, reactivate: details };
     this.reactivating = null;
     this.stepUpError = null;
   }
@@ -183,17 +189,17 @@ export class Companies implements OnInit {
     const key = pending.kind === 'archive' ? 'ARCHIVE' : 'REACTIVATE';
     const request =
       pending.kind === 'archive'
-        ? this.companyService.archiveCompany(pending.company.id, { ...pending.archive!, totp_code: code })
-        : this.companyService.reactivateCompany(pending.company.id, { ...pending.reactivate!, totp_code: code });
+        ? this.companyService.archiveCompany(pending.company.id, { ...pending.archive, totp_code: code })
+        : this.companyService.reactivateCompany(pending.company.id, { ...pending.reactivate, totp_code: code });
     this.stepUpSending = true;
     this.stepUpError = null;
-    request.pipe(finalize(() => (this.stepUpSending = false))).subscribe({
-      next: (resp) => {
+    request.pipe(unwrapData(), finalize(() => (this.stepUpSending = false))).subscribe({
+      next: (archived) => {
         this.toast.showSuccess(
           this.translate.instant(`COMPANIES_MODULE.${key}.SUCCESS_TITLE`),
           this.translate.instant(`COMPANIES_MODULE.${key}.SUCCESS_MESSAGE`, {
-            name: resp.data!.name,
-            date: resp.data!.archive_until ? new Date(resp.data!.archive_until).toLocaleDateString() : '',
+            name: archived.name,
+            date: archived.archive_until ? new Date(archived.archive_until).toLocaleDateString() : '',
           }),
         );
         this.closeStepUp();
@@ -212,9 +218,8 @@ export class Companies implements OnInit {
 
   readCompanies(page: number) {
     this.isLoading = this.companyService.companies.length === 0;
-    this.companyService.readCompanies(page).subscribe({
-      next: (resp) => {
-        const data = resp.data!;
+    this.companyService.readCompanies(page).pipe(unwrapData()).subscribe({
+      next: (data) => {
         this.companyService.companies = data.items;
         this.companyService.page = data.page;
         this.companyService.total = data.total;

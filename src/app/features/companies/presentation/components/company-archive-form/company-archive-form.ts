@@ -8,8 +8,7 @@ import {
   DEFAULT_RETENTION_DAYS,
   DeactivationReason,
   MIN_RETENTION_DAYS,
-} from '@features/companies/models/company.model';
-import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
+} from '@shared/models/company.model';
 
 export interface ArchiveDetails {
   confirm_name: string;
@@ -24,7 +23,7 @@ const DAY_MS = 86_400_000;
 // diálogo; esta pieza expone `canSubmit` y `onSubmit()` como el resto de los formularios de Monkey Admin.
 @Component({
   selector: 'app-company-archive-form',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, TextBoxModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './company-archive-form.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -75,6 +74,11 @@ export class CompanyArchiveForm implements OnInit {
   hasError(name: keyof typeof this.form.controls, key: string): boolean {
     const control = this.form.controls[name];
     return control.touched && control.hasError(key);
+  }
+
+  // Con datos escritos sin enviar: el modal que lo contiene no se cierra solo con Esc ni con un clic fuera.
+  get dirty(): boolean {
+    return this.form.dirty;
   }
 
   onSubmit(): void {

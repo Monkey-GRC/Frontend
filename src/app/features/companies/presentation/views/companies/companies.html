@@ -1,68 +1,108 @@
 @if (isLoading) {
-<app-loader [type]="'monkey'" [headerSize]="'9rem'" />
+<app-loading-spinner />
 } @else {
-<div class="transition-colors duration-200 animation">
-  <div class="max-w-full mx-auto space-y-4 p-4">
-    <!-- ================= CONTENT ================= -->
-    <div class="flex flex-col">
-      <app-company-list (pageChange)="readCompanies($event)" (filterChange)="onFilterChange($event)" (archive)="archiving = $event" (reactivate)="reactivating = $event" (resendKey)="onResendKey($event)" (changeQuota)="onOpenQuota($event)">
-        <!-- El botón va en la fila del título de la lista: ya no hay un encabezado aparte que repita lo mismo -->
-        <button listActions
-          class="mk-hero-btn-solid"
-          (click)="onOpenForm()">
-          <span class="material-symbols-outlined text-base">domain_add</span>
-          {{ 'COMPANIES_MODULE.HEADER.BTN-CREATE' | translate }}
-        </button>
-      </app-company-list>
-    </div>
-  </div>
+<div class="mk-enter">
+  <app-company-list (pageChange)="readCompanies($event)" (filterChange)="onFilterChange($event)" (archive)="archiving = $event" (reactivate)="reactivating = $event" (resendKey)="onResendKey($event)" (changeQuota)="onOpenQuota($event)">
+    <!-- El botón va en la fila del título de la lista: ya no hay un encabezado aparte que repita lo mismo -->
+    <button listActions type="button" class="mk-btn" (click)="onOpenForm()">{{ 'COMPANIES_MODULE.HEADER.BTN-CREATE' | translate }}</button>
+  </app-company-list>
 </div>
 }
 
-<!-- Registro: los 3 campos del comité y el marco que se contrata (D47) -->
-<app-dialog [width]="'820px'" [title]="'COMPANIES_MODULE.FORM.TITLE' | translate"
-  [subtitle]="'COMPANIES_MODULE.FORM.SUBTITLE' | translate" [showCloseIcon]="false" [isModal]="true"
-  [submitText]="'COMPANIES_MODULE.FORM.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.FORM.CANCEL' | translate"
-  [isSubmitting]="companyForm?.sendingForm ?? false" [visible]="isFormVisible" (onClose)="onCloseForm()"
-  (onSubmit)="companyForm?.onSubmit()">
-  <app-company-form (registered)="onRegistered($event)" />
-</app-dialog>
+<!-- Registro: los 3 campos del comité y el marco que se contrata (D47). Esc y el clic fuera no cierran con datos sin enviar ni mientras envía; Cancelar sí. -->
+<app-modal [open]="isFormVisible" size="xl" labelledBy="company-form-title" describedBy="company-form-subtitle" testId="company-form"
+  [dismissible]="!(companyForm?.sendingForm ?? false) && !(companyForm?.dirty ?? false)" (dismissed)="onCloseForm()">
+  <div class="mb-4 flex items-center gap-3">
+        <div class="min-w-0">
+          <h2 id="company-form-title" class="text-xl font-semibold text-ink">{{ 'COMPANIES_MODULE.FORM.TITLE' | translate }}</h2>
+          <p id="company-form-subtitle" class="mt-1 text-sm text-ink-muted">{{ 'COMPANIES_MODULE.FORM.SUBTITLE' | translate }}</p>
+        </div>
+      </div>
+  <div class="-mx-1 max-h-[60vh] overflow-y-auto px-1">
+    <app-company-form (registered)="onRegistered($event)" />
+  </div>
+  <div class="mt-5 flex flex-col justify-end gap-3 sm:flex-row">
+        <button type="button" class="mk-btn-secondary" [disabled]="companyForm?.sendingForm ?? false" (click)="onCloseForm()" data-testid="company-form-cancel">{{ 'COMPANIES_MODULE.FORM.CANCEL' | translate }}</button>
+        <button type="button" class="mk-btn" [disabled]="companyForm?.sendingForm ?? false" [attr.aria-busy]="companyForm?.sendingForm ?? false" (click)="companyForm?.onSubmit()" data-testid="company-form-submit">
+        @if (companyForm?.sendingForm ?? false) {
+          <span class="material-symbols-rounded animate-spin" aria-hidden="true">progress_activity</span>
+        }
+        {{ 'COMPANIES_MODULE.FORM.SUBMIT' | translate }}
+        </button>
+      </div>
+</app-modal>
 
 <!-- D99 · Aviso de que la clave salió por correo (o de que no salió). Solo un mensaje: sin X ni Cancelar -->
-<app-dialog [width]="'460px'" [isModal]="true" [allowDragging]="false" [showCloseIcon]="false" [showCancel]="false"
-  [submitText]="'COMPANIES_MODULE.KEY.DONE' | translate" [visible]="!!registered" (onClose)="onCloseKey()"
-  (onSubmit)="onCloseKey()">
+<app-modal [open]="!!registered" size="md" labelledBy="company-key-title" testId="company-key" (dismissed)="onCloseKey()">
   @if (registered) {
   <app-access-key-sent [company]="registered" [sending]="resendingKey" (resend)="onResendFromSummary()" />
   }
-</app-dialog>
+  <div class="mt-5 flex justify-end">
+    <button type="button" class="mk-btn" (click)="onCloseKey()" data-testid="company-key-submit">{{ 'COMPANIES_MODULE.KEY.DONE' | translate }}</button>
+  </div>
+</app-modal>
 
 <!-- D103 · Cambiar el cupo de usuarios de una empresa -->
-<app-dialog [width]="'520px'" [title]="'COMPANIES_MODULE.QUOTA.TITLE' | translate"
-  [subtitle]="'COMPANIES_MODULE.QUOTA.SUBTITLE' | translate" icon="group" [isModal]="true" [showCloseIcon]="false" [allowDragging]="false"
-  [submitText]="'COMPANIES_MODULE.QUOTA.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate"
-  [submitDisabled]="!(quotaForm?.canSubmit ?? false)" [isSubmitting]="quotaSending"
-  [visible]="!!changingQuota" (onClose)="onCloseQuota()" (onSubmit)="quotaForm?.onSubmit()">
+<app-modal [open]="!!changingQuota" size="lg" labelledBy="company-quota-title" describedBy="company-quota-subtitle" testId="company-quota"
+  [dismissible]="!quotaSending && !(quotaForm?.dirty ?? false)" (dismissed)="onCloseQuota()">
+  <div class="mb-4 flex items-center gap-3">
+        <span class="material-symbols-rounded text-[26px] text-action" aria-hidden="true">group</span>
+        <div class="min-w-0">
+          <h2 id="company-quota-title" class="text-xl font-semibold text-ink">{{ 'COMPANIES_MODULE.QUOTA.TITLE' | translate }}</h2>
+          <p id="company-quota-subtitle" class="mt-1 text-sm text-ink-muted">{{ 'COMPANIES_MODULE.QUOTA.SUBTITLE' | translate }}</p>
+        </div>
+      </div>
   <app-company-quota-form [company]="changingQuota" [error]="quotaError" (approved)="onQuotaApproved($event)" />
-</app-dialog>
+  <div class="mt-5 flex flex-col justify-end gap-3 sm:flex-row">
+        <button type="button" class="mk-btn-secondary" [disabled]="quotaSending" (click)="onCloseQuota()" data-testid="company-quota-cancel">{{ 'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate }}</button>
+        <button type="button" class="mk-btn" [disabled]="!(quotaForm?.canSubmit ?? false) || quotaSending" [attr.aria-busy]="quotaSending" (click)="quotaForm?.onSubmit()" data-testid="company-quota-submit">
+        @if (quotaSending) {
+          <span class="material-symbols-rounded animate-spin" aria-hidden="true">progress_activity</span>
+        }
+        {{ 'COMPANIES_MODULE.QUOTA.SUBMIT' | translate }}
+        </button>
+      </div>
+</app-modal>
 
 <!-- D97 · Archivar: aprobar el formulario no lo envía; después se pide el código de seguridad. El botón se habilita al escribir la razón social exacta y completar el resto -->
-<app-dialog [width]="'640px'" [title]="'COMPANIES_MODULE.ARCHIVE.TITLE' | translate"
-  [subtitle]="'COMPANIES_MODULE.ARCHIVE.SUBTITLE' | translate" icon="inventory_2" [isModal]="true" [showCloseIcon]="false" [allowDragging]="false"
-  [danger]="true" [submitText]="'COMPANIES_MODULE.ARCHIVE.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate"
-  [submitDisabled]="!(archiveForm?.canSubmit ?? false)"
-  [visible]="!!archiving" (onClose)="archiving = null" (onSubmit)="archiveForm?.onSubmit()">
-  <app-company-archive-form [company]="archiving" (approved)="onArchiveApproved($event)" />
-</app-dialog>
+<app-modal [open]="!!archiving" size="lg" labelledBy="company-archive-title" describedBy="company-archive-subtitle" testId="company-archive"
+  [dismissible]="!(archiveForm?.dirty ?? false)" (dismissed)="archiving = null">
+  <div class="mb-4 flex items-center gap-3">
+        <span class="material-symbols-rounded text-[26px] text-action" aria-hidden="true">inventory_2</span>
+        <div class="min-w-0">
+          <h2 id="company-archive-title" class="text-xl font-semibold text-ink">{{ 'COMPANIES_MODULE.ARCHIVE.TITLE' | translate }}</h2>
+          <p id="company-archive-subtitle" class="mt-1 text-sm text-ink-muted">{{ 'COMPANIES_MODULE.ARCHIVE.SUBTITLE' | translate }}</p>
+        </div>
+      </div>
+  <div class="-mx-1 max-h-[60vh] overflow-y-auto px-1">
+    <app-company-archive-form [company]="archiving" (approved)="onArchiveApproved($event)" />
+  </div>
+  <div class="mt-5 flex flex-col justify-end gap-3 sm:flex-row">
+        <button type="button" class="mk-btn-secondary" (click)="archiving = null" data-testid="company-archive-cancel">{{ 'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate }}</button>
+        <button type="button" class="mk-btn-danger" [disabled]="!(archiveForm?.canSubmit ?? false)" (click)="archiveForm?.onSubmit()" data-testid="company-archive-submit">
+        {{ 'COMPANIES_MODULE.ARCHIVE.SUBMIT' | translate }}
+        </button>
+      </div>
+</app-modal>
 
 <!-- D97 · Reactivar: solo dentro del plazo -->
-<app-dialog [width]="'560px'" [title]="'COMPANIES_MODULE.REACTIVATE.TITLE' | translate"
-  [subtitle]="'COMPANIES_MODULE.REACTIVATE.SUBTITLE' | translate" icon="restore" [isModal]="true" [showCloseIcon]="false" [allowDragging]="false"
-  [submitText]="'COMPANIES_MODULE.REACTIVATE.SUBMIT' | translate" [cancelText]="'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate"
-  [submitDisabled]="!(reactivateForm?.canSubmit ?? false)"
-  [visible]="!!reactivating" (onClose)="reactivating = null" (onSubmit)="reactivateForm?.onSubmit()">
+<app-modal [open]="!!reactivating" size="lg" labelledBy="company-reactivate-title" describedBy="company-reactivate-subtitle" testId="company-reactivate"
+  [dismissible]="!(reactivateForm?.dirty ?? false)" (dismissed)="reactivating = null">
+  <div class="mb-4 flex items-center gap-3">
+        <span class="material-symbols-rounded text-[26px] text-action" aria-hidden="true">restore</span>
+        <div class="min-w-0">
+          <h2 id="company-reactivate-title" class="text-xl font-semibold text-ink">{{ 'COMPANIES_MODULE.REACTIVATE.TITLE' | translate }}</h2>
+          <p id="company-reactivate-subtitle" class="mt-1 text-sm text-ink-muted">{{ 'COMPANIES_MODULE.REACTIVATE.SUBTITLE' | translate }}</p>
+        </div>
+      </div>
   <app-company-reactivate-form [company]="reactivating" (approved)="onReactivateApproved($event)" />
-</app-dialog>
+  <div class="mt-5 flex flex-col justify-end gap-3 sm:flex-row">
+        <button type="button" class="mk-btn-secondary" (click)="reactivating = null" data-testid="company-reactivate-cancel">{{ 'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate }}</button>
+        <button type="button" class="mk-btn" [disabled]="!(reactivateForm?.canSubmit ?? false)" (click)="reactivateForm?.onSubmit()" data-testid="company-reactivate-submit">
+        {{ 'COMPANIES_MODULE.REACTIVATE.SUBMIT' | translate }}
+        </button>
+      </div>
+</app-modal>
 
 <!-- Segunda confirmación (D94, D97): el código de la app de autenticación de quien actúa, ya aprobada la acción. Es el modal genérico de verificación del segundo factor: el mismo
      que usan las demás pantallas. Archivar es una acción grave (botón rojo); el código de recuperación no sirve aquí. -->

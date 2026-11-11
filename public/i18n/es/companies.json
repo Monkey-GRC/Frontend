@@ -17,8 +17,6 @@
             "ONBOARDED": "Onboarding completado",
             "NOT_ONBOARDED": "Onboarding pendiente",
             "KEY_EXPIRES": "Clave vence",
-            "PREV": "Anterior",
-            "NEXT": "Siguiente",
             "LOAD_ERROR": "No se cargaron las empresas",
             "FILTER_LABEL": "Filtrar empresas",
             "FILTER_ACTIVE": "Activas",

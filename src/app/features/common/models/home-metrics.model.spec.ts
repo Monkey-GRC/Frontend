@@ -1,4 +1,4 @@
-import { AccessKeyStatus, Company } from '@features/companies/models/company.model';
+import { AccessKeyStatus, Company } from '@shared/models/company.model';
 import { RECENT_DAYS, computeHomeMetrics } from './home-metrics.model';
 
 const NOW = new Date('2026-10-13T12:00:00Z');

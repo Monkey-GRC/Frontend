@@ -1,4 +1,4 @@
-import { AccessKeyStatus, Company } from '@features/companies/models/company.model';
+import { AccessKeyStatus, Company } from '@shared/models/company.model';
 
 // Las métricas del home de Monkey Admin salen TODAS de `GET /v1/companies` (no hay endpoint de métricas): se calculan aquí sobre la lista.
 // Es una función pura, sin textos ni HTTP, para poder probarla sola.

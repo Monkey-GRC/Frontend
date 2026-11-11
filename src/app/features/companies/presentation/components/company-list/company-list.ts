@@ -1,24 +1,36 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, output } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, output, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { AccessKeyStatus, Company } from '@features/companies/models/company.model';
+import { AccessKeyStatus, Company, CompanyStatus } from '@shared/models/company.model';
 import { CompanyService } from '@features/companies/services/company.service';
+import { DataTable, TableCell, TableColumn } from '@shared/presentation/components/data-table/data-table';
+import { PageInfo } from '@shared/presentation/components/data-table/table-page';
 import { PageHeader } from '@shared/presentation/components/page-header/page-header';
+import { StatusIndicator, StatusTone } from '@shared/presentation/components/status-indicator/status-indicator';
+import { TabItem, Tabs } from '@shared/presentation/components/tabs/tabs';
+import { Tag } from '@shared/presentation/components/tag/tag';
 
-const KEY_STATUS_CLASSES: Record<AccessKeyStatus, string> = {
-  pending: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-  used: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-  expired: 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400',
-  revoked: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-};
+const COLUMNS: TableColumn<Company>[] = [
+  { key: 'company', headerKey: 'COMPANIES_MODULE.LIST.COL_COMPANY' },
+  { key: 'status', headerKey: 'COMPANIES_MODULE.LIST.COL_STATUS' },
+  { key: 'key', headerKey: 'COMPANIES_MODULE.LIST.COL_KEY' },
+  { key: 'frameworks', headerKey: 'COMPANIES_MODULE.LIST.COL_FRAMEWORKS' },
+  { key: 'users', headerKey: 'COMPANIES_MODULE.LIST.COL_USERS' },
+  { key: 'isolation', headerKey: 'COMPANIES_MODULE.LIST.COL_ISOLATION' },
+  { key: 'onboarding', headerKey: 'COMPANIES_MODULE.LIST.COL_ONBOARDING' },
+  { key: 'created', headerKey: 'COMPANIES_MODULE.LIST.COL_CREATED' },
+  { key: 'actions', headerKey: 'COMPANIES_MODULE.LIST.COL_ACTIONS', align: 'right', srOnlyHeader: true },
+];
 
 @Component({
   selector: 'app-company-list',
-  imports: [PageHeader, CommonModule, TranslateModule],
+  imports: [PageHeader, DatePipe, TranslateModule, DataTable, TableCell, StatusIndicator, Tag, Tabs],
   templateUrl: './company-list.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class CompanyList {
+  companyService = inject(CompanyService);
+
   pageChange = output<number>();
   // D97: el filtro (activas / archivadas) y las dos acciones; el diálogo y la llamada los resuelve la vista.
   filterChange = output<boolean>();
@@ -29,10 +41,31 @@ export class CompanyList {
   // D103: cambiar el cupo de usuarios; el diálogo y la llamada los resuelve la vista.
   changeQuota = output<Company>();
 
-  constructor(public companyService: CompanyService) {}
+  readonly columns = COLUMNS;
+  // Las archivadas suman la fecha de borrado, antes de las acciones.
+  readonly archivedColumns: TableColumn<Company>[] = [
+    ...COLUMNS.slice(0, -1),
+    { key: 'deletes', headerKey: 'COMPANIES_MODULE.LIST.COL_DELETES' },
+    COLUMNS[COLUMNS.length - 1],
+  ];
+  readonly tabs: TabItem[] = [
+    { id: 'active', labelKey: 'COMPANIES_MODULE.LIST.FILTER_ACTIVE' },
+    { id: 'archived', labelKey: 'COMPANIES_MODULE.LIST.FILTER_ARCHIVED' },
+  ];
+  readonly rowKey = (company: Company) => company.id;
 
-  keyStatusClass(status: AccessKeyStatus | null): string {
-    return status ? KEY_STATUS_CLASSES[status] : KEY_STATUS_CLASSES.expired;
+  // La paginación del servicio ya guarda página, tamaño, total y páginas: se arma el `PageInfo` de la tabla con eso.
+  get pageInfo(): PageInfo {
+    const { page, pageSize, total, totalPages } = this.companyService;
+    return { page, pageSize, total, totalPages };
+  }
+
+  statusTone(status: CompanyStatus): StatusTone {
+    return status === 'active' ? 'ok' : status === 'deactivated' ? 'warn' : 'neutral';
+  }
+
+  keyTone(status: AccessKeyStatus | null): StatusTone {
+    return status === 'used' ? 'ok' : status === 'expired' ? 'warn' : 'neutral';
   }
 
   // La clave se puede reenviar mientras la empresa esté activa y no la haya canjeado.
@@ -47,6 +80,14 @@ export class CompanyList {
 
   get showingArchived(): boolean {
     return this.companyService.statusFilter === 'deactivated';
+  }
+
+  onboardingTone(company: Company): StatusTone {
+    return company.onboarding_completed ? 'ok' : 'neutral';
+  }
+
+  onboardingKey(company: Company): string {
+    return company.onboarding_completed ? 'COMPANIES_MODULE.LIST.ONBOARDED' : 'COMPANIES_MODULE.LIST.NOT_ONBOARDED';
   }
 
   // Días que faltan para el borrado definitivo (0 si es hoy o ya venció).
