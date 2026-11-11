@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
-import { AuthService } from '@features/auth/services/auth.service';
+import { AuthService } from '@core/services/auth.service';
 import { ResetPassword } from './reset-password';
 
 const STRONG = 'Segunda-Clave-2026!';

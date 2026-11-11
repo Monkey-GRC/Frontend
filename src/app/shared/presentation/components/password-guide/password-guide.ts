@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CheckState, PasswordCheckKey, passwordChecks } from '@shared/utils/password-rules';
+import { CheckState, PasswordCheckKey, passwordChecks } from '@shared/domain/utils/password-rules';
 
 const ICONS: Record<CheckState, string> = { ok: 'check_circle', bad: 'cancel', idle: 'radio_button_unchecked' };
 const STATE_KEYS: Record<CheckState, string> = { ok: 'MET', bad: 'MISMATCH', idle: 'PENDING' };

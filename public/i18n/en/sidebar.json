@@ -1,11 +1,21 @@
 {
-    "GRC_FRAMEWORK":  {
-                          "MODULE_NAME":  {
-                                              "GENERAL":  "General",
-                                              "PARAMETRIZATION":  "Parameterization"
-                                          },
-                          "HOME":  "Home",
-                          "COMPANIES":  "Companies",
-                          "CATALOG":  "Master catalog"
-                      }
+    "GRC_FRAMEWORK": {
+        "MODULE_NAME": {
+            "GENERAL": "General",
+            "PARAMETRIZATION": "Parameterization"
+        },
+        "HOME": "Home",
+        "COMPANIES": "Companies",
+        "CATALOG": "Master catalog"
+    },
+    "SHELL": {
+        "NAV": {
+            "LABEL": "Main navigation",
+            "TOGGLE_SIDEBAR": "Show or hide the side menu",
+            "LOGO_ALT": "Monkey logo"
+        },
+        "HEADER": {
+            "SEARCH_PLACEHOLDER": "Search or type a command..."
+        }
+    }
 }

@@ -1,5 +1,37 @@
 {
   "COMMON": {
+    "LOADING": "Loading",
+    "CLOSE": "Close",
+    "TOAST": {
+      "REGION": "Notices",
+      "INFO": "Information",
+      "SUCCESS": "Success",
+      "WARNING": "Warning",
+      "ERROR": "Error"
+    },
+    "NOT_FOUND": {
+      "TITLE": "ERROR",
+      "MESSAGE": "We can't find the page you are looking for.",
+      "BACK_HOME": "Back to home",
+      "COPYRIGHT": "© {{year}} Monkey"
+    },
+    "TABLE": {
+      "PAGINATION": "Pagination",
+      "SHOWING": "Showing {{from}}–{{to}} of {{total}}",
+      "ROWS_PER_PAGE": "Rows per page",
+      "PAGE_OF": "Page {{page}} of {{pages}}",
+      "PREVIOUS": "Previous page",
+      "NEXT": "Next page",
+      "GO_TO_PAGE": "Go to page {{page}}",
+      "OPEN_DETAIL": "Open details",
+      "ACTIONS": "Actions",
+      "SELECT_ALL": "Select all",
+      "SELECT_ROW": "Select {{name}}",
+      "EMPTY_TITLE": "Nothing to show yet",
+      "GROUP_COUNT": "Items: {{count}}",
+      "GROUP_COLLAPSE": "Collapse group {{name}}",
+      "GROUP_EXPAND": "Expand group {{name}}"
+    },
     "SHOW_PASSWORD": "Show password",
     "HIDE_PASSWORD": "Hide password",
     "CHANGE_LANGUAGE": "Change language",
@@ -61,7 +93,8 @@
     "SECOND_FACTOR_DIALOG": {
       "DESCRIPTION": "For security, enter the code from your authenticator app.",
       "CONFIRMING": "Confirming…"
-    }
+    },
+    "CONFIRM": "Confirm"
   },
   "STEP_UP": {
     "TITLE": "Confirm with your code",

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, model, viewChild } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { CodeInput } from '@core/presentation/components/code-input/code-input';
+import { CodeInput } from '@shared/presentation/components/code-input/code-input';
 
 // El segundo factor de una acción sensible: el código de 6 dígitos de la app o, si la persona perdió el celular, uno de sus códigos de recuperación. El padre lee
 // `code` o `recoveryCode` según `useRecovery`.

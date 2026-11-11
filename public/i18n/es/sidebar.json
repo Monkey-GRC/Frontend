@@ -1,11 +1,21 @@
 {
-    "GRC_FRAMEWORK":  {
-                          "MODULE_NAME":  {
-                                              "GENERAL":  "General",
-                                              "PARAMETRIZATION":  "Parametrización"
-                                          },
-                          "HOME":  "Inicio",
-                          "COMPANIES":  "Empresas",
-                          "CATALOG":  "Catálogo maestro"
-                      }
+    "GRC_FRAMEWORK": {
+        "MODULE_NAME": {
+            "GENERAL": "General",
+            "PARAMETRIZATION": "Parametrización"
+        },
+        "HOME": "Inicio",
+        "COMPANIES": "Empresas",
+        "CATALOG": "Catálogo maestro"
+    },
+    "SHELL": {
+        "NAV": {
+            "LABEL": "Navegación principal",
+            "TOGGLE_SIDEBAR": "Mostrar u ocultar el menú lateral",
+            "LOGO_ALT": "Logotipo de Monkey"
+        },
+        "HEADER": {
+            "SEARCH_PLACEHOLDER": "Buscar o escribir un comando..."
+        }
+    }
 }

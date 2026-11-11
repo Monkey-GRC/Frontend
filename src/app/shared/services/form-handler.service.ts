@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
-import { ToastService } from './toast.service';
-import { SuccessResponse, ErrorResponse } from '../models/api-response.model';
+import { Injectable, inject } from '@angular/core';
+import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
+import { SuccessResponse, ErrorResponse } from '@shared/models/api-response.model';
 import { FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
 
 export interface FormHandlerConfig {
     form?: FormGroup;
@@ -14,7 +13,7 @@ export interface FormHandlerConfig {
 
 @Injectable({ providedIn: 'root' })
 export class FormHandlerService {
-    constructor(private toast: ToastService) { }
+    private toast = inject(ToastService);
 
     /**
      * Maneja una respuesta exitosa de forma genérica

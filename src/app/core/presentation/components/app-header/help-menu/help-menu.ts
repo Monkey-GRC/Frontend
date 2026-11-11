@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '@environments/environment';
-import { modifierKeyLabel } from '@shared/utils/keyboard';
+import { modifierKeyLabel } from '@shared/domain/utils/keyboard';
 
 // El «?» del encabezado: los atajos de teclado de la app y, si el entorno trae una dirección de soporte (`supportUrl`: una URL o un `mailto:`), cómo contactarlo.
 // Sin esa dirección no se muestra el contacto: no se inventa ninguna. Se cierra al elegir algo, al hacer clic fuera y con Escape.

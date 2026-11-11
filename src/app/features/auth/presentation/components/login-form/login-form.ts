@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { AuthService } from '@features/auth/services/auth.service';
-import { PasswordToggle } from '@core/presentation/components/password-toggle/password-toggle';
+import { AuthService } from '@core/services/auth.service';
+import { PasswordToggle } from '@shared/presentation/components/password-toggle/password-toggle';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription, finalize } from 'rxjs';
 
@@ -21,7 +20,13 @@ import { Subscription, finalize } from 'rxjs';
   styleUrl: './login-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginForm {
+export class LoginForm implements OnInit, OnDestroy {
+  private fb = inject(FormBuilder);
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
+
 
   private subs = new Subscription();
   private returnUrl: string | null = null;
@@ -31,14 +36,6 @@ export class LoginForm {
   showPassword = signal(false);
   errorMsg = signal<string | null>(null);
   form!: FormGroup;
-
-  constructor(
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private translate: TranslateService,
-  ) { }
 
   ngOnInit(): void {
     // lee returnUrl una sola vez
@@ -62,9 +59,11 @@ export class LoginForm {
       return;
     }
 
+    const { email, password } = this.form.value;
+    if (typeof email !== 'string' || typeof password !== 'string') return;
     const dto = {
-      email: this.form.value.email!.trim().toLowerCase(),
-      password: this.form.value.password!,
+      email: email.trim().toLowerCase(),
+      password,
     };
 
     this.loading.set(true);
@@ -98,10 +97,7 @@ export class LoginForm {
   private navigateAfterLogin(): void {
     // si returnUrl es vacío, raíz, o apunta a /auth, ignóralo
     const ru = this.returnUrl;
-    const invalid =
-      !ru || ru === '/' || ru === '' || ru.startsWith('/auth');
-
-    const target = invalid ? '/' : ru!;
+    const target = ru && ru !== '/' && !ru.startsWith('/auth') ? ru : '/';
     // `replaceUrl`: el login no queda en el historial, así «atrás» no vuelve a él.
     this.router.navigateByUrl(target, { replaceUrl: true });
   }

@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NavigationProgress } from '@core/presentation/components/navigation-progress/navigation-progress';
-import { TranslateDirective, TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ToastContainer } from '@shared/presentation/components/toast-container/toast-container';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,7 @@ import { TranslateDirective, TranslateModule, TranslatePipe, TranslateService } 
     RouterModule,
     TranslateModule,
     NavigationProgress,
+    ToastContainer,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

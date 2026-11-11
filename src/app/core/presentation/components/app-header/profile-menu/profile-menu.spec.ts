@@ -5,8 +5,8 @@ import { of } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { LanguageService } from '@core/services/language.service';
 import { ThemeService } from '@core/services/theme.service';
-import { AuthService } from '@features/auth/services/auth.service';
-import { User } from '@features/auth/models/user';
+import { AuthService } from '@core/services/auth.service';
+import { User } from '@core/models/user';
 import { ProfileMenu } from './profile-menu';
 
 describe('ProfileMenu (perfil, idioma, modo oscuro, ajustes y salir)', () => {
