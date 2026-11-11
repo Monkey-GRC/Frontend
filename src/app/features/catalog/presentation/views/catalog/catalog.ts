@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CatalogFilters, CatalogFramework, CatalogOrigin, CatalogTab, ControlScope, FormKind, Paginated } from '@features/catalog/models/catalog.model';
@@ -8,8 +7,14 @@ import { CatalogService } from '@features/catalog/services/catalog.service';
 import { CatalogColumn, CatalogRow, CatalogTable } from '@features/catalog/presentation/components/catalog-table/catalog-table';
 import { CatalogDetail, DetailKind, EditRequest } from '@features/catalog/presentation/components/catalog-detail/catalog-detail';
 import { CatalogForm } from '@features/catalog/presentation/components/catalog-form/catalog-form';
-import { LoaderComponent } from '@shared/presentation/components/loader/loader.component';
+import { LoadingSpinner } from '@shared/presentation/components/loading-spinner/loading-spinner';
+import { EmptyState } from '@shared/presentation/components/empty-state/empty-state';
 import { PageHeader } from '@shared/presentation/components/page-header/page-header';
+import { StatusIndicator } from '@shared/presentation/components/status-indicator/status-indicator';
+import { TableFilter, TableFilterOption } from '@shared/presentation/components/table-filter/table-filter';
+import { TableToolbar } from '@shared/presentation/components/table-toolbar/table-toolbar';
+import { TabItem, Tabs } from '@shared/presentation/components/tabs/tabs';
+import { targetChecked } from '@shared/presentation/utils/event-target';
 
 const BADGES: CatalogColumn[] = [
   { key: 'origin', labelKey: 'CATALOG_MODULE.COL.ORIGIN', kind: 'origin' },
@@ -66,17 +71,27 @@ const NEW_KIND: Record<CatalogTab, FormKind> = { controls: 'control', risks: 'ri
 // Desde aquí se agrega un elemento nuevo (botón «Nuevo»); editar, dar de baja y vincular se hace desde su detalle.
 @Component({
   selector: 'app-catalog',
-  imports: [PageHeader, CommonModule, TranslateModule, CatalogTable, CatalogDetail, CatalogForm, LoaderComponent],
+  imports: [PageHeader, TranslateModule, CatalogTable, CatalogDetail, CatalogForm, LoadingSpinner, EmptyState, StatusIndicator, TableFilter, TableToolbar, Tabs],
   templateUrl: './catalog.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class Catalog implements OnInit, OnDestroy {
+  private readonly catalog = inject(CatalogService);
+  readonly options = inject(CatalogOptionsService);
+
+  protected readonly targetChecked = targetChecked;
   readonly tabs: { key: CatalogTab; labelKey: string }[] = [
     { key: 'controls', labelKey: 'CATALOG_MODULE.TABS.CONTROLS' },
     { key: 'risks', labelKey: 'CATALOG_MODULE.TABS.RISKS' },
     { key: 'causes', labelKey: 'CATALOG_MODULE.TABS.CAUSES' },
     { key: 'tests', labelKey: 'CATALOG_MODULE.TABS.TESTS' },
     { key: 'evidence-templates', labelKey: 'CATALOG_MODULE.TABS.EVIDENCE' },
+  ];
+
+  readonly tabItems: TabItem[] = this.tabs.map((t) => ({ id: t.key, labelKey: t.labelKey }));
+  readonly stateOptions: TableFilterOption[] = [
+    { value: 'active', labelKey: 'CATALOG_MODULE.STATE.ACTIVE' },
+    { value: 'inactive', labelKey: 'CATALOG_MODULE.STATE.INACTIVE' },
   ];
 
   tab: CatalogTab = 'controls';
@@ -102,11 +117,6 @@ export class Catalog implements OnInit, OnDestroy {
   private readonly typing = new Subject<string>();
   private subscription?: Subscription;
   private request = 0;
-
-  constructor(
-    private readonly catalog: CatalogService,
-    readonly options: CatalogOptionsService,
-  ) {}
 
   ngOnInit(): void {
     this.options.load(['dimension', 'control_type', 'risk_criterion', 'failure_category', 'catalog_origin']).subscribe();
@@ -134,7 +144,7 @@ export class Catalog implements OnInit, OnDestroy {
   }
 
   get captionKey(): string {
-    return this.tabs.find((t) => t.key === this.tab)!.labelKey;
+    return this.tabs.find((t) => t.key === this.tab)?.labelKey ?? '';
   }
 
   /** Todas las listas se pueden abrir; cada una tiene su detalle (la plantilla de evidencia, uno corto). */
@@ -147,8 +157,23 @@ export class Catalog implements OnInit, OnDestroy {
     return NEW_KIND[this.tab];
   }
 
+  /** Los ámbitos de la lista de controles: el marco abierto, todo el catálogo o los controles sin requisito. */
+  get scopeOptions(): TableFilterOption[] {
+    return [
+      { value: 'framework', label: this.currentFramework?.name ?? '' },
+      { value: 'all', labelKey: 'CATALOG_MODULE.SCOPE.ALL' },
+      { value: 'unlinked', labelKey: 'CATALOG_MODULE.SCOPE.UNLINKED' },
+    ];
+  }
+
   get currentFramework(): CatalogFramework | null {
     return this.frameworks.find((f) => f.id === this.frameworkId) ?? null;
+  }
+
+  /** `app-tabs` emits the id as text: only a tab of this view counts. */
+  onTab(id: string): void {
+    const tab = this.tabs.find((t) => t.key === id);
+    if (tab) this.pickTab(tab.key);
   }
 
   pickTab(tab: CatalogTab): void {

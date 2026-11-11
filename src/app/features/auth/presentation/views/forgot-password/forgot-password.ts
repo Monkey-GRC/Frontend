@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { apiErrorMessage } from '@shared/utils/api-error';
+import { apiErrorMessage } from '@shared/domain/utils/api-error';
 import { AuthPageLayoutComponent } from '@core/presentation/pages/auth-page-layout/auth-page-layout.component';
-import { AuthService } from '@features/auth/services/auth.service';
+import { AuthService } from '@core/services/auth.service';
 
 // Un correo pegado suele traer espacios al final: se valida ya recortado (el envío también lo recorta), para que no se rechace por algo que la persona no ve.
 const trimmedEmail: ValidatorFn = (control: AbstractControl): ValidationErrors | null => Validators.email({ value: String(control.value ?? '').trim() } as AbstractControl);

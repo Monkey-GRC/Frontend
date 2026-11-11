@@ -1,22 +1,19 @@
 <div class="flex flex-col items-center gap-3 px-4 pb-4 pt-6 text-center">
   @if (failed) {
-  <span class="material-symbols-outlined text-5xl text-rose-500" aria-hidden="true">error</span>
-  <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ 'COMPANIES_MODULE.KEY.FAILED_TITLE' | translate }}</h2>
-  <p class="text-sm text-gray-700 dark:text-gray-200" role="alert" data-testid="key-failed">
+  <h2 id="company-key-title" class="text-lg font-semibold text-ink">{{ 'COMPANIES_MODULE.KEY.FAILED_TITLE' | translate }}</h2>
+  <p class="text-sm text-ink" role="alert" data-testid="key-failed">
     {{ 'COMPANIES_MODULE.KEY.FAILED_BODY' | translate: { name: company().name, email: company().admin_email } }}
   </p>
   <button type="button" (click)="resend.emit()" [disabled]="sending()" data-testid="key-resend"
-    class="inline-flex items-center justify-center gap-2 rounded-lg border border-brand-500 px-4 py-2 text-sm font-semibold text-brand-600 transition hover:bg-brand-50 disabled:opacity-50 dark:border-brand-400 dark:text-brand-300 dark:hover:bg-brand-500/10">
-    <span class="material-symbols-outlined text-base" aria-hidden="true">forward_to_inbox</span>
+    class="mk-btn-secondary">
     {{ 'COMPANIES_MODULE.KEY.RESEND' | translate }}
   </button>
   } @else {
-  <span class="material-symbols-outlined text-5xl text-green-600 dark:text-green-400" aria-hidden="true">mark_email_read</span>
-  <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ 'COMPANIES_MODULE.KEY.TITLE' | translate }}</h2>
-  <p class="text-sm text-gray-700 dark:text-gray-200" data-testid="key-sent">
+  <h2 id="company-key-title" class="text-lg font-semibold text-ink">{{ 'COMPANIES_MODULE.KEY.TITLE' | translate }}</h2>
+  <p class="text-sm text-ink" data-testid="key-sent">
     {{ 'COMPANIES_MODULE.KEY.SENT' | translate: { name: company().name, email: company().admin_email } }}
   </p>
-  <p class="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-500 dark:bg-white/10 dark:text-gray-400">
+  <p class="text-xs text-ink-muted">
     {{ 'COMPANIES_MODULE.KEY.EXPIRES' | translate }} {{ company().access_key.expires_at | date:'dd/MM/yyyy HH:mm' }}
   </p>
   }

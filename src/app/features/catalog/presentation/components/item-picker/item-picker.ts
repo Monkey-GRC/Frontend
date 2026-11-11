@@ -1,9 +1,10 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, input, output, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { CatalogFramework, FrameworkDetail, Paginated } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
+import { DataTable, TableCell, TableColumn } from '@shared/presentation/components/data-table/data-table';
+import { targetValue } from '@shared/presentation/utils/event-target';
 
 export type PickKind = 'test' | 'template' | 'cause' | 'control' | 'risk' | 'pof';
 
@@ -23,11 +24,14 @@ interface Choice extends Pick {
 // por marco y requisito, porque son 302 y no se buscan por texto.
 @Component({
   selector: 'app-item-picker',
-  imports: [CommonModule, TranslateModule],
+  imports: [TranslateModule, DataTable, TableCell],
   templateUrl: './item-picker.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class ItemPicker implements OnInit, OnDestroy {
+  private readonly catalog = inject(CatalogService);
+
+  protected readonly targetValue = targetValue;
   readonly kind = input.required<PickKind>();
   /** Lo que ya está vinculado (ids; `REQ#N` en los puntos de enfoque): no se ofrece de nuevo. */
   readonly exclude = input<string[]>([]);
@@ -38,6 +42,13 @@ export class ItemPicker implements OnInit, OnDestroy {
   readonly cancelled = output<void>();
 
   query = '';
+  // Las opciones en la lista compacta (la tabla única en su variante para paneles): el código y lo que lo explica; pulsar la fila elige.
+  readonly columns: TableColumn<Choice>[] = [
+    { key: 'label', headerKey: 'CATALOG_MODULE.PICKER.CAPTION', class: 'w-32' },
+    { key: 'hint', headerKey: 'CATALOG_MODULE.PICKER.CAPTION' },
+  ];
+  readonly choiceKey = (c: Choice) => c.key;
+  readonly choiceLabel = (c: Choice) => c.label;
   choices: Choice[] = [];
   loading = false;
   failed = false;
@@ -50,8 +61,6 @@ export class ItemPicker implements OnInit, OnDestroy {
   private readonly typing = new Subject<string>();
   private subscription?: Subscription;
   private request = 0;
-
-  constructor(private readonly catalog: CatalogService) {}
 
   ngOnInit(): void {
     if (this.kind() === 'pof') {

@@ -1,20 +1,25 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { FrameworkOption, RegisteredCompany } from '@features/companies/models/company.model';
+import { FrameworkOption, RegisteredCompany } from '@shared/models/company.model';
 import { CompanyService } from '@features/companies/services/company.service';
-import { ToastService } from '@shared/services/toast.service';
-import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
+import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
+import { unwrapData } from '@shared/domain/utils/unwrap-response';
 import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-company-form',
-  imports: [CommonModule, ReactiveFormsModule, TextBoxModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './company-form.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class CompanyForm implements OnInit {
+  companyService = inject(CompanyService);
+  private toast = inject(ToastService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+
   // Emite la empresa recién registrada, con su clave en claro, para mostrarla una sola vez.
   registered = output<RegisteredCompany>();
   sendingForm = false;
@@ -24,13 +29,6 @@ export class CompanyForm implements OnInit {
   frameworks: FrameworkOption[] = [];
   selectedFrameworks: string[] = [];
   frameworksFailed = false;
-
-  constructor(
-    public companyService: CompanyService,
-    private toast: ToastService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.companyService.initializeForm();
@@ -78,6 +76,11 @@ export class CompanyForm implements OnInit {
     return !!control && control.touched && control.hasError(key);
   }
 
+  // Con datos escritos sin enviar: el modal que lo contiene no se cierra solo con Esc ni con un clic fuera.
+  get dirty(): boolean {
+    return this.companyService.form.dirty;
+  }
+
   onSubmit(): void {
     const form = this.companyService.form;
     if (form.invalid || this.selectedFrameworks.length === 0) {
@@ -99,12 +102,12 @@ export class CompanyForm implements OnInit {
         framework_codes: this.selectedFrameworks,
         max_users: Number(max_users),
       })
-      .pipe(finalize(() => (this.sendingForm = false)))
+      .pipe(unwrapData(), finalize(() => (this.sendingForm = false)))
       .subscribe({
-        next: (resp) => {
+        next: (company) => {
           this.companyService.initializeForm();
           this.loadFrameworks();
-          this.registered.emit(resp.data!);
+          this.registered.emit(company);
         },
         error: (err: Error & { fields?: { field: string; message: string }[] }) => {
           // D103 · Un 422 sobre el cupo se muestra junto al campo, no solo en un aviso.

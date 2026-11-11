@@ -1,7 +1,7 @@
 {
   "CATALOG_MODULE": {
     "TITLE": "Catálogo maestro",
-    "INTRO": "Los marcos que ofrece Monkey y lo que hay dentro de cada uno: controles, riesgos, causas, pruebas y evidencias requeridas. Es el catálogo general, no el de una empresa. Por ahora es de solo lectura.",
+    "INTRO": "Catálogo general de Monkey: controles, riesgos, causas, pruebas y evidencias requeridas.",
     "FRAMEWORKS": "Marcos",
     "COUNTS": "{{requirements}} requisitos · {{controls}} controles · {{tests}} pruebas",
     "AVAILABILITY": {
@@ -24,7 +24,6 @@
       "ALL": "Todos"
     },
     "SCOPE": {
-      "FRAMEWORK": "{{name}}",
       "ALL": "Todo el catálogo",
       "UNLINKED": "Sin requisito (no cuelgan de ningún marco)"
     },
@@ -107,8 +106,6 @@
     "RETRY": "Reintentar",
     "EMPTY": "No hay resultados con esos filtros.",
     "TOTAL": "{{total}} resultados",
-    "PREV": "Anterior",
-    "NEXT": "Siguiente",
     "FORM": {
       "NEW": {
         "CONTROL": "Nuevo control",
@@ -176,7 +173,8 @@
     "PICKER": {
       "FRAMEWORK": "Marco",
       "REQUIREMENT": "Requisito",
-      "EMPTY": "No hay nada que ofrecer con esa búsqueda."
+      "EMPTY": "No hay nada que ofrecer con esa búsqueda.",
+      "CAPTION": "Elementos para vincular"
     }
   }
 }

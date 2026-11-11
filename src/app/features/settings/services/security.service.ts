@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { environment } from '@environments/environment';
+import { unwrapData } from '@shared/domain/utils/unwrap-response';
 import { SuccessResponse } from '@shared/models/api-response.model';
 import { ChangePasswordInput } from '../models/security.models';
 
@@ -25,6 +26,6 @@ export class SecurityService {
   regenerateRecoveryCodes(code: string): Observable<string[]> {
     return this.http
       .post<SuccessResponse<{ recovery_codes: string[] }>>(`${this.baseUrl}/mfa/recovery-codes`, { code })
-      .pipe(map((res) => res.data!.recovery_codes));
+      .pipe(unwrapData(), map((d) => d.recovery_codes));
   }
 }

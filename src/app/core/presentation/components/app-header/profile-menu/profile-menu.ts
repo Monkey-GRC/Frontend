@@ -5,8 +5,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { Language, LanguageService } from '@core/services/language.service';
 import { ThemeService } from '@core/services/theme.service';
-import { AuthService } from '@features/auth/services/auth.service';
-import { displayNameOf, initialsOf } from '@shared/utils/initials';
+import { AuthService } from '@core/services/auth.service';
+import { displayNameOf, initialsOf } from '@shared/domain/utils/initials';
 
 // El menú de la persona en sesión (el círculo con sus iniciales, arriba a la derecha): reúne lo que es suyo y no de la pantalla: sus ajustes, el idioma, el modo oscuro y
 // cerrar sesión. Se cierra al elegir algo, al hacer clic fuera y con Escape.

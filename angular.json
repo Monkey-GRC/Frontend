@@ -32,8 +32,7 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "public/monkey-app-theme.css"
+              "src/styles.css"
             ],
             "scripts": []
           },
@@ -94,10 +93,18 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "public/monkey-app-theme.css"
+              "src/styles.css"
             ],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }

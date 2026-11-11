@@ -156,4 +156,21 @@ describe('CatalogForm', () => {
         type('name', 'Algo');
         expect(el().querySelector('[data-error="name"]')).toBeNull();
     });
+
+    it('lives in the side drawer: Escape does not throw away what was typed, the close button still closes', () => {
+        setup('control', 'create');
+        let cancelled = 0;
+        fixture.componentInstance.cancelled.subscribe(() => cancelled++);
+        const escape = () => {
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+            fixture.detectChanges();
+        };
+        escape();
+        expect(cancelled).toBe(1); // nothing typed yet: Escape closes
+        type('name', 'Un control');
+        escape();
+        expect(cancelled).toBe(1); // with data: Escape is ignored
+        el().querySelector<HTMLButtonElement>('button[aria-label="COMMON.CLOSE"]')!.click();
+        expect(cancelled).toBe(2);
+    });
 });

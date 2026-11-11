@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { Company } from '@features/companies/models/company.model';
-import { TextBoxModule } from '@syncfusion/ej2-angular-inputs';
+import { Company } from '@shared/models/company.model';
 
 export interface ReactivateDetails {
   reason: string;
@@ -12,7 +11,7 @@ export interface ReactivateDetails {
 // D97 · Reactivar una empresa archivada, solo dentro del plazo. Igual que archivar: aprobarlo no lo envía, la vista pide después el código de seguridad.
 @Component({
   selector: 'app-company-reactivate-form',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, TextBoxModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './company-reactivate-form.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -40,6 +39,11 @@ export class CompanyReactivateForm implements OnInit {
 
   get canSubmit(): boolean {
     return this.form.valid;
+  }
+
+  // Con datos escritos sin enviar: el modal que lo contiene no se cierra solo con Esc ni con un clic fuera.
+  get dirty(): boolean {
+    return this.form.dirty;
   }
 
   onSubmit(): void {

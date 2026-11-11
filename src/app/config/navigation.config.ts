@@ -5,6 +5,7 @@ export interface NavSubItem {
     pro?: boolean;
     new?: boolean;
     section: string;
+    roles?: string[]; // A child can be narrower than its parent
 }
 
 export interface NavItem {
@@ -13,13 +14,11 @@ export interface NavItem {
     path?: string;
     new?: boolean;
     section: string; // Define a qué sección pertenece
-    subItems?: NavSubItem[];
+    subItems?: NavSubItem[]; // Children of a group: the parent keeps its own page; a parent with no visible child behaves as a simple item
     roles?: string[]; // Si se define, solo estos roles ven el item
 }
 
-export interface SectionIcon {
-    [key: string]: string;
-}
+export type SectionIcon = Record<string, string>;
 
 // Configuración de items de navegación
 export const NAV_ITEMS: NavItem[] = [

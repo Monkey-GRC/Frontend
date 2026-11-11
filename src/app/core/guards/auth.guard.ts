@@ -5,7 +5,7 @@ import {
     RouterStateSnapshot,
     UrlTree
 } from '@angular/router';
-import { AuthService } from '@features/auth/services/auth.service';
+import { AuthService } from '@core/services/auth.service';
 import { firstValueFrom } from 'rxjs';
 
 export const authGuard = async (

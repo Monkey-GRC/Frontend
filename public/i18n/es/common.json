@@ -1,5 +1,37 @@
 {
   "COMMON": {
+    "LOADING": "Cargando",
+    "CLOSE": "Cerrar",
+    "TOAST": {
+      "REGION": "Avisos",
+      "INFO": "Información",
+      "SUCCESS": "Correcto",
+      "WARNING": "Aviso",
+      "ERROR": "Error"
+    },
+    "NOT_FOUND": {
+      "TITLE": "ERROR",
+      "MESSAGE": "No encontramos la página que buscas.",
+      "BACK_HOME": "Volver al inicio",
+      "COPYRIGHT": "© {{year}} Monkey"
+    },
+    "TABLE": {
+      "PAGINATION": "Paginación",
+      "SHOWING": "Mostrando {{from}}–{{to}} de {{total}}",
+      "ROWS_PER_PAGE": "Filas por página",
+      "PAGE_OF": "Página {{page}} de {{pages}}",
+      "PREVIOUS": "Página anterior",
+      "NEXT": "Página siguiente",
+      "GO_TO_PAGE": "Ir a la página {{page}}",
+      "OPEN_DETAIL": "Abrir detalle",
+      "ACTIONS": "Acciones",
+      "SELECT_ALL": "Seleccionar todo",
+      "SELECT_ROW": "Seleccionar {{name}}",
+      "EMPTY_TITLE": "No hay nada que mostrar todavía",
+      "GROUP_COUNT": "Elementos: {{count}}",
+      "GROUP_COLLAPSE": "Contraer grupo {{name}}",
+      "GROUP_EXPAND": "Desplegar grupo {{name}}"
+    },
     "SHOW_PASSWORD": "Mostrar contraseña",
     "HIDE_PASSWORD": "Ocultar contraseña",
     "CHANGE_LANGUAGE": "Cambiar idioma",
@@ -61,7 +93,8 @@
     "SECOND_FACTOR_DIALOG": {
       "DESCRIPTION": "Por seguridad, escribe el código de tu app de autenticación.",
       "CONFIRMING": "Confirmando…"
-    }
+    },
+    "CONFIRM": "Confirmar"
   },
   "STEP_UP": {
     "TITLE": "Confirma con tu código",

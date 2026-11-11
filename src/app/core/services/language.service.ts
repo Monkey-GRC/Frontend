@@ -1,6 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { changeSyncfusionLanguage } from '@config/syncfusion-locale.config';
 
 export type Language = 'es' | 'en';
 
@@ -16,7 +15,7 @@ function storedLanguage(): Language {
   }
 }
 
-// Un solo lugar cambia el idioma de la app: lo guarda (de ahí lo lee `Accept-Language` en cada petición), carga los textos y cambia el de los componentes de Syncfusion.
+// Un solo lugar cambia el idioma de la app: lo guarda (de ahí lo lee `Accept-Language` en cada petición) y carga los textos.
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
   private readonly translate = inject(TranslateService);
@@ -30,7 +29,6 @@ export class LanguageService {
       // Sin almacenamiento el idioma vale solo para esta sesión.
     }
     this.translate.use(lang);
-    changeSyncfusionLanguage(lang);
     this.current.set(lang);
   }
 }

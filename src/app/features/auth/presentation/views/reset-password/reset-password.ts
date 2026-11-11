@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { apiErrorCode, apiErrorMessage } from '@shared/utils/api-error';
+import { apiErrorCode, apiErrorMessage } from '@shared/domain/utils/api-error';
 import { AuthPageLayoutComponent } from '@core/presentation/pages/auth-page-layout/auth-page-layout.component';
-import { AuthService } from '@features/auth/services/auth.service';
-import { passwordsMatch, STRONG_PASSWORD } from '@shared/utils/password-rules';
+import { AuthService } from '@core/services/auth.service';
+import { passwordsMatch, STRONG_PASSWORD } from '@shared/domain/utils/password-rules';
 import { NewPasswordFields } from '@shared/presentation/components/new-password-fields/new-password-fields';
 import { SecondFactorField } from '@shared/presentation/components/second-factor-field/second-factor-field';
 

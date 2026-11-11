@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SessionService } from '@core/services/session.service';
-import { apiErrorCode, apiErrorMessage } from '@shared/utils/api-error';
-import { differentFromCurrent, passwordsMatch, STRONG_PASSWORD } from '@shared/utils/password-rules';
+import { apiErrorCode, apiErrorMessage } from '@shared/domain/utils/api-error';
+import { differentFromCurrent, passwordsMatch, STRONG_PASSWORD } from '@shared/domain/utils/password-rules';
 import { NoticeDialog } from '@shared/presentation/components/notice-dialog/notice-dialog';
 import { NewPasswordFields } from '@shared/presentation/components/new-password-fields/new-password-fields';
 import { PasswordField } from '@shared/presentation/components/password-field/password-field';
 import { SecondFactorAnswer, SecondFactorDialog } from '@shared/presentation/components/second-factor-dialog/second-factor-dialog';
-import { SecurityService } from '../../../services/security.service';
+import { SecurityService } from '@features/settings/services/security.service';
 
 // Un código equivocado se corrige en el mismo modal; cualquier otro error (la contraseña actual, una repetida, demasiados cambios) manda a la persona de vuelta al formulario.
 const STAYS_IN_DIALOG = new Set(['MFA_CODE_INVALID', 'ACCOUNT_LOCKED']);

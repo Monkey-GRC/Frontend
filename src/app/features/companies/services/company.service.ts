@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from '@environments/environment';
 import {
@@ -12,13 +12,16 @@ import {
   Paginated,
   ReactivateCompany,
   RegisteredCompany,
-} from '@features/companies/models/company.model';
+} from '@shared/models/company.model';
 import { SuccessResponse } from '@shared/models/api-response.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CompanyService {
+  private http = inject(HttpClient);
+  private fb = inject(FormBuilder);
+
 
   apiUrl = environment.apiUrl + '/companies';
   form!: FormGroup;
@@ -29,11 +32,6 @@ export class CompanyService {
   totalPages = 0;
   // D97: las archivadas salen del listado por defecto; con este filtro se ven solo ellas.
   statusFilter: Extract<CompanyStatus, 'deactivated'> | null = null;
-
-  constructor(
-    private http: HttpClient,
-    private fb: FormBuilder
-  ) { }
 
   initializeForm() {
     this.form = this.fb.group({

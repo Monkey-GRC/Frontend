@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
-import { Company } from '@features/companies/models/company.model';
+import { Company } from '@shared/models/company.model';
 import { CompanyService } from '@features/companies/services/company.service';
 import { CompanyList } from './company-list';
 
@@ -52,5 +52,29 @@ describe('CompanyList · cupo de usuarios', () => {
   it('an archived company cannot have its quota changed', () => {
     show(company({ status: 'deactivated' }));
     expect(fixture.nativeElement.querySelector('[data-testid="company-change-quota"]')).toBeNull();
+  });
+
+  it('pages with the total the service already has, and asks for the page that was pressed', () => {
+    show(company());
+    const service = TestBed.inject(CompanyService);
+    service.page = 2;
+    service.pageSize = 25;
+    service.total = 60;
+    service.totalPages = 3;
+    fixture.detectChanges();
+    const asked: number[] = [];
+    fixture.componentInstance.pageChange.subscribe((p) => asked.push(p));
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('COMMON.TABLE.SHOWING');
+    fixture.nativeElement.querySelector('[data-next]').click();
+    expect(asked).toEqual([3]);
+  });
+
+  it('says an archived company has a removal date, and an active one does not', () => {
+    show(company({ status: 'deactivated', archive_until: '2027-01-01T00:00:00Z' }));
+    const service = TestBed.inject(CompanyService);
+    service.statusFilter = 'deactivated';
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[data-testid="company-reactivate"]')).not.toBeNull();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('COMPANIES_MODULE.LIST.COL_DELETES');
   });
 });

@@ -3,11 +3,12 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { CodeInput } from '@core/presentation/components/code-input/code-input';
+import { CodeInput } from '@shared/presentation/components/code-input/code-input';
 import { Stepper, StepperItem } from '@shared/presentation/components/stepper/stepper';
-import { QrCode } from '@core/presentation/components/qr-code/qr-code';
-import { AuthPayload, MfaSetupStart } from '@features/auth/models/auth-reponse';
-import { AuthService } from '@features/auth/services/auth.service';
+import { QrCode } from '@shared/presentation/components/qr-code/qr-code';
+import { AuthPayload, MfaSetupStart } from '@core/models/auth-reponse';
+import { AuthService } from '@core/services/auth.service';
+import { targetChecked } from '@shared/presentation/utils/event-target';
 
 // Segundo factor (D94, contracts/modules/auth.md). Una sola pantalla con dos recorridos:
 //   · Quien ya tiene el factor: escribe el código de su app, o uno de recuperación (verify → recovery).
@@ -21,6 +22,7 @@ type Stage = 'verify' | 'recovery' | 'install' | 'scan' | 'confirm' | 'codes';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MfaForm {
+  protected readonly targetChecked = targetChecked;
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);

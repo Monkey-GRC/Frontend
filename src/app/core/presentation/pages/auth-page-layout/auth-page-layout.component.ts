@@ -1,22 +1,22 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { LanguageToggle } from '@core/presentation/components/app-header/language-toggle/language-toggle';
-import { ThemeToggleTwoComponent } from '@core/presentation/components/theme-toggle-two/theme-toggle-two.component'
+import { LanguageService } from '@core/services/language.service';
+import { ThemeToggleTwoComponent } from '@core/presentation/components/theme-toggle-two/theme-toggle-two.component';
 
+// Auth shell: the markup is canonical (design-system); this file only differs from the other app in the service alias.
 @Component({
   selector: 'app-auth-page-layout',
-  imports: [
-    RouterModule,
-    ThemeToggleTwoComponent,
-    LanguageToggle,
-    TranslatePipe,
-  ],
+  imports: [RouterModule, ThemeToggleTwoComponent, TranslatePipe],
   templateUrl: './auth-page-layout.component.html',
-  styles: ``
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthPageLayoutComponent {
+  private readonly language = inject(LanguageService);
 
-  currentYear: number = new Date().getFullYear();
+  protected readonly languageCode = computed(() => this.language.current().toUpperCase());
 
+  protected toggleLanguage(): void {
+    this.language.set(this.language.current() === 'es' ? 'en' : 'es');
+  }
 }

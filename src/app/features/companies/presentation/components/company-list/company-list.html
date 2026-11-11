@@ -1,146 +1,70 @@
-<app-page-header class="mb-4" [title]="'COMPANIES_MODULE.LIST.TITLE' | translate" [subtitle]="'COMPANIES_MODULE.LIST.COUNT' | translate: { total: companyService.total }" icon="apartment">
+<app-page-header [title]="'COMPANIES_MODULE.LIST.TITLE' | translate" [description]="'COMPANIES_MODULE.LIST.COUNT' | translate: { total: companyService.total }">
   <div actions><ng-content select="[listActions]" /></div>
+  <!-- D97: las archivadas salen del listado y se ven con esta pestaña -->
+  <app-tabs tabs [items]="tabs" [active]="showingArchived ? 'archived' : 'active'" ariaLabelKey="COMPANIES_MODULE.LIST.FILTER_LABEL" (activeChange)="filterChange.emit($event === 'archived')" />
 </app-page-header>
 
-<!-- D97: las archivadas salen del listado y se ven con este filtro -->
-<div class="mb-3 inline-flex rounded-lg border border-gray-200 p-0.5 dark:border-gray-700" role="tablist" [attr.aria-label]="'COMPANIES_MODULE.LIST.FILTER_LABEL' | translate">
-  @for (archived of [false, true]; track archived) {
-  <button type="button" role="tab" [attr.aria-selected]="showingArchived === archived" (click)="filterChange.emit(archived)"
-    class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition"
-    [class]="showingArchived === archived ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5'">
-    <span class="material-symbols-outlined text-base" aria-hidden="true">{{ archived ? 'inventory_2' : 'apartment' }}</span>
-    {{ (archived ? 'COMPANIES_MODULE.LIST.FILTER_ARCHIVED' : 'COMPANIES_MODULE.LIST.FILTER_ACTIVE') | translate }}
-  </button>
-  }
-</div>
+<app-data-table captionKey="COMPANIES_MODULE.LIST.TITLE" [columns]="showingArchived ? archivedColumns : columns" [rows]="companyService.companies" [rowKey]="rowKey"
+  [page]="pageInfo" [pageSizes]="[]" emptyIcon="" [emptyTitleKey]="showingArchived ? 'COMPANIES_MODULE.LIST.EMPTY_ARCHIVED' : 'COMPANIES_MODULE.LIST.EMPTY'"
+  (pageChange)="pageChange.emit($event)">
 
-@if (companyService.companies.length === 0) {
-<div class="flex flex-col items-center justify-center gap-2 py-12 text-gray-600 dark:text-gray-300">
-  <span class="material-symbols-outlined text-4xl" aria-hidden="true">domain_add</span>
-  <p class="text-sm">{{ (showingArchived ? 'COMPANIES_MODULE.LIST.EMPTY_ARCHIVED' : 'COMPANIES_MODULE.LIST.EMPTY') | translate }}</p>
-</div>
-} @else {
-<!-- Una sola tabla que de lg para arriba es tabla y por debajo se apila en tarjetas (cada celda con su rótulo): nunca hay que desplazarse de lado. -->
-<div class="mk-card">
-  <table class="block w-full text-left text-sm lg:table">
-    <caption class="sr-only">{{ 'COMPANIES_MODULE.LIST.TITLE' | translate }}</caption>
-    <thead class="hidden lg:table-header-group">
-      <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:border-gray-800 dark:bg-white/5 dark:text-gray-300">
-        <th scope="col" class="px-4 py-3.5 xl:px-5">{{ 'COMPANIES_MODULE.LIST.COL_COMPANY' | translate }}</th>
-        <th scope="col" class="px-4 py-3.5 xl:px-5">{{ 'COMPANIES_MODULE.LIST.COL_STATUS' | translate }}</th>
-        <th scope="col" class="px-4 py-3.5 xl:px-5">{{ 'COMPANIES_MODULE.LIST.COL_FRAMEWORKS' | translate }}</th>
-        <th scope="col" class="px-4 py-3.5 xl:px-5">{{ 'COMPANIES_MODULE.LIST.COL_USERS' | translate }}</th>
-        <th scope="col" class="px-4 py-3.5 xl:px-5">{{ 'COMPANIES_MODULE.LIST.COL_CREATED' | translate }}</th>
-        @if (showingArchived) {
-        <th scope="col" class="px-4 py-3.5 xl:px-5">{{ 'COMPANIES_MODULE.LIST.COL_DELETES' | translate }}</th>
-        }
-        <th scope="col" class="px-4 py-3.5 text-right xl:px-5">{{ 'COMPANIES_MODULE.LIST.COL_ACTIONS' | translate }}</th>
-      </tr>
-    </thead>
-    <tbody class="block divide-y divide-gray-100 dark:divide-gray-800 lg:table-row-group">
-      @for (company of companyService.companies; track company.id) {
-      <tr class="block space-y-3 p-4 align-top transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.03] lg:table-row lg:space-y-0 lg:p-0" [ngClass]="{ 'opacity-60': company.status === 'suspended' }">
-        <td class="block lg:table-cell lg:px-4 lg:py-3.5 xl:px-5">
-          <span class="block break-words font-medium text-gray-900 dark:text-white">{{ company.name }}</span>
-          <span class="block break-words text-gray-600 dark:text-gray-300">{{ company.admin_email }}</span>
-          <!-- Aislamiento y onboarding van como detalle de la empresa: así no cuestan dos columnas. -->
-          <span class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-gray-600 dark:text-gray-300">
-            <span>{{ 'COMPANIES_MODULE.ISOLATION.' + company.isolation_strategy | translate }}</span>
-            <span class="inline-flex items-center gap-1">
-              <span class="material-symbols-outlined text-sm" aria-hidden="true">{{ company.onboarding_completed ? 'task_alt' : 'hourglass_empty' }}</span>
-              {{ (company.onboarding_completed ? 'COMPANIES_MODULE.LIST.ONBOARDED' : 'COMPANIES_MODULE.LIST.NOT_ONBOARDED') | translate }}
-            </span>
-          </span>
-        </td>
-        <td class="block lg:table-cell lg:px-4 lg:py-3.5 xl:px-5" [attr.data-label]="'COMPANIES_MODULE.LIST.COL_STATUS' | translate">
-          <div class="flex flex-wrap items-center gap-1.5">
-            <span class="inline-block rounded-full px-2 py-1 text-xs font-medium"
-              [ngClass]="company.status === 'active'
-                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                : company.status === 'deactivated'
-                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
-                  : 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400'">
-              {{ 'COMPANIES_MODULE.STATUS.' + company.status | translate }}
-            </span>
-            <span class="inline-block rounded-full px-2 py-1 text-xs font-medium" [ngClass]="keyStatusClass(company.access_key_status)">
-              {{ 'COMPANIES_MODULE.KEY_STATUS.' + (company.access_key_status ?? 'none') | translate }}
-            </span>
-          </div>
-          @if (company.access_key_status === 'pending' && company.access_key_expires_at) {
-          <span class="mt-1 flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300">
-            <span class="material-symbols-outlined text-sm" aria-hidden="true">key</span>
-            {{ 'COMPANIES_MODULE.LIST.KEY_EXPIRES' | translate }} {{ company.access_key_expires_at | date:'dd/MM/yy' }}
-          </span>
-          }
-        </td>
-        <td class="block lg:table-cell lg:px-4 lg:py-3.5 xl:px-5" [attr.data-label]="'COMPANIES_MODULE.LIST.COL_FRAMEWORKS' | translate">
-          <div class="flex flex-wrap gap-1.5">
-            @for (framework of company.frameworks; track framework.code) {
-            <span class="rounded bg-primary/10 px-2 py-1 text-xs font-medium text-primary" data-testid="company-framework">
-              {{ framework.name }}
-            </span>
-            } @empty { <span class="text-gray-600 dark:text-gray-300">—</span> }
-          </div>
-        </td>
-        <!-- D103 · Usuarios que cuentan / contratados, juntos; sin tope si la empresa es anterior al cupo. Cuando se llena, se dice. -->
-        <td class="block lg:table-cell lg:px-4 lg:py-3.5 xl:px-5" data-testid="company-users" [attr.data-label]="'COMPANIES_MODULE.LIST.COL_USERS' | translate">
-          <span class="whitespace-nowrap font-medium text-gray-900 dark:text-white">{{ company.users_count }} / {{ company.max_users ?? ('COMPANIES_MODULE.LIST.NO_LIMIT' | translate) }}</span>
-          @if (quotaFull(company)) {
-          <span class="ml-1.5 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" data-testid="company-quota-full">{{ 'COMPANIES_MODULE.LIST.QUOTA_FULL' | translate }}</span>
-          }
-        </td>
-        <td class="block text-gray-800 dark:text-gray-100 lg:table-cell lg:px-4 lg:py-3.5 xl:px-5" [attr.data-label]="'COMPANIES_MODULE.LIST.COL_CREATED' | translate">{{ company.created_at | date:'dd/MM/yy' }}</td>
-        @if (showingArchived) {
-        <td class="block lg:table-cell lg:px-4 lg:py-3.5 xl:px-5" [attr.data-label]="'COMPANIES_MODULE.LIST.COL_DELETES' | translate" [class]="daysLeft(company) <= 3 ? 'font-semibold text-rose-600 dark:text-rose-400' : 'text-gray-800 dark:text-gray-100'">
-          {{ company.archive_until | date:'dd/MM/yy' }} · {{ (daysLeft(company) === 0 ? 'COMPANIES_MODULE.LIST.TODAY' : 'COMPANIES_MODULE.LIST.DAYS_LEFT') | translate: { days: daysLeft(company) } }}
-        </td>
-        }
-        <td class="block lg:table-cell lg:px-4 lg:py-3.5 lg:text-right xl:px-5">
-          <!-- Acciones: con el ancho justo van solo con icono (con su nombre al pasar el cursor y para lectores de pantalla); en pantallas muy anchas y en tarjetas llevan texto. -->
-          <div class="flex flex-wrap items-center gap-1.5 lg:flex-nowrap lg:justify-end">
-            @if (company.status === 'deactivated') {
-            <button type="button" (click)="reactivate.emit(company)" data-testid="company-reactivate" [title]="'COMPANIES_MODULE.LIST.ACTION_REACTIVATE' | translate" [attr.aria-label]="'COMPANIES_MODULE.LIST.ACTION_REACTIVATE' | translate"
-              class="inline-flex items-center gap-1.5 rounded-md border border-gray-300 px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-white/5">
-              <span class="material-symbols-outlined text-base" aria-hidden="true">restore</span>
-              <span class="lg:sr-only 2xl:not-sr-only">{{ 'COMPANIES_MODULE.LIST.ACTION_REACTIVATE' | translate }}</span>
-            </button>
-            } @else {
-            <button type="button" (click)="changeQuota.emit(company)" data-testid="company-change-quota" [title]="'COMPANIES_MODULE.LIST.ACTION_QUOTA' | translate" [attr.aria-label]="'COMPANIES_MODULE.LIST.ACTION_QUOTA' | translate"
-              class="inline-flex items-center gap-1.5 rounded-md border border-gray-300 px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-white/5">
-              <span class="material-symbols-outlined text-base" aria-hidden="true">group</span>
-              <span class="lg:sr-only 2xl:not-sr-only">{{ 'COMPANIES_MODULE.LIST.ACTION_QUOTA' | translate }}</span>
-            </button>
-            @if (canResendKey(company)) {
-            <button type="button" (click)="resendKey.emit(company)" data-testid="company-resend-key" [title]="'COMPANIES_MODULE.LIST.ACTION_RESEND_KEY' | translate" [attr.aria-label]="'COMPANIES_MODULE.LIST.ACTION_RESEND_KEY' | translate"
-              class="inline-flex items-center gap-1.5 rounded-md border border-gray-300 px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-white/5">
-              <span class="material-symbols-outlined text-base" aria-hidden="true">forward_to_inbox</span>
-              <span class="lg:sr-only 2xl:not-sr-only">{{ 'COMPANIES_MODULE.LIST.ACTION_RESEND_KEY' | translate }}</span>
-            </button>
-            }
-            <button type="button" (click)="archive.emit(company)" data-testid="company-archive" [title]="'COMPANIES_MODULE.LIST.ACTION_ARCHIVE' | translate" [attr.aria-label]="'COMPANIES_MODULE.LIST.ACTION_ARCHIVE' | translate"
-              class="inline-flex items-center gap-1.5 rounded-md border border-rose-300 px-2.5 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50 dark:border-rose-500/50 dark:text-rose-300 dark:hover:bg-rose-500/10">
-              <span class="material-symbols-outlined text-base" aria-hidden="true">inventory_2</span>
-              <span class="lg:sr-only 2xl:not-sr-only">{{ 'COMPANIES_MODULE.LIST.ACTION_ARCHIVE' | translate }}</span>
-            </button>
-            }
-          </div>
-        </td>
-      </tr>
+  <ng-template appCell="company" let-company>
+    <span class="block font-medium text-ink">{{ company.name }}</span>
+    <span class="block text-ink-muted">{{ company.admin_email }}</span>
+    <!-- Aislamiento y onboarding van como detalle de la empresa: no cuestan dos columnas. -->
+    <span class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-muted">
+      <span>{{ 'COMPANIES_MODULE.ISOLATION.' + company.isolation_strategy | translate }}</span>
+      <app-status-indicator [tone]="onboardingTone(company)" [labelKey]="onboardingKey(company)" />
+    </span>
+  </ng-template>
+
+  <ng-template appCell="status" let-company>
+    <span class="flex flex-col items-start gap-1">
+      <app-status-indicator [tone]="statusTone(company.status)" [labelKey]="'COMPANIES_MODULE.STATUS.' + company.status" />
+      <app-status-indicator [tone]="keyTone(company.access_key_status)" [labelKey]="'COMPANIES_MODULE.KEY_STATUS.' + (company.access_key_status ?? 'none')" />
+      @if (company.access_key_status === 'pending' && company.access_key_expires_at) {
+      <span class="block text-xs text-ink-muted">{{ 'COMPANIES_MODULE.LIST.KEY_EXPIRES' | translate }} {{ company.access_key_expires_at | date:'dd/MM/yy' }}</span>
       }
-    </tbody>
-  </table>
-</div>
-@if (companyService.totalPages > 1) {
-<div class="flex items-center justify-end gap-3 mt-4 text-sm text-gray-600 dark:text-gray-300">
-  <button type="button" class="px-3 py-1 rounded border border-gray-300 dark:border-gray-600 disabled:opacity-40"
-    [disabled]="companyService.page <= 1" (click)="pageChange.emit(companyService.page - 1)">
-    {{ 'COMPANIES_MODULE.LIST.PREV' | translate }}
-  </button>
-  <span>{{ companyService.page }} / {{ companyService.totalPages }}</span>
-  <button type="button" class="px-3 py-1 rounded border border-gray-300 dark:border-gray-600 disabled:opacity-40"
-    [disabled]="companyService.page >= companyService.totalPages" (click)="pageChange.emit(companyService.page + 1)">
-    {{ 'COMPANIES_MODULE.LIST.NEXT' | translate }}
-  </button>
-</div>
-}
-}
+    </span>
+  </ng-template>
+
+  <ng-template appCell="frameworks" let-company>
+    <span class="flex flex-wrap gap-x-3 gap-y-1">
+      @for (framework of company.frameworks; track framework.code) {
+      <app-tag data-testid="company-framework" [text]="framework.name" />
+      } @empty { <span class="text-ink-faint">—</span> }
+    </span>
+  </ng-template>
+
+  <!-- D103 · Usuarios que cuentan / contratados, juntos; sin tope si la empresa es anterior al cupo. Cuando se llena, se dice. -->
+  <ng-template appCell="users" let-company>
+    <span class="flex flex-col items-start gap-1" data-testid="company-users">
+      <span class="font-medium text-ink">{{ company.users_count }} / {{ company.max_users ?? ('COMPANIES_MODULE.LIST.NO_LIMIT' | translate) }}</span>
+      @if (quotaFull(company)) {
+      <app-status-indicator data-testid="company-quota-full" tone="warn" labelKey="COMPANIES_MODULE.LIST.QUOTA_FULL" />
+      }
+    </span>
+  </ng-template>
+
+  <ng-template appCell="created" let-company>{{ company.created_at | date:'dd/MM/yy' }}</ng-template>
+
+  <ng-template appCell="deletes" let-company>
+    <span [class]="daysLeft(company) <= 3 ? 'font-semibold text-bad-ink' : ''">
+      {{ company.archive_until | date:'dd/MM/yy' }} · {{ (daysLeft(company) === 0 ? 'COMPANIES_MODULE.LIST.TODAY' : 'COMPANIES_MODULE.LIST.DAYS_LEFT') | translate: { days: daysLeft(company) } }}
+    </span>
+  </ng-template>
+
+  <ng-template appCell="actions" let-company>
+    <span class="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
+      @if (company.status === 'deactivated') {
+      <button type="button" (click)="reactivate.emit(company)" data-testid="company-reactivate" class="text-sm font-medium text-action hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_REACTIVATE' | translate }}</button>
+      } @else {
+      <button type="button" (click)="changeQuota.emit(company)" data-testid="company-change-quota" class="text-sm font-medium text-action hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_QUOTA' | translate }}</button>
+      @if (canResendKey(company)) {
+      <button type="button" (click)="resendKey.emit(company)" data-testid="company-resend-key" class="text-sm font-medium text-action hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_RESEND_KEY' | translate }}</button>
+      }
+      <button type="button" (click)="archive.emit(company)" data-testid="company-archive" class="text-sm font-medium text-bad-ink hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_ARCHIVE' | translate }}</button>
+      }
+    </span>
+  </ng-template>
+</app-data-table>

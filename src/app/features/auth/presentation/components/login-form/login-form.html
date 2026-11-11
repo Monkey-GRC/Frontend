@@ -7,7 +7,7 @@
         <div class="w-full">
 
             <!-- Title -->
-            <h1 class="text-2xl md:text-3xl font-bold text-primary dark:text-white text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-ink text-center">
                 {{ 'AUTH.LOGIN.TITLE' | translate }}
             </h1>
 
@@ -16,27 +16,22 @@
 
                 <!-- Email -->
                 <div class="relative">
-                    <label class="block text-xs font-medium text-slate-400 mb-2">
+                    <label for="login-email" class="block text-xs font-medium text-ink-muted mb-2">
                         {{ 'AUTH.FIELDS.EMAIL' | translate }}
                     </label>
 
-                    <span
-                        class="pointer-events-none absolute left-3 top-9 md:top-10 inline-flex items-center text-slate-500">
-                        <span class="material-symbols-rounded text-[20px] md:text-[22px] leading-none">mail</span>
-                    </span>
-
-                    <input formControlName="email" type="email" autocomplete="email"
+                    <input id="login-email" formControlName="email" type="email" autocomplete="email"
                         [placeholder]="'AUTH.FIELDS.EMAIL_PLACEHOLDER' | translate"
-                        class="bg-gray-100 dark:bg-[#162036] dark:text-white focus:bg-white dark:focus:bg-[#0E1525] w-full pl-10 pr-3 h-9 md:pl-12 md:h-12 text-sm md:text-base rounded-lg border border-gray-300 dark:border-gray-700 focus:border-primary/60 transition" />
+                        class="mk-input !h-9 md:!h-12 md:text-base" />
 
                     @if (hasError('email','required')) {
-                    <p class="mt-1.5 text-xs text-rose-500">
+                    <p class="mt-1.5 text-xs text-bad-ink">
                         {{ 'AUTH.VALIDATION.EMAIL_REQUIRED' | translate }}
                     </p>
                     }
 
                     @if (hasError('email','email')) {
-                    <p class="mt-1.5 text-xs text-rose-500">
+                    <p class="mt-1.5 text-xs text-bad-ink">
                         {{ 'AUTH.VALIDATION.EMAIL_INVALID' | translate }}
                     </p>
                     }
@@ -44,21 +39,16 @@
 
                 <!-- Password -->
                 <div class="relative">
-                    <label class="block text-xs font-medium text-slate-400 mb-2">
+                    <label for="login-password" class="block text-xs font-medium text-ink-muted mb-2">
                         {{ 'AUTH.FIELDS.PASSWORD' | translate }}
                     </label>
 
-                    <span
-                        class="pointer-events-none absolute left-3 top-9 md:top-10 inline-flex items-center text-slate-500">
-                        <span class="material-symbols-rounded text-[20px] md:text-[22px] leading-none">lock</span>
-                    </span>
-
-                    <input formControlName="password" [type]="showPassword() ? 'text' : 'password'" autocomplete="current-password"
-                        placeholder="••••••••" class="bg-gray-100 dark:bg-[#162036] dark:text-white focus:bg-white dark:focus:bg-[#0E1525] w-full pl-10 pr-12 h-9 md:pl-12 md:h-12 text-sm md:text-base rounded-lg border border-gray-300 dark:border-gray-700 focus:border-primary/60 transition" />
+                    <input id="login-password" formControlName="password" [type]="showPassword() ? 'text' : 'password'" autocomplete="current-password"
+                        placeholder="••••••••" class="mk-input !h-9 !pr-12 md:!h-12 md:text-base" />
                     <app-password-toggle [(visible)]="showPassword" />
 
                     @if (hasError('password','required')) {
-                    <p class="mt-1.5 text-xs text-rose-500">
+                    <p class="mt-1.5 text-xs text-bad-ink">
                         {{ 'AUTH.VALIDATION.PASSWORD_REQUIRED' | translate }}
                     </p>
                     }
@@ -66,19 +56,19 @@
 
                 <!-- Forgot password link -->
                 <div class="text-right">
-                    <a routerLink="/auth/forgot-password" data-testid="forgot-password-link" class="text-xs md:text-sm text-primary font-medium hover:underline">
+                    <a routerLink="/auth/forgot-password" data-testid="forgot-password-link" class="text-xs md:text-sm text-action font-medium hover:underline">
                         {{ 'AUTH.LOGIN.FORGOT' | translate }}
                     </a>
                 </div>
             </div>
 
             @if (errorMsg()) {
-            <p class="mt-4 text-xs text-rose-500" role="alert">{{ errorMsg() }}</p>
+            <p class="mt-4 text-xs text-bad-ink" role="alert">{{ errorMsg() }}</p>
             }
 
             <!-- Submit -->
             <div class="mt-5 md:mt-10">
-                <button type="submit" class="group w-full inline-flex items-center justify-center gap-2 shadow-theme-sm h-9 md:h-12 px-5 text-sm md:text-base font-semibold rounded-xl text-white bg-primary hover:bg-brand-600 focus:outline-0 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                <button type="submit" class="mk-btn w-full !h-9 md:!h-12 md:text-base"
                     [disabled]="loading() || form.invalid">
 
                     @if (!loading()) {
@@ -90,27 +80,22 @@
                         {{ 'AUTH.LOGIN.PROCESSING' | translate }}
                     </span>
                     }
-
-                    <span
-                        class="material-symbols-rounded text-[18px] md:text-[20px] transition group-hover:translate-x-0.5">
-                        arrow_forward
-                    </span>
                 </button>
             </div>
 
             <!-- Divider -->
             <div class="mt-5 md:mt-10">
                 <div class="flex items-center gap-3">
-                    <span class="h-px w-full bg-slate-200 dark:bg-slate-700"></span>
-                    <span class="text-xs text-slate-500">{{ 'AUTH.LOGIN.INFO' | translate }}</span>
-                    <span class="h-px w-full bg-slate-200 dark:bg-slate-700"></span>
+                    <span class="h-px w-full bg-line"></span>
+                    <span class="text-xs text-ink-muted">{{ 'AUTH.LOGIN.INFO' | translate }}</span>
+                    <span class="h-px w-full bg-line"></span>
                 </div>
 
-                <p class="text-[11px] md:text-xs text-slate-500 mt-4 text-center md:text-left">
+                <p class="text-[11px] md:text-xs text-ink-muted mt-4 text-center md:text-left">
                     {{ 'AUTH.LOGIN.TERMS_PREFIX' | translate }}
-                    <a href="javascript:void(0)" class="text-primary underline">{{ 'AUTH.LOGIN.TERMS' | translate }}</a>
+                    <a href="javascript:void(0)" class="text-action underline">{{ 'AUTH.LOGIN.TERMS' | translate }}</a>
                     {{ 'AUTH.LOGIN.AND' | translate }}
-                    <a href="javascript:void(0)" class="text-primary underline">{{ 'AUTH.LOGIN.PRIVACY' | translate }}</a>.
+                    <a href="javascript:void(0)" class="text-action underline">{{ 'AUTH.LOGIN.PRIVACY' | translate }}</a>.
                 </p>
             </div>
 

@@ -1,5 +1,5 @@
 // En @core/models/api-response.ts
-export interface SuccessResponse<T = any> {
+export interface SuccessResponse<T = unknown> {
     entityName: string;
     statusCode: number;
     message: string;
@@ -15,7 +15,7 @@ export interface ErrorResponse {
 }
 
 // Tipo unificado para respuestas HTTP
-export type ApiResponse<T = any> = SuccessResponse<T> | ErrorResponse;
+export type ApiResponse<T = unknown> = SuccessResponse<T> | ErrorResponse;
 
 // Helper para verificar tipo
 export function isSuccessResponse<T>(response: ApiResponse<T>): response is SuccessResponse<T> {

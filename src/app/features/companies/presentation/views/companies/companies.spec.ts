@@ -1,10 +1,11 @@
+import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
-import { Company } from '@features/companies/models/company.model';
+import { Company } from '@shared/models/company.model';
 import { CompanyService } from '@features/companies/services/company.service';
 import { ArchiveDetails } from '@features/companies/presentation/components/company-archive-form/company-archive-form';
 import { ReactivateDetails } from '@features/companies/presentation/components/company-reactivate-form/company-reactivate-form';
-import { ToastService } from '@shared/services/toast.service';
+import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
 import { Companies } from './companies';
 
 // D94, D97: archivar y reactivar una empresa piden, ya aprobado el formulario, el código del segundo factor. Es el modal genérico de verificación; aquí se prueba el flujo que lo
@@ -26,7 +27,9 @@ describe('Companies · segunda confirmación con el modal genérico', () => {
     service = Object.assign(jasmine.createSpyObj<CompanyService>('CompanyService', ['archiveCompany', 'reactivateCompany', 'readCompanies']), { companies: [] as Company[] });
     service.readCompanies.and.returnValue(reply({ data: { items: [], page: 1, total: 0, total_pages: 1 } }));
     toast = jasmine.createSpyObj<ToastService>('ToastService', ['showSuccess', 'showError']);
-    page = new Companies(service, toast, { instant: (key: string) => key } as unknown as TranslateService);
+    const translate = { instant: (key: string) => key } as unknown as TranslateService;
+    TestBed.configureTestingModule({ providers: [{ provide: CompanyService, useValue: service }, { provide: ToastService, useValue: toast }, { provide: TranslateService, useValue: translate }] });
+    page = TestBed.runInInjectionContext(() => new Companies());
   });
 
   const startArchive = () => {
@@ -110,7 +113,9 @@ describe('Companies · cambiar el cupo de usuarios', () => {
     service = Object.assign(jasmine.createSpyObj<CompanyService>('CompanyService', ['updateMaxUsers', 'readCompanies']), { companies: [] as Company[], page: 2 });
     service.readCompanies.and.returnValue(reply({ data: { items: [], page: 2, total: 0, total_pages: 3 } }));
     toast = jasmine.createSpyObj<ToastService>('ToastService', ['showSuccess', 'showError']);
-    page = new Companies(service, toast, { instant: (key: string, params?: object) => key + (params ? JSON.stringify(params) : '') } as unknown as TranslateService);
+    const translate = { instant: (key: string, params?: object) => key + (params ? JSON.stringify(params) : '') } as unknown as TranslateService;
+    TestBed.configureTestingModule({ providers: [{ provide: CompanyService, useValue: service }, { provide: ToastService, useValue: toast }, { provide: TranslateService, useValue: translate }] });
+    page = TestBed.runInInjectionContext(() => new Companies());
   });
 
   it('opens with no previous error and sends the new quota for THAT company', () => {
