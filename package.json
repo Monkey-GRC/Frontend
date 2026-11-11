@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -20,14 +21,6 @@
     "@angular/router": "^20.0.6",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@syncfusion/ej2-angular-calendars": "^32.1.21-ngcc",
-    "@syncfusion/ej2-angular-dropdowns": "^32.1.21-ngcc",
-    "@syncfusion/ej2-angular-grids": "^32.1.21",
-    "@syncfusion/ej2-angular-inputs": "^32.1.20",
-    "@syncfusion/ej2-angular-lists": "^32.1.19",
-    "@syncfusion/ej2-angular-notifications": "^32.1.19",
-    "@syncfusion/ej2-angular-popups": "^32.1.19",
-    "@syncfusion/ej2-cldr-data": "^32.1.19",
     "@tailwindcss/postcss": "^4.1.17",
     "material-symbols": "^0.40.1",
     "ngx-translate-multi-http-loader": "^20.0.0",
@@ -41,8 +34,11 @@
     "@angular/build": "^20.0.5",
     "@angular/cli": "^20.0.5",
     "@angular/compiler-cli": "^20.0.6",
+    "@eslint/js": "9.39.5",
     "@types/jasmine": "~5.1.0",
     "@types/qrcode": "^1.5.5",
+    "angular-eslint": "20.7.0",
+    "eslint": "9.39.5",
     "jasmine-core": "~5.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
@@ -50,6 +46,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.5.6",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "typescript-eslint": "8.72.1"
   }
 }
