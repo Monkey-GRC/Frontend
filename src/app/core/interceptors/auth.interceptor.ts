@@ -13,10 +13,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     // Endpoints de auth: su 401 lo maneja AuthService, no este interceptor.
     const isAuthEndpoint = /\/auth\/(login|refresh|logout|me|mfa\/(verify|setup|setup\/confirm|recovery-codes))$/.test(req.url);
 
+    // `X-Monkey-Client` elige qué juego de cookies usa el servidor para que Admin y Platform convivan en un mismo
+    // navegador; no autentica nada.
     const cloned = req.clone({
         withCredentials: true, // ✅ ENVÍA COOKIES httpOnly
         setHeaders: {
             'Accept-Language': lang,
+            'X-Monkey-Client': 'admin',
         },
     });
 

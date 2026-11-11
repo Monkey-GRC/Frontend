@@ -31,6 +31,7 @@ describe('authInterceptor', () => {
     const req = backend.expectOne(`${api}/companies`);
     expect(req.request.withCredentials).toBeTrue();
     expect(req.request.headers.has('Accept-Language')).toBeTrue();
+    expect(req.request.headers.get('X-Monkey-Client')).toBe('admin');
     req.flush({});
   });
 
