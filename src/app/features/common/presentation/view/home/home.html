@@ -39,7 +39,7 @@
           }
 
           <!-- Cifras de un vistazo: la primera es la destacada -->
-          <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="grid gap-4 *:min-w-0 sm:grid-cols-2 xl:grid-cols-4">
 
             <app-card [featured]="true" class="h-full">
               <p class="text-sm font-medium text-white/90">{{ 'HOME.KPI.COMPANIES' | translate }}</p>
@@ -76,7 +76,7 @@
             </app-card>
           </div>
 
-          <div class="grid gap-4 xl:grid-cols-2">
+          <div class="grid gap-4 *:min-w-0 xl:grid-cols-2">
 
             <!-- Estado de las claves de acceso: parte de un todo -->
             <app-section class="h-full" titleKey="HOME.KEYS.TITLE" descriptionKey="HOME.KEYS.SUBTITLE">
@@ -114,7 +114,7 @@
             </app-section>
           </div>
 
-          <div class="grid gap-4 xl:grid-cols-3">
+          <div class="grid gap-4 *:min-w-0 xl:grid-cols-3">
 
             <!-- Altas recientes -->
             <app-section class="h-full xl:col-span-2" titleKey="HOME.RECENT.TITLE">

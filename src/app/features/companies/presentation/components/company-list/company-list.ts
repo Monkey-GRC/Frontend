@@ -13,11 +13,8 @@ import { Tag } from '@shared/presentation/components/tag/tag';
 const COLUMNS: TableColumn<Company>[] = [
   { key: 'company', headerKey: 'COMPANIES_MODULE.LIST.COL_COMPANY' },
   { key: 'status', headerKey: 'COMPANIES_MODULE.LIST.COL_STATUS' },
-  { key: 'key', headerKey: 'COMPANIES_MODULE.LIST.COL_KEY' },
   { key: 'frameworks', headerKey: 'COMPANIES_MODULE.LIST.COL_FRAMEWORKS' },
   { key: 'users', headerKey: 'COMPANIES_MODULE.LIST.COL_USERS' },
-  { key: 'isolation', headerKey: 'COMPANIES_MODULE.LIST.COL_ISOLATION' },
-  { key: 'onboarding', headerKey: 'COMPANIES_MODULE.LIST.COL_ONBOARDING' },
   { key: 'created', headerKey: 'COMPANIES_MODULE.LIST.COL_CREATED' },
   { key: 'actions', headerKey: 'COMPANIES_MODULE.LIST.COL_ACTIONS', align: 'right', srOnlyHeader: true },
 ];

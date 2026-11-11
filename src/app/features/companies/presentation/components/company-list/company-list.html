@@ -11,17 +11,21 @@
   <ng-template appCell="company" let-company>
     <span class="block font-medium text-ink">{{ company.name }}</span>
     <span class="block text-ink-muted">{{ company.admin_email }}</span>
+    <!-- Aislamiento y onboarding van como detalle de la empresa: no cuestan dos columnas. -->
+    <span class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-muted">
+      <span>{{ 'COMPANIES_MODULE.ISOLATION.' + company.isolation_strategy | translate }}</span>
+      <app-status-indicator [tone]="onboardingTone(company)" [labelKey]="onboardingKey(company)" />
+    </span>
   </ng-template>
 
   <ng-template appCell="status" let-company>
-    <app-status-indicator [tone]="statusTone(company.status)" [labelKey]="'COMPANIES_MODULE.STATUS.' + company.status" />
-  </ng-template>
-
-  <ng-template appCell="key" let-company>
-    <app-status-indicator [tone]="keyTone(company.access_key_status)" [labelKey]="'COMPANIES_MODULE.KEY_STATUS.' + (company.access_key_status ?? 'none')" />
-    @if (company.access_key_status === 'pending' && company.access_key_expires_at) {
-    <span class="mt-1 block text-xs text-ink-muted">{{ 'COMPANIES_MODULE.LIST.KEY_EXPIRES' | translate }} {{ company.access_key_expires_at | date:'dd/MM/yy' }}</span>
-    }
+    <span class="flex flex-col items-start gap-1">
+      <app-status-indicator [tone]="statusTone(company.status)" [labelKey]="'COMPANIES_MODULE.STATUS.' + company.status" />
+      <app-status-indicator [tone]="keyTone(company.access_key_status)" [labelKey]="'COMPANIES_MODULE.KEY_STATUS.' + (company.access_key_status ?? 'none')" />
+      @if (company.access_key_status === 'pending' && company.access_key_expires_at) {
+      <span class="block text-xs text-ink-muted">{{ 'COMPANIES_MODULE.LIST.KEY_EXPIRES' | translate }} {{ company.access_key_expires_at | date:'dd/MM/yy' }}</span>
+      }
+    </span>
   </ng-template>
 
   <ng-template appCell="frameworks" let-company>
@@ -40,12 +44,6 @@
       <app-status-indicator data-testid="company-quota-full" tone="warn" labelKey="COMPANIES_MODULE.LIST.QUOTA_FULL" />
       }
     </span>
-  </ng-template>
-
-  <ng-template appCell="isolation" let-company>{{ 'COMPANIES_MODULE.ISOLATION.' + company.isolation_strategy | translate }}</ng-template>
-
-  <ng-template appCell="onboarding" let-company>
-    <app-status-indicator [tone]="onboardingTone(company)" [labelKey]="onboardingKey(company)" />
   </ng-template>
 
   <ng-template appCell="created" let-company>{{ company.created_at | date:'dd/MM/yy' }}</ng-template>
