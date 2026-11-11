@@ -24,15 +24,18 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         catchError((error: HttpErrorResponse) => {
             if (error.status !== 401 || isAuthEndpoint) return throwError(() => error);
 
-            // El access token dura 15 min: ante un 401 se renueva una vez y se reintenta.
-            // Si la sesión ya no se puede renovar (30 min sin actividad, 8 h, o la cookie fue
-            // pisada por otra app en localhost), se limpia y se manda a loguear de nuevo.
+            // El access token dura 15 min: ante un 401 se intenta renovar y se reintenta UNA vez, pase lo que
+            // pase con la renovación: si falló, otra pestaña pudo rotar el refresh token y el navegador ya tiene
+            // cookies nuevas. Solo si el reintento también responde 401 (30 min sin actividad, 8 h, o la cookie
+            // fue pisada por otra app en localhost) se limpia la sesión y se manda a loguear de nuevo.
             return authService.refresh().pipe(
-                switchMap((ok) => {
-                    if (ok) return next(cloned);
-                    authService.clearLocalSession();
-                    router.navigate(['/auth/login']);
-                    return throwError(() => error);
+                switchMap(() => next(cloned)),
+                catchError((retryError: HttpErrorResponse) => {
+                    if (retryError.status === 401) {
+                        authService.clearLocalSession();
+                        router.navigate(['/auth/login']);
+                    }
+                    return throwError(() => retryError);
                 }),
             );
         }),
