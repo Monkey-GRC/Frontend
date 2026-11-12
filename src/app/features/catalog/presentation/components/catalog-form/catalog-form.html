@@ -21,13 +21,7 @@
         class="mk-input !h-auto py-2 font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null"></textarea>
       }
       @case ('select') {
-      <select [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" (change)="set(f.key, targetValue($event))" [disabled]="sending"
-        class="mk-input font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null">
-        @if (!f.initial) { <option value="" [selected]="!values[f.key]">{{ 'CATALOG_MODULE.FORM.CHOOSE' | translate }}</option> }
-        @for (o of optionsOf(f); track o.value) {
-        <option [value]="o.value" [selected]="values[f.key] === o.value">{{ o.label }}</option>
-        }
-      </select>
+      <app-select class="font-normal" [inputId]="'catalog-field-' + f.key" [attr.data-field]="f.key" [options]="optionsOf(f)" [value]="values[f.key]" [invalid]="!!errors[f.key]" [disabled]="sending" placeholderKey="CATALOG_MODULE.FORM.CHOOSE" (valueChange)="set(f.key, $event)" />
       }
       @default {
       <input type="text" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [disabled]="sending"

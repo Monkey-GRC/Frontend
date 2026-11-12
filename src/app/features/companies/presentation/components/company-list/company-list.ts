@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { LocalDatePipe } from '@shared/presentation/pipes/local-date.pipe';
 import { ChangeDetectionStrategy, Component, output, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessKeyStatus, Company, CompanyStatus } from '@shared/models/company.model';
@@ -21,7 +21,7 @@ const COLUMNS: TableColumn<Company>[] = [
 
 @Component({
   selector: 'app-company-list',
-  imports: [PageHeader, DatePipe, TranslateModule, DataTable, TableCell, StatusIndicator, Tag, Tabs],
+  imports: [PageHeader, LocalDatePipe, TranslateModule, DataTable, TableCell, StatusIndicator, Tag, Tabs],
   templateUrl: './company-list.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })

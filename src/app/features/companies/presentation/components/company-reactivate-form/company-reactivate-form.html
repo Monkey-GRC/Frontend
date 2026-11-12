@@ -2,7 +2,7 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
   <div class="flex flex-col gap-4">
     <div class="mk-surface-tinted p-3 text-sm text-ink" role="note">
-      {{ 'COMPANIES_MODULE.REACTIVATE.INFO' | translate: { name: c.name, date: (c.archive_until | date: 'dd/MM/yyyy') } }}
+      {{ 'COMPANIES_MODULE.REACTIVATE.INFO' | translate: { name: c.name, date: (c.archive_until | localDate: 'medium') } }}
     </div>
 
     <div class="flex flex-col gap-1">

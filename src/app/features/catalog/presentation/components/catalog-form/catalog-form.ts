@@ -6,6 +6,7 @@ import { CatalogService } from '@features/catalog/services/catalog.service';
 import { FormModal } from '@shared/presentation/components/form-modal/form-modal';
 import { CODE_PATTERN, FORM_FIELDS, FieldDef } from './catalog-form.config';
 import { targetValue } from '@shared/presentation/utils/event-target';
+import { Select } from '@shared/presentation/components/select/select';
 
 type Values = Record<string, string>;
 
@@ -13,7 +14,7 @@ type Values = Record<string, string>;
 // (`catalog-form.config.ts`). Al editar solo se manda lo que cambió. El backend es quien manda: sus errores por campo se muestran junto a cada campo.
 @Component({
   selector: 'app-catalog-form',
-  imports: [TranslateModule, FormModal],
+  imports: [TranslateModule, FormModal, Select],
   templateUrl: './catalog-form.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })

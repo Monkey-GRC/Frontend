@@ -14,7 +14,7 @@
     {{ 'COMPANIES_MODULE.KEY.SENT' | translate: { name: company().name, email: company().admin_email } }}
   </p>
   <p class="text-xs text-ink-muted">
-    {{ 'COMPANIES_MODULE.KEY.EXPIRES' | translate }} {{ company().access_key.expires_at | date:'dd/MM/yyyy HH:mm' }}
+    {{ 'COMPANIES_MODULE.KEY.EXPIRES' | translate }} {{ company().access_key.expires_at | localDate: 'medium' : true }}
   </p>
   }
 </div>

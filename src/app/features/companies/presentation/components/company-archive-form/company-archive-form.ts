@@ -1,3 +1,4 @@
+import { LocalDatePipe } from '@shared/presentation/pipes/local-date.pipe';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,6 +10,7 @@ import {
   DeactivationReason,
   MIN_RETENTION_DAYS,
 } from '@shared/models/company.model';
+import { Select, SelectOption } from '@shared/presentation/components/select/select';
 
 export interface ArchiveDetails {
   confirm_name: string;
@@ -23,7 +25,7 @@ const DAY_MS = 86_400_000;
 // diálogo; esta pieza expone `canSubmit` y `onSubmit()` como el resto de los formularios de Monkey Admin.
 @Component({
   selector: 'app-company-archive-form',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, Select, LocalDatePipe],
   templateUrl: './company-archive-form.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -55,7 +57,7 @@ export class CompanyArchiveForm implements OnInit {
     this.form.valueChanges.subscribe(() => this.cdr.markForCheck());
   }
 
-  readonly reasons = DEACTIVATION_REASONS;
+  readonly reasonOptions: SelectOption[] = DEACTIVATION_REASONS.map((code) => ({ value: code, labelKey: 'COMPANIES_MODULE.ARCHIVE.REASON.' + code }));
 
   // Tiene que coincidir letra por letra: es la barrera contra archivar la empresa equivocada.
   get nameMatches(): boolean {

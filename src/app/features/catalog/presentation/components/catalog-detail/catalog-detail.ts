@@ -10,6 +10,7 @@ import { OptionName } from '@features/catalog/models/catalog.model';
 import { SideDrawer } from '@shared/presentation/components/side-drawer/side-drawer';
 import { StatusIndicator } from '@shared/presentation/components/status-indicator/status-indicator';
 import { targetValue, targetChecked } from '@shared/presentation/utils/event-target';
+import { Select } from '@shared/presentation/components/select/select';
 
 export type DetailKind = 'controls' | 'risks' | 'causes' | 'tests' | 'evidence-templates';
 type Detail = ControlDetail | RiskDetail | CauseDetail | TestDetail | EvidenceTemplateRow;
@@ -31,7 +32,7 @@ export interface EditRequest {
 // reactiva, y se vincula o desvincula con lo relacionado (contracts/modules/monkey-admin-catalog.md). Dar de baja no borra; desvincular borra solo la relación.
 @Component({
   selector: 'app-catalog-detail',
-  imports: [NgTemplateOutlet, TranslateModule, ItemPicker, SideDrawer, StatusIndicator],
+  imports: [NgTemplateOutlet, TranslateModule, ItemPicker, SideDrawer, StatusIndicator, Select],
   templateUrl: './catalog-detail.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })

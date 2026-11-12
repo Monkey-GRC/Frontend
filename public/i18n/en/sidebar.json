@@ -12,6 +12,8 @@
         "NAV": {
             "LABEL": "Main navigation",
             "TOGGLE_SIDEBAR": "Show or hide the side menu",
+            "PIN": "Pin menu",
+            "UNPIN": "Unpin menu",
             "LOGO_ALT": "Monkey logo"
         },
         "HEADER": {

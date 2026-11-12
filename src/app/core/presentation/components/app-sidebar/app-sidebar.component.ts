@@ -9,7 +9,7 @@ import { filter } from 'rxjs';
 import { SidebarService } from '@core/services/sidebar.service';
 import { NavItem, NAV_ITEMS, NavSubItem, NavigationHelper } from '@config/navigation.config';
 import { AuthService } from '@core/services/auth.service';
-import { filterNavByRole, groupDomId, groupHasActiveRoute, openActiveGroups, toggleGroup } from './sidebar-groups';
+import { filterNavByRole, groupDomId, groupHasActiveRoute, isRenderable, navSections, openActiveGroups, toggleGroup } from './sidebar-groups';
 
 interface Flyout {
   name: string;
@@ -54,16 +54,11 @@ export class AppSidebarComponent {
   }
 
   get sections(): string[] {
-    return NavigationHelper.getSections(this.navItems);
+    return navSections(this.navItems);
   }
 
   getItemsBySection(section: string): NavItem[] {
-    return NavigationHelper.getItemsBySection(this.navItems, section);
-  }
-
-  /** In Admin the section name is already its translation key. */
-  sectionLabelKey(section: string): string {
-    return section;
+    return NavigationHelper.getItemsBySection(this.navItems, section).filter(isRenderable);
   }
 
   /** In Admin the name of an item is its translation key. */

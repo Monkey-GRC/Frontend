@@ -38,6 +38,7 @@
       "NAME_PLACEHOLDER": "Next Audit & Consulting S.A.S.",
       "NAME_HINT": "It becomes fixed: the client will see it locked in the onboarding.",
       "ADMIN_EMAIL": "Administrative email",
+      "ADMIN_EMAIL_PLACEHOLDER": "contact@company.com",
       "ADMIN_EMAIL_HINT": "Recipient of the access key.",
       "DEDICATED": "Requires a dedicated database",
       "DEDICATED_HINT": "Only if the client's own policy requires its data in a separate database. Otherwise its data is isolated in the shared database.",

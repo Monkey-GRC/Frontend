@@ -23,7 +23,7 @@
       <app-status-indicator [tone]="statusTone(company.status)" [labelKey]="'COMPANIES_MODULE.STATUS.' + company.status" />
       <app-status-indicator [tone]="keyTone(company.access_key_status)" [labelKey]="'COMPANIES_MODULE.KEY_STATUS.' + (company.access_key_status ?? 'none')" />
       @if (company.access_key_status === 'pending' && company.access_key_expires_at) {
-      <span class="block text-xs text-ink-muted">{{ 'COMPANIES_MODULE.LIST.KEY_EXPIRES' | translate }} {{ company.access_key_expires_at | date:'dd/MM/yy' }}</span>
+      <span class="block text-xs text-ink-muted">{{ 'COMPANIES_MODULE.LIST.KEY_EXPIRES' | translate }} {{ company.access_key_expires_at | localDate: 'short' }}</span>
       }
     </span>
   </ng-template>
@@ -46,11 +46,11 @@
     </span>
   </ng-template>
 
-  <ng-template appCell="created" let-company>{{ company.created_at | date:'dd/MM/yy' }}</ng-template>
+  <ng-template appCell="created" let-company>{{ company.created_at | localDate: 'short' }}</ng-template>
 
   <ng-template appCell="deletes" let-company>
     <span [class]="daysLeft(company) <= 3 ? 'font-semibold text-bad-ink' : ''">
-      {{ company.archive_until | date:'dd/MM/yy' }} · {{ (daysLeft(company) === 0 ? 'COMPANIES_MODULE.LIST.TODAY' : 'COMPANIES_MODULE.LIST.DAYS_LEFT') | translate: { days: daysLeft(company) } }}
+      {{ company.archive_until | localDate: 'short' }} · {{ (daysLeft(company) === 0 ? 'COMPANIES_MODULE.LIST.TODAY' : 'COMPANIES_MODULE.LIST.DAYS_LEFT') | translate: { days: daysLeft(company) } }}
     </span>
   </ng-template>
 

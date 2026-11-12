@@ -4,6 +4,8 @@ import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged, 
 import { CatalogFramework, FrameworkDetail, Paginated } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { DataTable, TableCell, TableColumn } from '@shared/presentation/components/data-table/data-table';
+import { SearchField } from '@shared/presentation/components/search-field/search-field';
+import { Select, SelectOption } from '@shared/presentation/components/select/select';
 import { targetValue } from '@shared/presentation/utils/event-target';
 
 export type PickKind = 'test' | 'template' | 'cause' | 'control' | 'risk' | 'pof';
@@ -24,7 +26,7 @@ interface Choice extends Pick {
 // por marco y requisito, porque son 302 y no se buscan por texto.
 @Component({
   selector: 'app-item-picker',
-  imports: [TranslateModule, DataTable, TableCell],
+  imports: [TranslateModule, DataTable, TableCell, Select, SearchField],
   templateUrl: './item-picker.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -54,6 +56,8 @@ export class ItemPicker implements OnInit, OnDestroy {
   failed = false;
 
   frameworks: CatalogFramework[] = [];
+  frameworkOptions: SelectOption[] = [];
+  requirementOptions: SelectOption[] = [];
   frameworkId = '';
   framework: FrameworkDetail | null = null;
   requirementCode = '';
@@ -68,6 +72,7 @@ export class ItemPicker implements OnInit, OnDestroy {
       this.catalog.frameworks().subscribe({
         next: (list) => {
           this.frameworks = list;
+          this.frameworkOptions = list.map((f) => ({ value: f.id, label: f.name }));
           this.loading = false;
           const first = list.find((f) => f.availability === 'available') ?? list[0];
           if (first) this.pickFramework(first.id);
@@ -94,9 +99,13 @@ export class ItemPicker implements OnInit, OnDestroy {
   pickFramework(id: string): void {
     this.frameworkId = id;
     this.requirementCode = '';
+    this.requirementOptions = [];
     this.choices = [];
     this.catalog.framework(id).subscribe({
-      next: (framework) => (this.framework = framework),
+      next: (framework) => {
+        this.framework = framework;
+        this.requirementOptions = framework.requirements.map((r) => ({ value: r.code, label: `${r.code} · ${r.criterion}` }));
+      },
       error: () => this.fail(),
     });
   }

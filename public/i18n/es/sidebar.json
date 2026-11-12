@@ -12,6 +12,8 @@
         "NAV": {
             "LABEL": "Navegación principal",
             "TOGGLE_SIDEBAR": "Mostrar u ocultar el menú lateral",
+            "PIN": "Fijar menú",
+            "UNPIN": "Soltar menú",
             "LOGO_ALT": "Logotipo de Monkey"
         },
         "HEADER": {

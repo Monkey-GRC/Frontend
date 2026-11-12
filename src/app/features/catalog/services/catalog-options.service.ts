@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin, map, of, tap } from 'rxjs';
+import { storedLanguage } from '@core/services/language.service';
 import { environment } from '@environments/environment';
 import { CatalogOption, OptionName } from '@features/catalog/models/catalog.model';
 import { SuccessResponse } from '@shared/models/api-response.model';
@@ -33,13 +34,15 @@ export class CatalogOptionsService {
         return this.cache.get(this.key(name)) ?? [];
     }
 
-    /** El texto de un valor. Si la lista aún no llegó o el valor es nuevo, se muestra el valor tal cual: una opción nueva del backend nunca rompe ni oculta la pantalla. */
+    /** El texto de un valor. Mientras la lista no llegó no se muestra nada (nunca el valor crudo); si ya llegó y el valor es nuevo, se muestra tal cual: una opción nueva del backend nunca rompe ni oculta la pantalla. */
     label(name: OptionName, value: string | null | undefined): string {
         if (!value) return '—';
-        return this.options(name).find((o) => o.value === value)?.label ?? value;
+        const list = this.cache.get(this.key(name));
+        if (!list) return '';
+        return list.find((o) => o.value === value)?.label ?? value;
     }
 
     private key(name: OptionName): string {
-        return `${localStorage.getItem('lang') || 'es'}:${name}`;
+        return `${storedLanguage()}:${name}`;
     }
 }

@@ -1,6 +1,7 @@
 {
   "COMMON": {
     "LOADING": "Cargando",
+    "LANGUAGE_SWITCHING": "Cambiando el idioma…",
     "CLOSE": "Cerrar",
     "TOAST": {
       "REGION": "Avisos",
@@ -32,12 +33,18 @@
       "GROUP_COLLAPSE": "Contraer grupo {{name}}",
       "GROUP_EXPAND": "Desplegar grupo {{name}}"
     },
+    "SELECT": {
+      "COUNT": "{{count}} seleccionados",
+      "NO_OPTIONS": "No hay opciones",
+      "NONE": "Sin elegir"
+    },
     "SHOW_PASSWORD": "Mostrar contraseña",
     "HIDE_PASSWORD": "Ocultar contraseña",
     "CHANGE_LANGUAGE": "Cambiar idioma",
     "SEARCH_PLACEHOLDER": "Buscar o escribir un comando...",
     "LOGOUT": "Cerrar sesión",
     "ERRORS": {
+      "MISSING_DATA": "La respuesta del servidor no trae datos",
       "AUTH_PROBLEM": "Ocurrió un problema de autenticación. Si el error persiste, contacta a soporte.",
       "UNPROCESSABLE": "Entidad no procesable",
       "UNEXPECTED": "No pudimos completar la acción. Inténtalo de nuevo.",

@@ -14,7 +14,7 @@
 
     <div class="flex flex-col gap-1">
       <label for="company-admin-email">{{ 'COMPANIES_MODULE.FORM.ADMIN_EMAIL' | translate }} <span class="text-bad-ink">*</span></label>
-      <input id="company-admin-email" type="text" placeholder="contacto@empresa.com" formControlName="admin_email" class="mk-input" />
+      <input id="company-admin-email" type="text" [placeholder]="'COMPANIES_MODULE.FORM.ADMIN_EMAIL_PLACEHOLDER' | translate" formControlName="admin_email" class="mk-input" />
       <p class="text-xs text-ink-muted">
         {{ 'COMPANIES_MODULE.FORM.ADMIN_EMAIL_HINT' | translate }}
       </p>

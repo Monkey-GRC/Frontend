@@ -123,18 +123,14 @@
         </div>
         @if (addingDimension) {
         <div class="mb-3 grid gap-3 border-y border-line py-3 sm:grid-cols-2" data-dimension-form>
-          <label class="flex flex-col gap-1 text-xs font-medium text-ink">
-            {{ 'CATALOG_MODULE.COL.DIMENSION' | translate }}
-            <select data-dim-dimension (change)="dimension.dimension = targetValue($event)" class="mk-input">
-              @for (d of options.options('dimension'); track d.value) { <option [value]="d.value" [selected]="dimension.dimension === d.value">{{ d.label }}</option> }
-            </select>
-          </label>
-          <label class="flex flex-col gap-1 text-xs font-medium text-ink">
-            {{ 'CATALOG_MODULE.LINK.TYPE' | translate }}
-            <select data-dim-type (change)="dimension.type = targetValue($event)" class="mk-input">
-              @for (t of options.options('control_type'); track t.value) { <option [value]="t.value" [selected]="dimension.type === t.value">{{ t.label }}</option> }
-            </select>
-          </label>
+          <div class="flex flex-col gap-1 text-xs font-medium text-ink">
+            <label for="dim-dimension">{{ 'CATALOG_MODULE.COL.DIMENSION' | translate }}</label>
+            <app-select inputId="dim-dimension" data-dim-dimension [options]="options.options('dimension')" [value]="dimension.dimension" (valueChange)="dimension.dimension = $event" />
+          </div>
+          <div class="flex flex-col gap-1 text-xs font-medium text-ink">
+            <label for="dim-type">{{ 'CATALOG_MODULE.LINK.TYPE' | translate }}</label>
+            <app-select inputId="dim-type" data-dim-type [options]="options.options('control_type')" [value]="dimension.type" (valueChange)="dimension.type = $event" />
+          </div>
           <label class="flex items-center gap-2 text-xs text-ink"><input type="checkbox" class="mk-checkbox" [checked]="dimension.requires_probe" (change)="dimension.requires_probe = targetChecked($event)" />{{ 'CATALOG_MODULE.DETAIL.PROBE' | translate }}</label>
           <label class="flex items-center gap-2 text-xs text-ink"><input type="checkbox" class="mk-checkbox" [checked]="dimension.requires_ai" (change)="dimension.requires_ai = targetChecked($event)" />{{ 'CATALOG_MODULE.DETAIL.AI' | translate }}</label>
           <label class="flex items-center gap-2 text-xs text-ink sm:col-span-2"><input type="checkbox" class="mk-checkbox" [checked]="dimension.requires_compliance_confirmation" (change)="dimension.requires_compliance_confirmation = targetChecked($event)" />{{ 'CATALOG_MODULE.DETAIL.CONFIRMATION' | translate }}</label>

@@ -1,3 +1,4 @@
+import { LocalDatePipe } from '@shared/presentation/pipes/local-date.pipe';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,7 +8,7 @@ import { RegisteredCompany } from '@shared/models/company.model';
 // si no salió, ofrece reenviar una clave nueva. La vista hace la llamada; aquí solo se muestra el estado.
 @Component({
   selector: 'app-access-key-sent',
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, LocalDatePipe],
   templateUrl: './access-key-sent.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

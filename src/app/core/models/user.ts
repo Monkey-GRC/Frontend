@@ -9,6 +9,7 @@ export interface User {
     role: UserRole;
     status: 'active' | 'inactive' | 'suspended';
     is_mfa_enabled: boolean;
+    preferred_language?: 'es' | 'en';
     last_login_at: string | null;
     created_at: string;
 }

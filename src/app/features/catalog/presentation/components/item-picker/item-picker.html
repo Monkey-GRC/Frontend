@@ -1,26 +1,17 @@
 <div class="border-y border-line py-3" data-picker>
   @if (kind() === 'pof') {
   <div class="grid gap-3 sm:grid-cols-2">
-    <label class="flex flex-col gap-1 text-xs font-medium text-ink">
-      {{ 'CATALOG_MODULE.PICKER.FRAMEWORK' | translate }}
-      <select data-pick-framework (change)="pickFramework(targetValue($event))" class="mk-input">
-        @for (f of frameworks; track f.id) { <option [value]="f.id" [selected]="f.id === frameworkId">{{ f.name }}</option> }
-      </select>
-    </label>
-    <label class="flex flex-col gap-1 text-xs font-medium text-ink">
-      {{ 'CATALOG_MODULE.PICKER.REQUIREMENT' | translate }}
-      <select data-pick-requirement (change)="pickRequirement(targetValue($event))" class="mk-input">
-        <option value="" [selected]="!requirementCode">{{ 'CATALOG_MODULE.FORM.CHOOSE' | translate }}</option>
-        @for (r of framework?.requirements ?? []; track r.code) { <option [value]="r.code" [selected]="r.code === requirementCode">{{ r.code }} · {{ r.criterion }}</option> }
-      </select>
-    </label>
+    <div class="flex flex-col gap-1 text-xs font-medium text-ink">
+      <label for="pick-framework">{{ 'CATALOG_MODULE.PICKER.FRAMEWORK' | translate }}</label>
+      <app-select inputId="pick-framework" data-pick-framework [options]="frameworkOptions" [value]="frameworkId" (valueChange)="pickFramework($event)" />
+    </div>
+    <div class="flex flex-col gap-1 text-xs font-medium text-ink">
+      <label for="pick-requirement">{{ 'CATALOG_MODULE.PICKER.REQUIREMENT' | translate }}</label>
+      <app-select inputId="pick-requirement" data-pick-requirement [options]="requirementOptions" [value]="requirementCode" placeholderKey="CATALOG_MODULE.FORM.CHOOSE" (valueChange)="pickRequirement($event)" />
+    </div>
   </div>
   } @else {
-  <label class="flex flex-col gap-1 text-xs font-medium text-ink">
-    {{ 'CATALOG_MODULE.FILTER.SEARCH' | translate }}
-    <input type="search" data-pick-search (input)="onType(targetValue($event))" [placeholder]="'CATALOG_MODULE.FILTER.SEARCH_HINT' | translate"
-      class="mk-input" />
-  </label>
+  <app-search-field data-pick-search placeholderKey="CATALOG_MODULE.FILTER.SEARCH_HINT" ariaLabelKey="CATALOG_MODULE.FILTER.SEARCH" (valueChange)="onType($event)" />
   }
 
   <div class="mt-3" aria-live="polite">

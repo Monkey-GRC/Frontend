@@ -1,17 +1,18 @@
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NavigationProgress } from '@core/presentation/components/navigation-progress/navigation-progress';
+import { LanguageService } from '@core/services/language.service';
+import { LanguageSwitching } from '@shared/presentation/components/language-switching/language-switching';
 import { ToastContainer } from '@shared/presentation/components/toast-container/toast-container';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     RouterModule,
-    TranslateModule,
     NavigationProgress,
     ToastContainer,
+    LanguageSwitching,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
@@ -19,11 +20,5 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 export class AppComponent {
   title = 'Monkey GRC';
 
-  private translate = inject(TranslateService);
-
-  constructor() {
-    this.translate.addLangs(['es', 'en']);
-    this.translate.setFallbackLang('en');
-    this.translate.use(localStorage.getItem('lang') || 'en');
-  }
+  protected readonly language = inject(LanguageService);
 }
