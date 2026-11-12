@@ -10,19 +10,14 @@
         <li>{{ 'COMPANIES_MODULE.ARCHIVE.CONSEQ_ACCESS' | translate }}</li>
         <li>{{ 'COMPANIES_MODULE.ARCHIVE.CONSEQ_ENGINES' | translate }}</li>
         <li>{{ 'COMPANIES_MODULE.ARCHIVE.CONSEQ_KEPT' | translate }}</li>
-        <li>{{ 'COMPANIES_MODULE.ARCHIVE.CONSEQ_DELETE' | translate: { date: (deleteDate | date: 'dd/MM/yyyy') } }}</li>
+        <li>{{ 'COMPANIES_MODULE.ARCHIVE.CONSEQ_DELETE' | translate: { date: (deleteDate | localDate: 'medium') } }}</li>
         <li>{{ 'COMPANIES_MODULE.ARCHIVE.CONSEQ_REVERSIBLE' | translate }}</li>
       </ul>
     </div>
 
     <div class="flex flex-col gap-1">
       <label for="archive-reason-code">{{ 'COMPANIES_MODULE.ARCHIVE.REASON_CODE_LABEL' | translate }} <span class="text-bad-ink">*</span></label>
-      <select id="archive-reason-code" formControlName="reason_code"
-        class="mk-input">
-        @for (code of reasons; track code) {
-        <option [value]="code">{{ 'COMPANIES_MODULE.ARCHIVE.REASON.' + code | translate }}</option>
-        }
-      </select>
+      <app-select inputId="archive-reason-code" formControlName="reason_code" [options]="reasonOptions" />
     </div>
 
     <div class="flex flex-col gap-1">
@@ -37,7 +32,7 @@
       <label for="archive-retention">{{ 'COMPANIES_MODULE.ARCHIVE.RETENTION_LABEL' | translate }} <span class="text-bad-ink">*</span></label>
       <input id="archive-retention" type="number" formControlName="retention_days" class="mk-input" />
       <p class="text-xs" [class]="hasError('retention_days', 'min') || hasError('retention_days', 'max') ? 'text-bad-ink' : 'text-ink-muted'">
-        {{ 'COMPANIES_MODULE.ARCHIVE.RETENTION_HINT' | translate: { date: (deleteDate | date: 'dd/MM/yyyy'), min: minDays } }}
+        {{ 'COMPANIES_MODULE.ARCHIVE.RETENTION_HINT' | translate: { date: (deleteDate | localDate: 'medium'), min: minDays } }}
       </p>
     </div>
 

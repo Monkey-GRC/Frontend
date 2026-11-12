@@ -25,6 +25,7 @@ import {
     MfaStep,
 } from '@core/models/auth-reponse';
 import { ApiResponse, SuccessResponse } from '@shared/models/api-response.model';
+import { LanguageService, hasChosenLanguage } from '@core/services/language.service';
 import { unwrapData } from '@shared/domain/utils/unwrap-response';
 
 // Monkey Admin es exclusiva del equipo Monkey (decisión D24): cualquier otro rol se rechaza.
@@ -53,6 +54,7 @@ const writeHint = (on: boolean): void => {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private readonly translate = inject(TranslateService);
+    private readonly language = inject(LanguageService);
     private readonly API = environment.apiUrl + '/auth';
 
     private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
@@ -210,8 +212,26 @@ export class AuthService {
         );
     }
 
+    /** Guarda el idioma de la persona en el servidor (para sus correos). Requiere sesión (D111). */
+    saveLanguage(language: 'es' | 'en'): Observable<void> {
+        return this.http.patch<void>(`${this.API}/me/language`, { language }).pipe(map(() => void 0));
+    }
+
+    // Con un idioma elegido en este navegador manda el navegador (se avisa al servidor, sin recargar); sin elegir, manda la cuenta (cambia y recarga una sola vez).
+    private syncLanguage(user: User) {
+        const account = user.preferred_language;
+        if (!account) return;
+        if (hasChosenLanguage()) {
+            const shown = this.language.current();
+            if (account !== shown) this.saveLanguage(shown).subscribe({ error: () => undefined });
+        } else {
+            this.language.adoptAccountLanguage(account);
+        }
+    }
+
     private setSession(user: User) {
         writeHint(true);
+        this.syncLanguage(user);
         this._user$.next(user);
         this._isLoggedIn$.next(true);
     }

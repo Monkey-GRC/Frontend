@@ -3,6 +3,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { ItemPicker, Pick, PickKind } from './item-picker';
+import { pickOption } from '@shared/presentation/components/select/select.testing';
 
 // Las pruebas no necesitan filas completas: se entregan con el tipo que pide el servicio.
 const page = (items: unknown[]) => of({ items, page: 1, page_size: 25, total: items.length, total_pages: 1 }) as never;
@@ -58,7 +59,7 @@ describe('ItemPicker', () => {
     it('searches after the user stops typing', fakeAsync(() => {
         setup('cause');
         api.causes.calls.reset();
-        const input = el().querySelector<HTMLInputElement>('[data-pick-search]')!;
+        const input = el().querySelector<HTMLInputElement>('[data-pick-search] input')!;
         for (const text of ['c', 'ca', 'cau']) {
             input.value = text;
             input.dispatchEvent(new Event('input'));
@@ -86,10 +87,7 @@ describe('ItemPicker', () => {
     it('picks a point of focus by framework and requirement, and hides the ones already linked', () => {
         setup('pof', { exclude: ['CC1.1#1'] });
         expect(api.framework).toHaveBeenCalledWith('f1');
-        const requirement = el().querySelector<HTMLSelectElement>('[data-pick-requirement]')!;
-        requirement.value = 'CC1.1';
-        requirement.dispatchEvent(new Event('change'));
-        fixture.detectChanges();
+        pickOption(el(), '[data-pick-requirement]', 'CC1.1', () => fixture.detectChanges());
         expect(api.pointsOfFocus).toHaveBeenCalledWith('f1', 'CC1.1');
         expect(choices()).toEqual(['CC1.1#2']);
         el().querySelector<HTMLButtonElement>('[data-choice="CC1.1#2"]')!.click();

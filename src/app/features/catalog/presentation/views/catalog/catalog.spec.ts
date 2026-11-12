@@ -5,6 +5,7 @@ import { CatalogFramework } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { provideOptionsStub } from '@features/catalog/testing/catalog-options';
 import { Catalog } from './catalog';
+import { pickOption } from '@shared/presentation/components/select/select.testing';
 
 const SOC2: CatalogFramework = { id: 'f1', code: 'soc2', name: 'SOC 2', version: '2017', type: 'attestation', availability: 'available', scope_description: '', counts: { requirements: 61, controls: 118, tests: 61 } };
 const ISO: CatalogFramework = { id: 'f2', code: 'iso27001', name: 'ISO 27001', version: '2022', type: 'certification', availability: 'coming_soon', scope_description: '', counts: { requirements: 0, controls: 0, tests: 0 } };
@@ -32,10 +33,7 @@ describe('Catalog (Monkey Admin)', () => {
     const el = () => fixture.nativeElement as HTMLElement;
     const text = () => el().textContent ?? '';
     const choose = (selector: string, value: string) => {
-        const select = el().querySelector<HTMLSelectElement>(selector)!;
-        select.value = value;
-        select.dispatchEvent(new Event('change'));
-        fixture.detectChanges();
+        pickOption(el(), selector, value, () => fixture.detectChanges());
     };
 
     it('opens on the controls of the first available framework', () => {
@@ -60,7 +58,7 @@ describe('Catalog (Monkey Admin)', () => {
 
     it('asks for the controls without a requirement (CPL-1) without a framework', () => {
         setup();
-        choose('[data-scope] select', 'unlinked');
+        choose('[data-scope]', 'unlinked');
         const last = api.controls.calls.mostRecent().args[0];
         expect(last.unlinked).toBeTrue();
         expect(last.framework_id).toBeUndefined();
@@ -68,7 +66,7 @@ describe('Catalog (Monkey Admin)', () => {
 
     it('asks for the whole catalog without a framework or a link filter', () => {
         setup();
-        choose('[data-scope] select', 'all');
+        choose('[data-scope]', 'all');
         const last = api.controls.calls.mostRecent().args[0];
         expect(last.framework_id).toBeUndefined();
         expect(last.unlinked).toBeUndefined();
@@ -86,7 +84,7 @@ describe('Catalog (Monkey Admin)', () => {
     it('waits for the user to stop typing before searching, and goes back to the first page', fakeAsync(() => {
         setup();
         api.controls.calls.reset();
-        const input = el().querySelector<HTMLInputElement>('[data-table-search]')!;
+        const input = el().querySelector<HTMLInputElement>('app-table-toolbar input[type="search"]')!;
         for (const text of ['c', 'ca', 'cap']) {
             input.value = text;
             input.dispatchEvent(new Event('input'));
@@ -113,15 +111,15 @@ describe('Catalog (Monkey Admin)', () => {
         expect(el().querySelector('[data-dimension]')).toBeNull();
         el().querySelector<HTMLButtonElement>('#tab-tests')!.click();
         fixture.detectChanges();
-        choose('[data-dimension] select', 'server');
+        choose('[data-dimension]', 'server');
         expect(api.tests.calls.mostRecent().args[0].dimension).toBe('server');
     });
 
     it('sends the state and origin filters, keeping false as a real value', () => {
         setup();
-        choose('[data-state] select', 'inactive');
+        choose('[data-state]', 'inactive');
         expect(api.controls.calls.mostRecent().args[0].is_active).toBeFalse();
-        choose('[data-origin] select', 'monkey_admin');
+        choose('[data-origin]', 'monkey_admin');
         expect(api.controls.calls.mostRecent().args[0].origin).toBe('monkey_admin');
     });
 
@@ -189,10 +187,10 @@ describe('Catalog (Monkey Admin)', () => {
     it('says so when nothing matches, and offers to retry when the catalog cannot be read', () => {
         setup();
         api.controls.and.returnValue(page([]));
-        choose('[data-origin] select', 'monkey_admin');
+        choose('[data-origin]', 'monkey_admin');
         expect(el().querySelector('[data-empty]')).not.toBeNull();
         api.controls.and.returnValue(throwError(() => new Error('down')));
-        choose('[data-origin] select', 'committee');
+        choose('[data-origin]', 'committee');
         expect(el().querySelector('[data-error]')).not.toBeNull();
         api.controls.and.returnValue(page([CONTROL]));
         el().querySelector<HTMLButtonElement>('[data-retry]')!.click();
@@ -204,7 +202,7 @@ describe('Catalog (Monkey Admin)', () => {
     it('goes to the page that was asked for', () => {
         setup();
         api.controls.and.returnValue(page([CONTROL], 60, 3));
-        choose('[data-origin] select', 'committee');
+        choose('[data-origin]', 'committee');
         el().querySelector<HTMLButtonElement>('[data-next]')!.click();
         fixture.detectChanges();
         expect(api.controls.calls.mostRecent().args[0].page).toBe(2);

@@ -38,6 +38,7 @@
       "NAME_PLACEHOLDER": "Next Audit & Consulting S.A.S.",
       "NAME_HINT": "Queda fija: el cliente la verá bloqueada en su onboarding.",
       "ADMIN_EMAIL": "Correo administrativo",
+      "ADMIN_EMAIL_PLACEHOLDER": "contacto@empresa.com",
       "ADMIN_EMAIL_HINT": "Destinatario de la clave de acceso.",
       "DEDICATED": "Requiere base de datos dedicada",
       "DEDICATED_HINT": "Solo si el cliente exige, por política propia, que sus datos vivan en una base separada. Si no, sus datos quedan aislados en la base compartida.",

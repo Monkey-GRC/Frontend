@@ -1,3 +1,4 @@
+import { LanguageService } from '@core/services/language.service';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -38,6 +39,7 @@ export class Companies implements OnInit {
   companyService = inject(CompanyService);
   private toast = inject(ToastService);
   private translate = inject(TranslateService);
+  private language = inject(LanguageService);
 
   isLoading = false;
   isFormVisible = false;
@@ -199,7 +201,7 @@ export class Companies implements OnInit {
           this.translate.instant(`COMPANIES_MODULE.${key}.SUCCESS_TITLE`),
           this.translate.instant(`COMPANIES_MODULE.${key}.SUCCESS_MESSAGE`, {
             name: archived.name,
-            date: archived.archive_until ? new Date(archived.archive_until).toLocaleDateString() : '',
+            date: archived.archive_until ? new Intl.DateTimeFormat(this.language.current(), { dateStyle: 'medium' }).format(new Date(archived.archive_until)) : '',
           }),
         );
         this.closeStepUp();

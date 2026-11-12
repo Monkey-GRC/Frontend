@@ -49,7 +49,7 @@ function attentionReason(company: Company): AttentionReason | null {
     return null;
 }
 
-export function computeHomeMetrics(companies: Company[], now: Date = new Date(), limits = { recent: 5, attention: 8 }): HomeMetrics {
+export function computeHomeMetrics(companies: Company[], now: Date = new Date(), limits = { recent: 5, attention: 8 }, locale = 'es'): HomeMetrics {
     const keys: Record<KeyBucket, number> = { pending: 0, used: 0, expired: 0, revoked: 0, none: 0 };
     const frameworks = new Map<string, FrameworkCount>();
     const isolation = { dedicated: 0, shared: 0 };
@@ -73,7 +73,7 @@ export function computeHomeMetrics(companies: Company[], now: Date = new Date(),
         if (reason) attention.push({ company, reason });
     }
 
-    attention.sort((a, b) => PRIORITY[a.reason] - PRIORITY[b.reason] || a.company.name.localeCompare(b.company.name));
+    attention.sort((a, b) => PRIORITY[a.reason] - PRIORITY[b.reason] || a.company.name.localeCompare(b.company.name, locale));
     const recent = [...companies].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, limits.recent);
 
     return {
@@ -84,7 +84,7 @@ export function computeHomeMetrics(companies: Company[], now: Date = new Date(),
         onboardingPending: companies.length - onboardingDone,
         createdRecently,
         keys,
-        frameworks: [...frameworks.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
+        frameworks: [...frameworks.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, locale)),
         isolation,
         recent,
         attention: attention.slice(0, limits.attention),

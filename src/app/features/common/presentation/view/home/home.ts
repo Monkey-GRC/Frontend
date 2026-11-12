@@ -105,7 +105,7 @@ export class Home implements OnInit {
         this.stage.set('loading');
         this.metricsService.readAll().subscribe({
             next: ({ companies, total }) => {
-                this.metrics.set(computeHomeMetrics(companies));
+                this.metrics.set(computeHomeMetrics(companies, new Date(), undefined, this.lang()));
                 this.total.set(total);
                 this.updatedAt.set(new Date());
                 this.stage.set('ready');

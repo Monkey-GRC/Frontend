@@ -1,7 +1,8 @@
-import { ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer, Injector, provideZoneChangeDetection } from '@angular/core';
 import { PreloadAllModules, provideRouter, TitleStrategy, withPreloading } from '@angular/router';
 
 import { PageTitleStrategy } from '@core/services/page-title.strategy';
+import { LanguageService, Language, SAVE_LANGUAGE } from '@core/services/language.service';
 import { ThemeService } from '@core/services/theme.service';
 import { routes } from './app.routes';
 import { HttpBackend, provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -9,6 +10,7 @@ import { authInterceptor } from '@core/interceptors/auth.interceptor';
 import { errorHandlerInterceptor } from '@core/interceptors/error-handler.interceptor';
 import { provideTranslateService, TranslateLoader } from "@ngx-translate/core";
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
+import { AuthService } from '@core/services/auth.service';
 
 export function HttpLoaderFactory(httpBackend: HttpBackend): MultiTranslateHttpLoader {
   return new MultiTranslateHttpLoader(httpBackend, [
@@ -25,6 +27,19 @@ export function HttpLoaderFactory(httpBackend: HttpBackend): MultiTranslateHttpL
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
+    // El idioma guardado (respaldo 'es') se aplica antes de pintar: la app espera a tener los textos.
+    provideAppInitializer(() => inject(LanguageService).init()),
+    // Guarda el idioma de la persona con sesión (D111). Se resuelve al usarlo: así LanguageService y AuthService no se piden uno al otro.
+    {
+      provide: SAVE_LANGUAGE,
+      useFactory: () => {
+        const injector = inject(Injector);
+        return (lang: Language) => {
+          const auth = injector.get(AuthService);
+          return auth.currentUser ? auth.saveLanguage(lang) : null;
+        };
+      },
+    },
     // El tema (claro/oscuro) se aplica al arrancar, en CUALQUIER pantalla: antes solo lo hacía el selector de tema, que no existe en las pantallas fuera del layout (Ajustes).
     provideAppInitializer(() => {
       inject(ThemeService);

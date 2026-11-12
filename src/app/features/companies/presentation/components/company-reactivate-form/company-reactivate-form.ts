@@ -1,3 +1,4 @@
+import { LocalDatePipe } from '@shared/presentation/pipes/local-date.pipe';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,7 +12,7 @@ export interface ReactivateDetails {
 // D97 · Reactivar una empresa archivada, solo dentro del plazo. Igual que archivar: aprobarlo no lo envía, la vista pide después el código de seguridad.
 @Component({
   selector: 'app-company-reactivate-form',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, LocalDatePipe],
   templateUrl: './company-reactivate-form.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
