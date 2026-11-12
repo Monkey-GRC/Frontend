@@ -152,7 +152,8 @@
       "CREATE_SUBMIT": "Agregar",
       "SAVE": "Guardar cambios",
       "COMMITTEE": "Textos del comité (opcionales)",
-      "COMMITTEE_HINT": "Internos: solo los ve Monkey; al cliente nunca le salen."
+      "COMMITTEE_HINT": "Internos: solo los ve Monkey; al cliente nunca le salen.",
+      "SUBTITLE": "Completa los datos del elemento del catálogo. Los campos con * son obligatorios."
     },
     "ACTIONS": {
       "EDIT": "Editar",

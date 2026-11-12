@@ -3,7 +3,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ApiError, CatalogOption, FormKind } from '@features/catalog/models/catalog.model';
 import { CatalogOptionsService } from '@features/catalog/services/catalog-options.service';
 import { CatalogService } from '@features/catalog/services/catalog.service';
-import { SideDrawer } from '@shared/presentation/components/side-drawer/side-drawer';
+import { FormModal } from '@shared/presentation/components/form-modal/form-modal';
 import { CODE_PATTERN, FORM_FIELDS, FieldDef } from './catalog-form.config';
 import { targetValue } from '@shared/presentation/utils/event-target';
 
@@ -13,7 +13,7 @@ type Values = Record<string, string>;
 // (`catalog-form.config.ts`). Al editar solo se manda lo que cambió. El backend es quien manda: sus errores por campo se muestran junto a cada campo.
 @Component({
   selector: 'app-catalog-form',
-  imports: [TranslateModule, SideDrawer],
+  imports: [TranslateModule, FormModal],
   templateUrl: './catalog-form.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
