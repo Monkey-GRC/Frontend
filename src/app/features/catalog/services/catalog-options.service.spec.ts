@@ -26,10 +26,13 @@ describe('CatalogOptionsService', () => {
         expect(service.label('catalog_origin', 'committee')).toBe('Comité');
     });
 
-    it('shows the raw value of a value the list does not know, and nothing is hidden before the list arrives', () => {
+    it('shows the raw value of a value a loaded list does not know, and never the raw value before the list arrives', () => {
         expect(service.options('control_type')).toEqual([]);
-        expect(service.label('control_type', 'manual')).toBe('manual');
+        expect(service.label('control_type', 'manual')).toBe('');
         expect(service.label('control_type', null)).toBe('—');
+        service.load(['control_type']).subscribe();
+        http.expectOne((r) => r.url.endsWith('/catalogs/control_type')).flush({ data: { items: [{ value: 'auto', label: 'Automático' }] } });
+        expect(service.label('control_type', 'manual')).toBe('manual');
     });
 
     it('keeps one list per language', () => {

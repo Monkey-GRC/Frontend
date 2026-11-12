@@ -5,6 +5,7 @@ import { ApiError, FormKind } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { provideOptionsStub } from '@features/catalog/testing/catalog-options';
 import { CatalogForm } from './catalog-form';
+import { optionValues, optionsText, pickOption, selectText } from '@shared/presentation/components/select/select.testing';
 
 const apiError = (message: string, extra: Partial<ApiError> = {}): ApiError => Object.assign(new Error(message), extra);
 
@@ -34,10 +35,7 @@ describe('CatalogForm', () => {
         fixture.detectChanges();
     };
     const choose = (field: string, value: string) => {
-        const select = el().querySelector<HTMLSelectElement>(`[data-field="${field}"]`)!;
-        select.value = value;
-        select.dispatchEvent(new Event('change'));
-        fixture.detectChanges();
+        pickOption(el(), `[data-field="${field}"]`, value, () => fixture.detectChanges());
     };
     const submit = () => {
         el().querySelector<HTMLFormElement>('[data-form]')!.dispatchEvent(new Event('submit'));
@@ -90,7 +88,7 @@ describe('CatalogForm', () => {
 
     it('starts a new test in the documentary dimension and keeps the committee texts folded away until asked', () => {
         setup('test', 'create');
-        expect(el().querySelector<HTMLSelectElement>('[data-field="dimension"]')!.value).toBe('policy');
+        expect(selectText(el(), '[data-field="dimension"]')).toContain('policy');
         expect(el().querySelector('[data-field="tool"]')).toBeNull();
         el().querySelector<HTMLButtonElement>('[data-committee-toggle]')!.click();
         fixture.detectChanges();
@@ -99,9 +97,8 @@ describe('CatalogForm', () => {
 
     it('fills the selects with the lists the backend serves, with their text', () => {
         setup('risk', 'create');
-        const options = Array.from(el().querySelectorAll<HTMLOptionElement>('[data-field="trust_criterion"] option'));
-        expect(options.map((o) => o.value)).toContain('third_parties');
-        expect(options.find((o) => o.value === 'security')!.textContent).toContain('«security»');
+        expect(optionValues(el(), '[data-field="trust_criterion"]', () => fixture.detectChanges())).toContain('third_parties');
+        expect(optionsText(el(), '[data-field="trust_criterion"]', () => fixture.detectChanges())).toContain('«security»');
     });
 
     it('edits sending only what changed, and the code is not editable', () => {

@@ -5,6 +5,7 @@ import { ApiError } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { provideOptionsStub } from '@features/catalog/testing/catalog-options';
 import { CatalogDetail, DetailKind, EditRequest } from './catalog-detail';
+import { pickOption } from '@shared/presentation/components/select/select.testing';
 
 const empty = of({ items: [], page: 1, page_size: 25, total: 0, total_pages: 1 }) as never;
 
@@ -132,9 +133,7 @@ describe('CatalogDetail', () => {
         // la causa se vincula desde su lado: `POST /causes/{causa}/controls`
         expect(api.link).toHaveBeenCalledWith('cause', 'c9', 'controls', { control_id: 'k1' });
         click('[data-add="dimension"]');
-        const select = el().querySelector<HTMLSelectElement>('[data-dim-dimension]')!;
-        select.value = 'server';
-        select.dispatchEvent(new Event('change'));
+        pickOption(el(), '[data-dim-dimension]', 'server', () => fixture.detectChanges());
         click('[data-dim-save]');
         expect(api.link).toHaveBeenCalledWith('control', 'k1', 'dimensions', jasmine.objectContaining({ dimension: 'server', type: 'manual' }));
     });
