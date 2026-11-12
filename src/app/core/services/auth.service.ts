@@ -155,7 +155,8 @@ export class AuthService {
 
     /**
      * Valida la sesión contra el backend (GET /auth/me). El access token dura 15 min: si ya
-     * venció, intenta un refresh (la sesión vive hasta 30 min sin actividad y 8 h en total).
+     * venció, intenta un refresh y vuelve a consultar sin mirar su resultado (si falló, otra pestaña
+     * pudo haberlo hecho y las cookies ya son válidas). La sesión vive hasta 30 min sin actividad y 8 h en total.
      */
     validateSession(): Observable<boolean> {
         // Sin sesión abierta en este navegador no se pregunta al servidor (evita un 401 en cada visita al login).
@@ -163,7 +164,7 @@ export class AuthService {
         return this.me().pipe(
             catchError((error: HttpErrorResponse) =>
                 error.status === 401
-                    ? this.refresh().pipe(switchMap((ok) => (ok ? this.me() : of(false))))
+                    ? this.refresh().pipe(switchMap(() => this.me()))
                     : of(false),
             ),
             catchError(() => of(false)),
@@ -171,15 +172,12 @@ export class AuthService {
         );
     }
 
-    /** Refresh token (cookie → cookie). Devuelve false si la sesión ya no se puede renovar. */
+    /** Refresh token (cookie → cookie). Devuelve false si falló; no toca la sesión local: quien llama decide tras reintentar. */
     refresh(): Observable<boolean> {
         if (!this.refreshInFlight$) {
             this.refreshInFlight$ = this.http.post<ApiResponse>(`${this.API}/refresh`, {}).pipe(
                 map(() => true),
-                catchError(() => {
-                    this.clearSession();
-                    return of(false);
-                }),
+                catchError(() => of(false)),
                 finalize(() => (this.refreshInFlight$ = null)),
                 shareReplay(1),
             );
