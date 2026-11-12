@@ -157,7 +157,7 @@ describe('CatalogForm', () => {
         expect(el().querySelector('[data-error="name"]')).toBeNull();
     });
 
-    it('lives in the side drawer: Escape does not throw away what was typed, the close button still closes', () => {
+    it('lives in a modal: Escape does not throw away what was typed, Cancel still closes', () => {
         setup('control', 'create');
         let cancelled = 0;
         fixture.componentInstance.cancelled.subscribe(() => cancelled++);
@@ -170,7 +170,7 @@ describe('CatalogForm', () => {
         type('name', 'Un control');
         escape();
         expect(cancelled).toBe(1); // with data: Escape is ignored
-        el().querySelector<HTMLButtonElement>('button[aria-label="COMMON.CLOSE"]')!.click();
+        el().querySelector<HTMLButtonElement>('[data-cancel]')!.click();
         expect(cancelled).toBe(2);
     });
 });

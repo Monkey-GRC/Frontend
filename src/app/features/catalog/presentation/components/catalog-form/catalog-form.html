@@ -1,7 +1,7 @@
-<app-side-drawer [open]="true" [titleKey]="'CATALOG_MODULE.FORM.' + (mode() === 'create' ? 'CREATE' : 'EDIT') + '.' + kind().toUpperCase()" size="lg"
-  [dismissible]="!sending" [guarded]="changed" (closed)="cancelled.emit()">
+<app-form-modal [titleKey]="'CATALOG_MODULE.FORM.' + (mode() === 'create' ? 'CREATE' : 'EDIT') + '.' + kind().toUpperCase()" descriptionKey="CATALOG_MODULE.FORM.SUBTITLE" cancelLabelKey="CATALOG_MODULE.FORM.CANCEL"
+  [dismissible]="!sending" [guarded]="changed" testId="catalog-form" (closed)="cancelled.emit()">
 
-  <form id="catalog-form" class="flex flex-col gap-4" data-form (submit)="$event.preventDefault(); save()" novalidate>
+  <form id="catalog-form" class="flex flex-col gap-5" data-form (submit)="$event.preventDefault(); save()" novalidate>
     @if (banner) {
     <div class="mk-surface-state-bad p-3 text-sm text-ink" role="alert" data-banner>
       <span>{{ banner }}</span>
@@ -40,7 +40,7 @@
     }
 
     @if (committeeFields.length) {
-    <section class="border-t border-line pt-3">
+    <section class="border-t border-line pt-4">
       <button type="button" (click)="committeeOpen = !committeeOpen" [attr.aria-expanded]="committeeOpen" data-committee-toggle
         class="flex w-full items-center justify-between text-left text-sm font-semibold text-ink">
         {{ 'CATALOG_MODULE.FORM.COMMITTEE' | translate }}
@@ -69,8 +69,7 @@
     }
   </form>
 
-  <button actions type="button" (click)="cancelled.emit()" [disabled]="sending" class="mk-btn-secondary">{{ 'CATALOG_MODULE.FORM.CANCEL' | translate }}</button>
   <button actions type="submit" form="catalog-form" data-save [disabled]="sending || (mode() === 'edit' && !changed)" class="mk-btn">
     {{ (mode() === 'create' ? 'CATALOG_MODULE.FORM.CREATE_SUBMIT' : 'CATALOG_MODULE.FORM.SAVE') | translate }}
   </button>
-</app-side-drawer>
+</app-form-modal>

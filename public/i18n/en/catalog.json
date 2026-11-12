@@ -152,7 +152,8 @@
       "CREATE_SUBMIT": "Add",
       "SAVE": "Save changes",
       "COMMITTEE": "Committee texts (optional)",
-      "COMMITTEE_HINT": "Internal: only Monkey sees them; the client never does."
+      "COMMITTEE_HINT": "Internal: only Monkey sees them; the client never does.",
+      "SUBTITLE": "Fill in the catalog item details. Fields marked * are required."
     },
     "ACTIONS": {
       "EDIT": "Edit",
