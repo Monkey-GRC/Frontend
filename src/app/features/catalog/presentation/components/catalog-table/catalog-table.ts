@@ -5,6 +5,7 @@ import { CATALOG_PAGE_SIZE } from '@features/catalog/services/catalog.service';
 import { DataTable, TableCell, TableColumn } from '@shared/presentation/components/data-table/data-table';
 import { PageInfo } from '@shared/presentation/components/data-table/table-page';
 import { StatusIndicator, StatusTone } from '@shared/presentation/components/status-indicator/status-indicator';
+import { Badge } from '@shared/presentation/components/badge/badge';
 import { Tag } from '@shared/presentation/components/tag/tag';
 
 export type CatalogRow = { id: string } & Record<string, unknown>;
@@ -22,7 +23,7 @@ export interface CatalogColumn {
 // pedida. El servicio entrega página y total (el tamaño de página es el del catálogo), con lo que se arma el `PageInfo` de la tabla.
 @Component({
   selector: 'app-catalog-table',
-  imports: [DataTable, TableCell, Tag, StatusIndicator],
+  imports: [DataTable, TableCell, Tag, StatusIndicator, Badge],
   templateUrl: './catalog-table.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -37,6 +38,8 @@ export class CatalogTable {
   readonly captionKey = input.required<string>();
   /** Solo las filas con detalle se pueden abrir. */
   readonly clickable = input(true);
+  /** Loading (D116): skeleton rows with the real columns while the page is requested. */
+  readonly loading = input(false);
 
   readonly rowClick = output<CatalogRow>();
   readonly pageChange = output<number>();
@@ -51,9 +54,24 @@ export class CatalogTable {
       key: column.key,
       headerKey: column.labelKey,
       align: column.kind === 'count' ? 'right' : 'left',
-      value: column.kind === 'code' || column.kind === 'active' ? undefined : (row: CatalogRow) => this.text(row, column),
+      skeleton: column.kind === 'code' || column.kind === 'active' || this.isBadge(column) ? 'badge' : 'text',
+      value: column.kind === 'code' || column.kind === 'active' || this.isBadge(column) ? undefined : (row: CatalogRow) => this.text(row, column),
     })),
   );
+
+  /** Las columnas `enum` y `list` pintan un distintivo de atributo por valor. */
+  readonly badgeColumns = computed(() => this.columns().filter((column) => this.isBadge(column)));
+
+  /** Un valor por distintivo: el color sale del valor estable del contrato y el texto, de su traducción. */
+  badgesOf(row: CatalogRow, column: CatalogColumn): { value: string; label: string }[] {
+    const raw = row[column.key];
+    const values = Array.isArray(raw) ? raw : raw === null || raw === undefined || raw === '' ? [] : [raw];
+    return values.map((v) => ({ value: String(v), label: this.label(column.options, String(v)) }));
+  }
+
+  private isBadge(column: CatalogColumn): boolean {
+    return column.kind === 'enum' || column.kind === 'list';
+  }
 
   codeOf(row: CatalogRow): string {
     return String(row['code'] ?? '');

@@ -4,7 +4,7 @@
   <app-tabs tabs [items]="tabs" [active]="showingArchived ? 'archived' : 'active'" ariaLabelKey="COMPANIES_MODULE.LIST.FILTER_LABEL" (activeChange)="filterChange.emit($event === 'archived')" />
 </app-page-header>
 
-<app-data-table captionKey="COMPANIES_MODULE.LIST.TITLE" [columns]="showingArchived ? archivedColumns : columns" [rows]="companyService.companies" [rowKey]="rowKey"
+<app-data-table captionKey="COMPANIES_MODULE.LIST.TITLE" [columns]="showingArchived ? archivedColumns : columns" [rows]="companyService.companies" [rowKey]="rowKey" [loading]="loading()"
   [page]="pageInfo" [pageSizes]="[]" emptyIcon="" [emptyTitleKey]="showingArchived ? 'COMPANIES_MODULE.LIST.EMPTY_ARCHIVED' : 'COMPANIES_MODULE.LIST.EMPTY'"
   (pageChange)="pageChange.emit($event)">
 
@@ -61,7 +61,7 @@
       } @else {
       <button type="button" (click)="changeQuota.emit(company)" data-testid="company-change-quota" class="text-sm font-medium text-action hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_QUOTA' | translate }}</button>
       @if (canResendKey(company)) {
-      <button type="button" (click)="resendKey.emit(company)" data-testid="company-resend-key" class="text-sm font-medium text-action hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_RESEND_KEY' | translate }}</button>
+      <button type="button" (click)="resendKey.emit(company)" [appBusy]="resendingId() === company.id" data-testid="company-resend-key" class="text-sm font-medium text-action hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_RESEND_KEY' | translate }}</button>
       }
       <button type="button" (click)="archive.emit(company)" data-testid="company-archive" class="text-sm font-medium text-bad-ink hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_ARCHIVE' | translate }}</button>
       }

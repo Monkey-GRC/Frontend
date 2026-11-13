@@ -1,5 +1,5 @@
 <app-form-modal [titleKey]="'CATALOG_MODULE.FORM.' + (mode() === 'create' ? 'CREATE' : 'EDIT') + '.' + kind().toUpperCase()" descriptionKey="CATALOG_MODULE.FORM.SUBTITLE" cancelLabelKey="CATALOG_MODULE.FORM.CANCEL"
-  [dismissible]="!sending" [guarded]="changed" testId="catalog-form" (closed)="cancelled.emit()">
+  [dismissible]="!sending" [busy]="sending" [guarded]="changed" testId="catalog-form" (closed)="cancelled.emit()">
 
   <form id="catalog-form" class="flex flex-col gap-5" data-form (submit)="$event.preventDefault(); save()" novalidate>
     @if (banner) {
@@ -13,18 +13,18 @@
       <span>{{ 'CATALOG_MODULE.FORM.FIELD.' + f.key.toUpperCase() | translate }}@if (f.required) { <span class="text-bad-ink" aria-hidden="true">*</span> }</span>
       @switch (f.control) {
       @case ('textarea') {
-      <textarea rows="4" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [disabled]="sending"
+      <textarea rows="4" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))"
         class="mk-input !h-auto py-2 font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null"></textarea>
       }
       @case ('lines') {
-      <textarea rows="4" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [disabled]="sending" [placeholder]="'CATALOG_MODULE.FORM.LINES_HINT' | translate"
+      <textarea rows="4" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [placeholder]="'CATALOG_MODULE.FORM.LINES_HINT' | translate"
         class="mk-input !h-auto py-2 font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null"></textarea>
       }
       @case ('select') {
-      <app-select class="font-normal" [inputId]="'catalog-field-' + f.key" [attr.data-field]="f.key" [options]="optionsOf(f)" [value]="values[f.key]" [invalid]="!!errors[f.key]" [disabled]="sending" placeholderKey="CATALOG_MODULE.FORM.CHOOSE" (valueChange)="set(f.key, $event)" />
+      <app-select class="font-normal" [inputId]="'catalog-field-' + f.key" [attr.data-field]="f.key" [options]="optionsOf(f)" [value]="values[f.key]" [invalid]="!!errors[f.key]" placeholderKey="CATALOG_MODULE.FORM.CHOOSE" (valueChange)="set(f.key, $event)" />
       }
       @default {
-      <input type="text" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [disabled]="sending"
+      <input type="text" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))"
         [placeholder]="(f.key === 'code' && !f.required ? 'CATALOG_MODULE.FORM.CODE_AUTO' : '') | translate"
         class="mk-input font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null" />
       }
@@ -47,10 +47,10 @@
         <label [attr.for]="'catalog-field-' + f.key" class="flex flex-col gap-1 text-sm font-medium text-ink">
           {{ 'CATALOG_MODULE.TEST_FIELD.' + f.key.toUpperCase() | translate }}
           @if (f.control === 'text') {
-          <input type="text" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [disabled]="sending"
+          <input type="text" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))"
             class="mk-input font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null" />
           } @else {
-          <textarea rows="3" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))" [disabled]="sending"
+          <textarea rows="3" [id]="'catalog-field-' + f.key" [attr.data-field]="f.key" [value]="values[f.key]" (input)="set(f.key, targetValue($event))"
             [placeholder]="f.control === 'lines' ? ('CATALOG_MODULE.FORM.LINES_HINT' | translate) : ''"
             class="mk-input !h-auto py-2 font-normal aria-invalid:border-bad" [attr.aria-invalid]="errors[f.key] ? 'true' : null"></textarea>
           }
@@ -63,7 +63,7 @@
     }
   </form>
 
-  <button actions type="submit" form="catalog-form" data-save [disabled]="sending || (mode() === 'edit' && !changed)" class="mk-btn">
+  <button actions type="submit" form="catalog-form" data-save [appBusy]="sending" [disabled]="mode() === 'edit' && !changed" class="mk-btn">
     {{ (mode() === 'create' ? 'CATALOG_MODULE.FORM.CREATE_SUBMIT' : 'CATALOG_MODULE.FORM.SAVE') | translate }}
   </button>
 </app-form-modal>

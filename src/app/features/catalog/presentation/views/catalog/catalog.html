@@ -5,7 +5,13 @@
   </app-page-header>
 
   <!-- Marcos: solo acotan la pestaña de controles; los riesgos, causas y pruebas son de todos -->
-  @if (frameworks.length) {
+  @if (loading && !frameworks.length && !failed) {
+  <app-skeleton-region class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" data-frameworks-loading>
+    <app-skeleton shape="card" />
+    <app-skeleton shape="card" />
+    <app-skeleton shape="card" />
+  </app-skeleton-region>
+  } @else if (frameworks.length) {
   <section [attr.aria-label]="'CATALOG_MODULE.FRAMEWORKS' | translate">
     <ul class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" data-frameworks>
       @for (f of frameworks; track f.id) {
@@ -54,7 +60,10 @@
 
   <!-- Resultado -->
   @if (loading) {
-  <app-loading-spinner />
+  <app-skeleton-region class="space-y-4" data-loading>
+    <app-skeleton shape="line" width="8rem" />
+    <app-catalog-table [columns]="columns" [rows]="[]" [loading]="true" [captionKey]="captionKey" [clickable]="false" />
+  </app-skeleton-region>
   } @else if (failed) {
   <app-empty-state data-error icon="" titleKey="CATALOG_MODULE.LOAD_ERROR">
     <button action type="button" (click)="reload(page)" data-retry class="mk-btn">{{ 'CATALOG_MODULE.RETRY' | translate }}</button>

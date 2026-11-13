@@ -82,6 +82,7 @@ export class CompanyForm implements OnInit {
   }
 
   onSubmit(): void {
+    if (this.sendingForm) return;
     const form = this.companyService.form;
     if (form.invalid || this.selectedFrameworks.length === 0) {
       form.markAllAsTouched();

@@ -9,6 +9,11 @@ const COLUMNS: CatalogColumn[] = [
   { key: 'tests_count', labelKey: 'CATALOG_MODULE.COL.TESTS', kind: 'count' },
   { key: 'is_active', labelKey: 'CATALOG_MODULE.COL.STATE', kind: 'active' },
 ];
+const BADGE_COLUMNS: CatalogColumn[] = [
+  { key: 'code', labelKey: 'CATALOG_MODULE.COL.CODE', kind: 'code' },
+  { key: 'dimension', labelKey: 'CATALOG_MODULE.COL.DIMENSION', kind: 'enum', options: 'dimension' },
+  { key: 'dimensions', labelKey: 'CATALOG_MODULE.COL.DIMENSIONS', kind: 'list', options: 'dimension' },
+];
 const ROWS: CatalogRow[] = [
   { id: 'a', code: 'CAP-1', name: 'Capacidad', tests_count: 3, is_active: true },
   { id: 'b', code: 'CAP-2', name: 'Otra', tests_count: 0, is_active: false },
@@ -46,5 +51,16 @@ describe('CatalogTable', () => {
     el().querySelector<HTMLButtonElement>('[data-next]')!.click();
     expect(opened).toEqual(['b']);
     expect(pages).toEqual([2]);
+  });
+
+  it('paints one attribute badge per value of an enum or list column, coloured by the stable value', () => {
+    fixture.componentRef.setInput('columns', BADGE_COLUMNS);
+    fixture.componentRef.setInput('rows', [{ id: 'a', code: 'X-1', dimension: 'policy', dimensions: ['policy', 'server'] }, { id: 'b', code: 'X-2', dimension: null, dimensions: [] }]);
+    fixture.detectChanges();
+    const rows = el().querySelectorAll('tbody tr');
+    const badges = (i: number) => Array.from(rows[i].querySelectorAll('app-badge[data-kind="attribute"]'));
+    expect(badges(0).length).toBe(3);
+    expect(badges(0)[0].getAttribute('data-color')).toBe(badges(0)[1].getAttribute('data-color'));
+    expect(badges(1).length).toBe(0);
   });
 });

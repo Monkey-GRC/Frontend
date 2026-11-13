@@ -7,7 +7,7 @@ import { CatalogService } from '@features/catalog/services/catalog.service';
 import { CatalogColumn, CatalogRow, CatalogTable } from '@features/catalog/presentation/components/catalog-table/catalog-table';
 import { CatalogDetail, DetailKind, EditRequest } from '@features/catalog/presentation/components/catalog-detail/catalog-detail';
 import { CatalogForm } from '@features/catalog/presentation/components/catalog-form/catalog-form';
-import { LoadingSpinner } from '@shared/presentation/components/loading-spinner/loading-spinner';
+import { Skeleton, SkeletonRegion } from '@shared/presentation/components/skeleton/skeleton';
 import { EmptyState } from '@shared/presentation/components/empty-state/empty-state';
 import { PageHeader } from '@shared/presentation/components/page-header/page-header';
 import { StatusIndicator } from '@shared/presentation/components/status-indicator/status-indicator';
@@ -71,7 +71,7 @@ const NEW_KIND: Record<CatalogTab, FormKind> = { controls: 'control', risks: 'ri
 // Desde aquí se agrega un elemento nuevo (botón «Nuevo»); editar, dar de baja y vincular se hace desde su detalle.
 @Component({
   selector: 'app-catalog',
-  imports: [PageHeader, TranslateModule, CatalogTable, CatalogDetail, CatalogForm, LoadingSpinner, EmptyState, StatusIndicator, TableFilter, TableToolbar, Tabs],
+  imports: [PageHeader, TranslateModule, CatalogTable, CatalogDetail, CatalogForm, Skeleton, SkeletonRegion, EmptyState, StatusIndicator, TableFilter, TableToolbar, Tabs],
   templateUrl: './catalog.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })

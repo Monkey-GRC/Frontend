@@ -90,8 +90,10 @@ describe('Companies · formularios en modales', () => {
       if (!form) throw new Error('form not mounted');
       form.sendingForm = true;
       await tick();
-      expect(q<HTMLButtonElement>('company-form-submit')?.disabled).toBeTrue();
-      expect(q<HTMLButtonElement>('company-form-submit')?.getAttribute('aria-busy')).toBe('true');
+      const submit = q<HTMLButtonElement>('company-form-submit');
+      expect(submit?.getAttribute('aria-busy')).toBe('true');
+      expect(submit?.getAttribute('aria-disabled')).toBe('true');
+      expect(submit?.hasAttribute('data-app-busy')).toBeTrue();
       expect(q<HTMLButtonElement>('company-form-cancel')?.disabled).toBeTrue();
       escape();
       await tick();
@@ -114,7 +116,10 @@ describe('Companies · formularios en modales', () => {
       expect(page.changingQuota).toBe(COMPANY);
       page.quotaSending = true;
       await tick();
-      expect(q<HTMLButtonElement>('company-quota-submit')?.disabled).toBeTrue();
+      const submit = q<HTMLButtonElement>('company-quota-submit');
+      expect(submit?.getAttribute('aria-busy')).toBe('true');
+      expect(submit?.getAttribute('aria-disabled')).toBe('true');
+      expect(submit?.hasAttribute('data-app-busy')).toBeTrue();
     });
   });
 

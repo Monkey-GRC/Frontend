@@ -4,7 +4,7 @@
   <p class="text-sm text-ink" role="alert" data-testid="key-failed">
     {{ 'COMPANIES_MODULE.KEY.FAILED_BODY' | translate: { name: company().name, email: company().admin_email } }}
   </p>
-  <button type="button" (click)="resend.emit()" [disabled]="sending()" data-testid="key-resend"
+  <button type="button" (click)="resend.emit()" [appBusy]="sending()" data-testid="key-resend"
     class="mk-btn-secondary">
     {{ 'COMPANIES_MODULE.KEY.RESEND' | translate }}
   </button>

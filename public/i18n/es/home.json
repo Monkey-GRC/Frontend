@@ -3,7 +3,6 @@
     "TITLE": "Resumen",
     "UPDATED": "Actualizado a las {{time}}",
     "REFRESH": "Actualizar",
-    "LOADING": "Cargando el resumen",
     "LOAD_ERROR_TITLE": "No pudimos cargar el resumen",
     "LOAD_ERROR_BODY": "Revisa tu conexión e inténtalo de nuevo.",
     "RETRY": "Reintentar",

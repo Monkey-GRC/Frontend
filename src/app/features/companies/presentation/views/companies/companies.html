@@ -1,13 +1,9 @@
-@if (isLoading) {
-<app-loading-spinner />
-} @else {
 <div class="mk-enter">
-  <app-company-list (pageChange)="readCompanies($event)" (filterChange)="onFilterChange($event)" (archive)="archiving = $event" (reactivate)="reactivating = $event" (resendKey)="onResendKey($event)" (changeQuota)="onOpenQuota($event)">
+  <app-company-list [loading]="isLoading" [resendingId]="resendingId" (pageChange)="readCompanies($event)" (filterChange)="onFilterChange($event)" (archive)="archiving = $event" (reactivate)="reactivating = $event" (resendKey)="onResendKey($event)" (changeQuota)="onOpenQuota($event)">
     <!-- El botón va en la fila del título de la lista: ya no hay un encabezado aparte que repita lo mismo -->
     <button listActions type="button" class="mk-btn" (click)="onOpenForm()">{{ 'COMPANIES_MODULE.HEADER.BTN-CREATE' | translate }}</button>
   </app-company-list>
 </div>
-}
 
 <!-- Registro: los 3 campos del comité y el marco que se contrata (D47). Esc y el clic fuera no cierran con datos sin enviar ni mientras envía; Cancelar sí. -->
 <app-modal [open]="isFormVisible" size="xl" labelledBy="company-form-title" describedBy="company-form-subtitle" testId="company-form"
@@ -18,15 +14,12 @@
           <p id="company-form-subtitle" class="mt-1 text-sm text-ink-muted">{{ 'COMPANIES_MODULE.FORM.SUBTITLE' | translate }}</p>
         </div>
       </div>
-  <div class="-mx-1 max-h-[60vh] overflow-y-auto px-1">
+  <div class="-mx-1 max-h-[60vh] overflow-y-auto px-1" [appBusyFields]="companyForm?.sendingForm ?? false">
     <app-company-form (registered)="onRegistered($event)" />
   </div>
   <div class="mt-5 flex flex-col justify-end gap-3 sm:flex-row">
         <button type="button" class="mk-btn-secondary" [disabled]="companyForm?.sendingForm ?? false" (click)="onCloseForm()" data-testid="company-form-cancel">{{ 'COMPANIES_MODULE.FORM.CANCEL' | translate }}</button>
-        <button type="button" class="mk-btn" [disabled]="companyForm?.sendingForm ?? false" [attr.aria-busy]="companyForm?.sendingForm ?? false" (click)="companyForm?.onSubmit()" data-testid="company-form-submit">
-        @if (companyForm?.sendingForm ?? false) {
-          <span class="material-symbols-rounded animate-spin" aria-hidden="true">progress_activity</span>
-        }
+        <button type="button" class="mk-btn" [appBusy]="companyForm?.sendingForm ?? false" (click)="companyForm?.onSubmit()" data-testid="company-form-submit">
         {{ 'COMPANIES_MODULE.FORM.SUBMIT' | translate }}
         </button>
       </div>
@@ -52,13 +45,12 @@
           <p id="company-quota-subtitle" class="mt-1 text-sm text-ink-muted">{{ 'COMPANIES_MODULE.QUOTA.SUBTITLE' | translate }}</p>
         </div>
       </div>
-  <app-company-quota-form [company]="changingQuota" [error]="quotaError" (approved)="onQuotaApproved($event)" />
+  <div [appBusyFields]="quotaSending">
+    <app-company-quota-form [company]="changingQuota" [error]="quotaError" (approved)="onQuotaApproved($event)" />
+  </div>
   <div class="mt-5 flex flex-col justify-end gap-3 sm:flex-row">
         <button type="button" class="mk-btn-secondary" [disabled]="quotaSending" (click)="onCloseQuota()" data-testid="company-quota-cancel">{{ 'COMPANIES_MODULE.ARCHIVE.CANCEL' | translate }}</button>
-        <button type="button" class="mk-btn" [disabled]="!(quotaForm?.canSubmit ?? false) || quotaSending" [attr.aria-busy]="quotaSending" (click)="quotaForm?.onSubmit()" data-testid="company-quota-submit">
-        @if (quotaSending) {
-          <span class="material-symbols-rounded animate-spin" aria-hidden="true">progress_activity</span>
-        }
+        <button type="button" class="mk-btn" [disabled]="!(quotaForm?.canSubmit ?? false)" [appBusy]="quotaSending" (click)="quotaForm?.onSubmit()" data-testid="company-quota-submit">
         {{ 'COMPANIES_MODULE.QUOTA.SUBMIT' | translate }}
         </button>
       </div>

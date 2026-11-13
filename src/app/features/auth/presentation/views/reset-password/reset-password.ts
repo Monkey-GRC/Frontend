@@ -3,6 +3,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { apiErrorCode, apiErrorMessage } from '@shared/domain/utils/api-error';
+import { Busy } from '@shared/presentation/directives/busy';
+import { BusyFields } from '@shared/presentation/directives/busy-fields';
 import { AuthPageLayoutComponent } from '@core/presentation/pages/auth-page-layout/auth-page-layout.component';
 import { AuthService } from '@core/services/auth.service';
 import { passwordsMatch, STRONG_PASSWORD } from '@shared/domain/utils/password-rules';
@@ -13,7 +15,7 @@ import { SecondFactorField } from '@shared/presentation/components/second-factor
 // cierran, así que al terminar se manda a iniciar sesión.
 @Component({
   selector: 'app-reset-password',
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, AuthPageLayoutComponent, NewPasswordFields, SecondFactorField],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, AuthPageLayoutComponent, NewPasswordFields, SecondFactorField, Busy, BusyFields],
   templateUrl: './reset-password.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

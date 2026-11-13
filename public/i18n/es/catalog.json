@@ -101,7 +101,6 @@
       "COMMITTEE": "Textos del comité",
       "USED_BY": "La piden {{count}} controles"
     },
-    "LOADING": "Cargando…",
     "LOAD_ERROR": "No se pudo cargar el catálogo.",
     "RETRY": "Reintentar",
     "EMPTY": "No hay resultados con esos filtros.",

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { ApiError } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { provideOptionsStub } from '@features/catalog/testing/catalog-options';
@@ -77,6 +77,23 @@ describe('CatalogDetail', () => {
         click('[data-confirm-yes]');
         expect(api.deactivate).toHaveBeenCalledOnceWith('control', 'k1');
         expect(api.control).toHaveBeenCalledTimes(2);
+        expect(changed).toBe(1);
+    });
+
+    it('keeps the confirm button busy until the answer arrives and does not send twice (D116)', () => {
+        setup('controls', CONTROL);
+        const answer = new Subject<undefined>();
+        api.deactivate.and.returnValue(answer as never);
+        click('[data-deactivate]');
+        click('[data-confirm-yes]');
+        fixture.detectChanges();
+        expect(el().querySelector('[data-confirm-yes]')!.getAttribute('aria-busy')).toBe('true');
+        click('[data-confirm-yes]');
+        expect(api.deactivate).toHaveBeenCalledTimes(1);
+        answer.next(undefined);
+        answer.complete();
+        fixture.detectChanges();
+        expect(fixture.componentInstance.busy).toBeFalse();
         expect(changed).toBe(1);
     });
 

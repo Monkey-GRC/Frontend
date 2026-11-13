@@ -8,6 +8,8 @@ import { Stepper, StepperItem } from '@shared/presentation/components/stepper/st
 import { QrCode } from '@shared/presentation/components/qr-code/qr-code';
 import { AuthPayload, MfaSetupStart } from '@core/models/auth-reponse';
 import { AuthService } from '@core/services/auth.service';
+import { Busy } from '@shared/presentation/directives/busy';
+import { BusyFields } from '@shared/presentation/directives/busy-fields';
 import { targetChecked } from '@shared/presentation/utils/event-target';
 
 // Segundo factor (D94, contracts/modules/auth.md). Una sola pantalla con dos recorridos:
@@ -17,7 +19,7 @@ type Stage = 'verify' | 'recovery' | 'install' | 'scan' | 'confirm' | 'codes';
 
 @Component({
   selector: 'app-mfa-form',
-  imports: [ReactiveFormsModule, TranslatePipe, CodeInput, QrCode, Stepper],
+  imports: [ReactiveFormsModule, TranslatePipe, CodeInput, QrCode, Stepper, Busy, BusyFields],
   templateUrl: './mfa-form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -168,20 +170,22 @@ export class MfaForm {
     this.router.navigateByUrl('/auth/login', { replaceUrl: true });
   }
 
-  private navigateIn(): void {
+  private navigateIn(): Promise<boolean> {
     // Igual que el login: si venía de otra pantalla, vuelve a ella; `replaceUrl` para que «atrás» no regrese aquí.
     const ru = this.route.snapshot.queryParamMap.get('returnUrl');
     const invalid = !ru || ru === '/' || ru.startsWith('/auth');
-    this.router.navigateByUrl(invalid ? '/' : ru, { replaceUrl: true });
+    return this.router.navigateByUrl(invalid ? '/' : ru, { replaceUrl: true });
   }
 
-  private run<T>(request: Observable<T>, onSuccess: (value: T) => void): void {
+  // Busy stays on until the answer arrives and, when the step navigates, until the navigation ends; it goes off only on error or when the next step is already on screen.
+  private run<T>(request: Observable<T>, onSuccess: (value: T) => void | Promise<unknown>): void {
     this.loading.set(true);
     this.errorMessage.set(null);
     request.subscribe({
       next: (value) => {
-        this.loading.set(false);
-        onSuccess(value);
+        const result = onSuccess(value);
+        if (result instanceof Promise) result.then(() => this.loading.set(false), () => this.loading.set(false));
+        else this.loading.set(false);
       },
       error: (error) => {
         this.loading.set(false);

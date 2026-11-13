@@ -3,7 +3,6 @@
     "TITLE": "Overview",
     "UPDATED": "Updated at {{time}}",
     "REFRESH": "Refresh",
-    "LOADING": "Loading the overview",
     "LOAD_ERROR_TITLE": "We couldn't load the overview",
     "LOAD_ERROR_BODY": "Check your connection and try again.",
     "RETRY": "Retry",

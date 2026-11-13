@@ -3,7 +3,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { CatalogFramework, FrameworkDetail, Paginated } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
+import { Badge } from '@shared/presentation/components/badge/badge';
 import { DataTable, TableCell, TableColumn } from '@shared/presentation/components/data-table/data-table';
+import { Skeleton, SkeletonRegion } from '@shared/presentation/components/skeleton/skeleton';
 import { SearchField } from '@shared/presentation/components/search-field/search-field';
 import { Select, SelectOption } from '@shared/presentation/components/select/select';
 import { targetValue } from '@shared/presentation/utils/event-target';
@@ -26,7 +28,7 @@ interface Choice extends Pick {
 // por marco y requisito, porque son 302 y no se buscan por texto.
 @Component({
   selector: 'app-item-picker',
-  imports: [TranslateModule, DataTable, TableCell, Select, SearchField],
+  imports: [TranslateModule, DataTable, TableCell, Select, SearchField, Badge, Skeleton, SkeletonRegion],
   templateUrl: './item-picker.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -101,8 +103,11 @@ export class ItemPicker implements OnInit, OnDestroy {
     this.requirementCode = '';
     this.requirementOptions = [];
     this.choices = [];
+    this.loading = true;
+    this.failed = false;
     this.catalog.framework(id).subscribe({
       next: (framework) => {
+        this.loading = false;
         this.framework = framework;
         this.requirementOptions = framework.requirements.map((r) => ({ value: r.code, label: `${r.code} · ${r.criterion}` }));
       },

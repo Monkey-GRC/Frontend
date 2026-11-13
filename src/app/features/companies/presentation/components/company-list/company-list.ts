@@ -1,8 +1,9 @@
 import { LocalDatePipe } from '@shared/presentation/pipes/local-date.pipe';
-import { ChangeDetectionStrategy, Component, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessKeyStatus, Company, CompanyStatus } from '@shared/models/company.model';
 import { CompanyService } from '@features/companies/services/company.service';
+import { Busy } from '@shared/presentation/directives/busy';
 import { DataTable, TableCell, TableColumn } from '@shared/presentation/components/data-table/data-table';
 import { PageInfo } from '@shared/presentation/components/data-table/table-page';
 import { PageHeader } from '@shared/presentation/components/page-header/page-header';
@@ -11,23 +12,27 @@ import { TabItem, Tabs } from '@shared/presentation/components/tabs/tabs';
 import { Tag } from '@shared/presentation/components/tag/tag';
 
 const COLUMNS: TableColumn<Company>[] = [
-  { key: 'company', headerKey: 'COMPANIES_MODULE.LIST.COL_COMPANY' },
-  { key: 'status', headerKey: 'COMPANIES_MODULE.LIST.COL_STATUS' },
-  { key: 'frameworks', headerKey: 'COMPANIES_MODULE.LIST.COL_FRAMEWORKS' },
+  { key: 'company', headerKey: 'COMPANIES_MODULE.LIST.COL_COMPANY', skeleton: 'person' },
+  { key: 'status', headerKey: 'COMPANIES_MODULE.LIST.COL_STATUS', skeleton: 'badge' },
+  { key: 'frameworks', headerKey: 'COMPANIES_MODULE.LIST.COL_FRAMEWORKS', skeleton: 'badge' },
   { key: 'users', headerKey: 'COMPANIES_MODULE.LIST.COL_USERS' },
   { key: 'created', headerKey: 'COMPANIES_MODULE.LIST.COL_CREATED' },
-  { key: 'actions', headerKey: 'COMPANIES_MODULE.LIST.COL_ACTIONS', align: 'right', srOnlyHeader: true },
+  { key: 'actions', headerKey: 'COMPANIES_MODULE.LIST.COL_ACTIONS', align: 'right', srOnlyHeader: true, skeleton: 'actions' },
 ];
 
 @Component({
   selector: 'app-company-list',
-  imports: [PageHeader, LocalDatePipe, TranslateModule, DataTable, TableCell, StatusIndicator, Tag, Tabs],
+  imports: [PageHeader, LocalDatePipe, TranslateModule, DataTable, TableCell, StatusIndicator, Tag, Tabs, Busy],
   templateUrl: './company-list.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class CompanyList {
   companyService = inject(CompanyService);
 
+  // D116: skeleton rows while the page is requested.
+  loading = input(false);
+  // The company whose access key is being resent: its button shows the busy state (D116).
+  resendingId = input<string | null>(null);
   pageChange = output<number>();
   // D97: el filtro (activas / archivadas) y las dos acciones; el diálogo y la llamada los resuelve la vista.
   filterChange = output<boolean>();
