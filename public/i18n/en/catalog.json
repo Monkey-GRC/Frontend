@@ -101,7 +101,6 @@
       "COMMITTEE": "Committee texts",
       "USED_BY": "Asked for by {{count}} controls"
     },
-    "LOADING": "Loading…",
     "LOAD_ERROR": "The catalog could not be loaded.",
     "RETRY": "Retry",
     "EMPTY": "No results with those filters.",

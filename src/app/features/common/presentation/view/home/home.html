@@ -4,16 +4,28 @@
     @if (updatedAt(); as when) {
       <span actions class="text-xs text-ink-faint">{{ 'HOME.UPDATED' | translate: { time: time(when) } }}</span>
     }
-    <button actions type="button" (click)="load()" [disabled]="stage() === 'loading'" class="mk-btn-secondary">{{ 'HOME.REFRESH' | translate }}</button>
+    <button actions type="button" (click)="load()" [appBusy]="stage() === 'loading'" class="mk-btn-secondary">{{ 'HOME.REFRESH' | translate }}</button>
   </app-page-header>
 
   @switch (stage()) {
 
     @case ('loading') {
-      <div class="flex items-center justify-center py-24" role="status">
-        <span class="material-symbols-rounded animate-spin text-[40px] text-action" aria-hidden="true">progress_activity</span>
-        <span class="sr-only">{{ 'HOME.LOADING' | translate }}</span>
-      </div>
+      <app-skeleton-region class="space-y-4" data-testid="home-loading">
+        <div class="grid gap-4 *:min-w-0 sm:grid-cols-2 xl:grid-cols-4">
+          <app-skeleton shape="metric" />
+          <app-skeleton shape="metric" />
+          <app-skeleton shape="metric" />
+          <app-skeleton shape="metric" />
+        </div>
+        <div class="grid gap-4 *:min-w-0 xl:grid-cols-2">
+          <app-skeleton shape="card" />
+          <app-skeleton shape="card" />
+        </div>
+        <div class="grid gap-4 *:min-w-0 xl:grid-cols-3">
+          <app-skeleton shape="card" class="xl:col-span-2" />
+          <app-skeleton shape="card" />
+        </div>
+      </app-skeleton-region>
     }
 
     @case ('error') {
@@ -134,7 +146,7 @@
               <app-section titleKey="HOME.FRAMEWORKS.TITLE">
                 @if (m.frameworks.length) {
                   <app-data-table captionKey="HOME.FRAMEWORKS.TITLE" [compact]="true" [hideHeader]="true" [columns]="frameworkColumns" [rows]="m.frameworks" [rowKey]="frameworkRowKey">
-                    <ng-template appCell="name" let-f><span class="font-medium">{{ f.name }}</span></ng-template>
+                    <ng-template appCell="name" let-f><app-tag [text]="f.name" /></ng-template>
                     <ng-template appCell="count" let-f>{{ (f.count === 1 ? 'HOME.COMPANY_COUNT_ONE' : 'HOME.COMPANY_COUNT_MANY') | translate: { count: f.count } }}</ng-template>
                   </app-data-table>
                 } @else {

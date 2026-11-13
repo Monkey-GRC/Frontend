@@ -1,6 +1,16 @@
-<app-data-table [captionKey]="captionKey()" [columns]="tableColumns()" [rows]="rows()" [rowKey]="rowKey" [page]="pageInfo()" [pageSizes]="[]"
+<app-data-table [captionKey]="captionKey()" [columns]="tableColumns()" [rows]="rows()" [rowKey]="rowKey" [loading]="loading()" [page]="pageInfo()" [pageSizes]="[]"
   [clickable]="clickable()" [rowLabel]="rowLabel" emptyIcon="" (pageChange)="pageChange.emit($event)" (rowClick)="rowClick.emit($event)">
   <ng-template appCell="code" let-row><app-tag [text]="codeOf(row)" /></ng-template>
+  @for (column of badgeColumns(); track column.key) {
+    <ng-template [appCell]="column.key" let-row>
+      @let items = badgesOf(row, column);
+      @if (items.length) {
+        <span class="flex flex-wrap gap-1">
+          @for (item of items; track item.value) { <app-badge kind="attribute" size="sm" [value]="item.value">{{ item.label }}</app-badge> }
+        </span>
+      } @else { — }
+    </ng-template>
+  }
   <ng-template appCell="is_active" let-row>
     <app-status-indicator [tone]="statusTone(row)" [labelKey]="statusKey(row)" />
   </ng-template>

@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks, tick } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { signal } from '@angular/core';
 import { of } from 'rxjs';
 import { AuthPayloadWithRecovery, MfaSetupStart } from '@core/models/auth-reponse';
+import { User } from '@core/models/user';
 import { AuthService } from '@core/services/auth.service';
 import { MfaForm } from './mfa-form';
 
@@ -161,6 +162,38 @@ describe('MfaForm · activar el segundo factor, QR y códigos de recuperación',
       box.checked = false;
       box.dispatchEvent(new Event('change'));
       expect(component().saved()).toBeFalse();
+    });
+  });
+
+  describe('terminar: ocupado durante la navegación', () => {
+    function toFinish(): Router {
+      const router = TestBed.inject(Router);
+      component().stage.set('confirm');
+      auth.confirmMfaSetup.and.returnValue(of({ recovery_codes: ['aaaa-bbbb'] } as unknown as AuthPayloadWithRecovery));
+      component().submitCode('123456');
+      component().saved.set(true);
+      auth.finishMfaSetup.and.returnValue(of(null as unknown as User));
+      return router;
+    }
+
+    it('stays busy until the navigation ends', async () => {
+      const router = toFinish();
+      let finish!: (ok: boolean) => void;
+      spyOn(router, 'navigateByUrl').and.returnValue(new Promise<boolean>((resolve) => (finish = resolve)));
+      component().finish();
+      expect(component().loading()).toBeTrue();
+      finish(true);
+      await fixture.whenStable();
+      expect(component().loading()).toBeFalse();
+    });
+
+    it('turns busy off when the navigation is rejected, without an unhandled rejection', async () => {
+      const router = toFinish();
+      spyOn(router, 'navigateByUrl').and.rejectWith(new Error('nav'));
+      component().finish();
+      expect(component().loading()).toBeTrue();
+      await fixture.whenStable();
+      expect(component().loading()).toBeFalse();
     });
   });
 });

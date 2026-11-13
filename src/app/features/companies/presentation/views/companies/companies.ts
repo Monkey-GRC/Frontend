@@ -13,7 +13,8 @@ import { CompanyList } from '@features/companies/presentation/components/company
 import { SecondFactorAnswer, SecondFactorDialog } from '@shared/presentation/components/second-factor-dialog/second-factor-dialog';
 import { unwrapData } from '@shared/domain/utils/unwrap-response';
 import { Modal } from '@shared/presentation/components/modal/modal';
-import { LoadingSpinner } from '@shared/presentation/components/loading-spinner/loading-spinner';
+import { Busy } from '@shared/presentation/directives/busy';
+import { BusyFields } from '@shared/presentation/directives/busy-fields';
 import { finalize } from 'rxjs';
 import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
 
@@ -30,7 +31,8 @@ import { ToastService } from '@shared/presentation/components/toast-container/to
     SecondFactorDialog,
     AccessKeySent,
     Modal,
-    LoadingSpinner,
+    Busy,
+    BusyFields,
   ],
   templateUrl: './companies.html',
   changeDetection: ChangeDetectionStrategy.Default,
@@ -47,6 +49,7 @@ export class Companies implements OnInit {
   // nunca; si no salió, se reenvía una nueva.
   registered: RegisteredCompany | null = null;
   resendingKey = false;
+  resendingId: string | null = null;
 
   // D97: la empresa que se está archivando o reactivando (el diálogo abierto).
   archiving: Company | null = null;
@@ -112,7 +115,8 @@ export class Companies implements OnInit {
   onResendKey(company: Company) {
     if (this.resendingKey) return;
     this.resendingKey = true;
-    this.companyService.regenerateAccessKey(company.id).pipe(unwrapData(), finalize(() => (this.resendingKey = false))).subscribe({
+    this.resendingId = company.id;
+    this.companyService.regenerateAccessKey(company.id).pipe(unwrapData(), finalize(() => { this.resendingKey = false; this.resendingId = null; })).subscribe({
       next: (key) => {
         const ok = key.delivery_status === 'sent';
         const show = ok ? this.toast.showSuccess.bind(this.toast) : this.toast.showError.bind(this.toast);
@@ -219,7 +223,7 @@ export class Companies implements OnInit {
   }
 
   readCompanies(page: number) {
-    this.isLoading = this.companyService.companies.length === 0;
+    this.isLoading = true;
     this.companyService.readCompanies(page).pipe(unwrapData()).subscribe({
       next: (data) => {
         this.companyService.companies = data.items;

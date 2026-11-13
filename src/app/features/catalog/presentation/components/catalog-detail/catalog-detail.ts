@@ -8,6 +8,10 @@ import { CatalogService } from '@features/catalog/services/catalog.service';
 import { ItemPicker, Pick, PickKind } from '@features/catalog/presentation/components/item-picker/item-picker';
 import { OptionName } from '@features/catalog/models/catalog.model';
 import { SideDrawer } from '@shared/presentation/components/side-drawer/side-drawer';
+import { Busy } from '@shared/presentation/directives/busy';
+import { BusyFields } from '@shared/presentation/directives/busy-fields';
+import { Skeleton, SkeletonRegion } from '@shared/presentation/components/skeleton/skeleton';
+import { Badge } from '@shared/presentation/components/badge/badge';
 import { StatusIndicator } from '@shared/presentation/components/status-indicator/status-indicator';
 import { targetValue, targetChecked } from '@shared/presentation/utils/event-target';
 import { Select } from '@shared/presentation/components/select/select';
@@ -32,7 +36,7 @@ export interface EditRequest {
 // reactiva, y se vincula o desvincula con lo relacionado (contracts/modules/monkey-admin-catalog.md). Dar de baja no borra; desvincular borra solo la relación.
 @Component({
   selector: 'app-catalog-detail',
-  imports: [NgTemplateOutlet, TranslateModule, ItemPicker, SideDrawer, StatusIndicator, Select],
+  imports: [NgTemplateOutlet, TranslateModule, ItemPicker, SideDrawer, StatusIndicator, Select, Badge, Busy, BusyFields, Skeleton, SkeletonRegion],
   templateUrl: './catalog-detail.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -59,6 +63,8 @@ export class CatalogDetail implements OnChanges {
   dimension = { dimension: 'policy', type: 'manual', requires_probe: false, requires_ai: false, requires_compliance_confirmation: false };
   confirmingDeactivate = false;
   busy = false;
+  /** Which action is running (`deactivate`, `reactivate`, `dimension`, `link`, `unlink:<id>`), so only its button shows the busy state. */
+  action: string | null = null;
   error: string | null = null;
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -69,17 +75,19 @@ export class CatalogDetail implements OnChanges {
     }
   }
 
-  load(): void {
+  load(done?: () => void): void {
     this.loading = this.detail === null;
     this.failed = false;
     this.request().subscribe({
       next: (detail) => {
         this.detail = detail;
         this.loading = false;
+        done?.();
       },
       error: () => {
         this.failed = true;
         this.loading = false;
+        done?.();
       },
     });
   }
@@ -104,11 +112,11 @@ export class CatalogDetail implements OnChanges {
   }
 
   deactivate(): void {
-    this.run(this.catalog.deactivate(FORM_KIND[this.kind()], this.itemId()));
+    this.run(this.catalog.deactivate(FORM_KIND[this.kind()], this.itemId()), 'deactivate');
   }
 
   reactivate(): void {
-    this.run(this.catalog.reactivate(FORM_KIND[this.kind()], this.itemId()));
+    this.run(this.catalog.reactivate(FORM_KIND[this.kind()], this.itemId()), 'reactivate');
   }
 
   // ---- vincular -------------------------------------------------------------------------------------------------------------------------------
@@ -167,7 +175,7 @@ export class CatalogDetail implements OnChanges {
     else if (kind === 'risks' && slot === 'cause') call = this.catalog.link('risk', id, 'causes', { cause_id: pick.id });
     else if (kind === 'causes' && slot === 'risk') call = this.catalog.link('risk', pick.id, 'causes', { cause_id: id });
     else if (kind === 'causes' && slot === 'control') call = this.catalog.link('cause', id, 'controls', { control_id: pick.id });
-    if (call) this.run(call);
+    if (call) this.run(call, 'link');
   }
 
   /** Quita un vínculo. `childId` es el id del otro lado (o la dimensión). */
@@ -183,28 +191,34 @@ export class CatalogDetail implements OnChanges {
     else if (kind === 'risks' && slot === 'cause') call = this.catalog.unlink('risk', id, 'causes', childId);
     else if (kind === 'causes' && slot === 'risk') call = this.catalog.unlink('risk', childId, 'causes', id);
     else if (kind === 'causes' && slot === 'control') call = this.catalog.unlink('cause', id, 'controls', childId);
-    if (call) this.run(call);
+    if (call) this.run(call, `unlink:${childId}`);
   }
 
   saveDimension(): void {
-    this.run(this.catalog.link('control', this.itemId(), 'dimensions', { ...this.dimension }));
+    this.run(this.catalog.link('control', this.itemId(), 'dimensions', { ...this.dimension }), 'dimension');
   }
 
   // ---- internos -------------------------------------------------------------------------------------------------------------------------------
 
   /** Hace el cambio y, si sale bien, vuelve a pedir el elemento y avisa a la lista. Si no, muestra el mensaje del backend (un 409, por ejemplo). */
-  private run(call: Observable<unknown>): void {
+  private run(call: Observable<unknown>, action: string): void {
+    if (this.busy) return;
     this.busy = true;
+    this.action = action;
     this.error = null;
     call.subscribe({
       next: () => {
-        this.busy = false;
+        // Stays busy until the refreshed element arrives, so the panel never shows the old data as if it were current.
         this.resetEditing();
-        this.load();
+        this.load(() => {
+          this.busy = false;
+          this.action = null;
+        });
         this.changed.emit();
       },
       error: (e: ApiError) => {
         this.busy = false;
+        this.action = null;
         this.confirmingDeactivate = false;
         this.error = e.fields?.[0]?.message ?? e.message;
       },
