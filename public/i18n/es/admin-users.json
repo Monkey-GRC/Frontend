@@ -1,0 +1,121 @@
+{
+  "ADMIN_USERS": {
+    "STATUS": {
+      "active": "Activo",
+      "pending": "Pendiente de activar",
+      "inactive": "Desactivado"
+    },
+    "ROLE": {
+      "admin_monkey": "Administrador de Monkey"
+    },
+    "PURGE": {
+      "TODAY": "Se borra hoy",
+      "ONE_DAY": "Se borra en 1 día",
+      "DAYS": "Se borra en {{days}} días"
+    },
+    "SORT": {
+      "-created_at": "Más recientes primero",
+      "created_at": "Más antiguos primero",
+      "email": "Correo, de la A a la Z",
+      "-email": "Correo, de la Z a la A",
+      "purge_at": "Se borran primero los más próximos"
+    },
+    "LIST": {
+      "TITLE": "Administradores",
+      "COUNT": "{{total}} administradores de Monkey",
+      "COL_PERSON": "Administrador",
+      "COL_ROLE": "Rol",
+      "COL_STATUS": "Estado",
+      "COL_LAST_LOGIN": "Último ingreso",
+      "COL_INVITED_BY": "Invitado por",
+      "COL_ACTIONS": "Acciones",
+      "FILTERS_LABEL": "Filtros de la lista de administradores",
+      "FILTER_STATUS": "Estado",
+      "SORT_LABEL": "Orden",
+      "LOAD_ERROR": "No pudimos cargar los administradores. Inténtalo de nuevo.",
+      "RETRY": "Reintentar",
+      "EMPTY": "Aún no hay administradores para mostrar",
+      "EMPTY_FILTERED": "Ningún administrador tiene ese estado",
+      "YOU": "Tú",
+      "NEVER": "Aún no ingresa",
+      "PURGED": "Administrador eliminado",
+      "INVITED_BY_CONSOLE": "Creado por consola",
+      "ACTION_RESEND": "Reenviar invitación",
+      "ACTION_DEACTIVATE": "Desactivar",
+      "ACTION_REACTIVATE": "Reactivar",
+      "RESEND_ARIA": "Reenviar la invitación a {{email}}",
+      "DEACTIVATE_ARIA": "Desactivar a {{email}}",
+      "REACTIVATE_ARIA": "Reactivar a {{email}}"
+    },
+    "FORM": {
+      "NAME": "Nombre",
+      "LAST_NAME": "Apellido",
+      "EMAIL": "Correo",
+      "EMAIL_HINT": "Recibirá el código de activación en este correo. Debe ser único en toda la plataforma.",
+      "ROLE": "Rol",
+      "ROLE_HINT": "Hoy solo se invita a administradores de Monkey.",
+      "REQUIRED": "Este campo es obligatorio.",
+      "INVALID_EMAIL": "Escribe un correo válido.",
+      "TOO_LONG": "Es demasiado largo."
+    },
+    "INVITE": {
+      "OPEN": "Invitar administrador",
+      "TITLE": "Invitar administrador",
+      "SUBTITLE": "Le enviamos por correo un código para activar su cuenta, crear su contraseña y configurar su segundo factor.",
+      "SUBMIT": "Enviar invitación",
+      "CONFIRM_TITLE": "Confirma la invitación",
+      "CONFIRM_DESCRIPTION": "Vamos a invitar a {{email}} como administrador de Monkey. Escribe el código de tu app de autenticación para confirmar.",
+      "CONFIRM_SUBMIT": "Confirmar e invitar"
+    },
+    "RESULT": {
+      "SENT_TITLE": "Invitación enviada",
+      "FAILED_TITLE": "La cuenta se creó, pero el correo no salió",
+      "SENT_BODY": "Mandamos el código de activación a {{email}}. El código nunca se muestra aquí.",
+      "FAILED_BODY": "La cuenta de {{email}} existe, pero no pudimos enviar el correo. Reenvía la invitación para generar un código nuevo.",
+      "STATUS_SENT": "Correo enviado",
+      "STATUS_FAILED": "Correo no enviado",
+      "EXPIRES": "El código vence el {{date}}",
+      "RESEND": "Reenviar invitación",
+      "DONE": "Listo"
+    },
+    "RESEND": {
+      "SUCCESS_TITLE": "Invitación reenviada",
+      "SUCCESS_MESSAGE": "Mandamos un código nuevo a {{email}}; el anterior dejó de servir.",
+      "FAILED_TITLE": "El correo no salió",
+      "FAILED_MESSAGE": "Generamos un código nuevo para {{email}}, pero el correo no salió. Inténtalo otra vez.",
+      "ERROR_TITLE": "No pudimos reenviar la invitación"
+    },
+    "DEACTIVATE": {
+      "TITLE": "Desactivar a {{name}}",
+      "DESCRIPTION": "Vas a desactivar la cuenta de {{email}}. En 7 días se borrará esta cuenta de forma definitiva. Hasta entonces puedes reactivarla. Lo que hizo seguirá apareciendo en la auditoría con su nombre. Para confirmar, escribe el código de tu app de autenticación.",
+      "SUBMIT": "Confirmar y desactivar",
+      "SUCCESS_TITLE": "Administrador desactivado",
+      "SUCCESS_MESSAGE": "{{name}} ya no tiene acceso. Puedes reactivarlo durante 7 días.",
+      "ERROR_TITLE": "No pudimos desactivar la cuenta"
+    },
+    "REACTIVATE": {
+      "TITLE": "Reactivar a {{name}}",
+      "MESSAGE": "{{email}} recupera el acceso. Tendrá que iniciar sesión de nuevo: sus sesiones anteriores siguen cerradas.",
+      "SUBMIT": "Reactivar",
+      "SUCCESS_TITLE": "Administrador reactivado",
+      "SUCCESS_MESSAGE": "{{name}} ya puede iniciar sesión otra vez.",
+      "ERROR_TITLE": "No pudimos reactivar la cuenta"
+    },
+    "ERRORS": {
+      "CANNOT_DEACTIVATE_SELF": "No puedes desactivar tu propia cuenta. Pídele a otro administrador que lo haga.",
+      "LAST_ADMIN": "Es el único administrador activo: Monkey no puede quedarse sin ninguno. Invita a otro y actívalo antes.",
+      "ADMIN_ALREADY_INACTIVE": "Esa cuenta ya está desactivada. Actualizamos la lista.",
+      "ADMIN_NOT_INACTIVE": "Esa cuenta no está desactivada, así que no hay nada que reactivar. Actualizamos la lista.",
+      "EMAIL_TAKEN": "Ese correo ya tiene una cuenta en la plataforma.",
+      "USER_NOT_ACTIVATED": "Esa cuenta aún no se activó. Reenvía la invitación o espera a que venza su código.",
+      "USER_ALREADY_ACTIVE": "Esa persona ya activó su cuenta; no hace falta reenviar la invitación.",
+      "MFA_CODE_INVALID": "El código no es correcto. Escribe el que muestra tu app ahora.",
+      "MFA_NOT_ENABLED": "Aún no configuraste tu segundo factor, y esta acción lo exige.",
+      "ACCOUNT_LOCKED": "Tu cuenta está bloqueada por demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
+      "ACCOUNT_INACTIVE": "Tu cuenta fue desactivada mientras se procesaba la acción.",
+      "VALIDATION_FAILED": "Revisa los datos: hay campos que no son válidos.",
+      "FORBIDDEN": "No tienes permiso para esta acción.",
+      "NOT_FOUND": "Esa cuenta ya no existe. Actualizamos la lista."
+    }
+  }
+}

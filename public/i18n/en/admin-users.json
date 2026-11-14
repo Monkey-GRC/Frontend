@@ -1,0 +1,121 @@
+{
+  "ADMIN_USERS": {
+    "STATUS": {
+      "active": "Active",
+      "pending": "Pending activation",
+      "inactive": "Deactivated"
+    },
+    "ROLE": {
+      "admin_monkey": "Monkey administrator"
+    },
+    "PURGE": {
+      "TODAY": "Deleted today",
+      "ONE_DAY": "Deleted in 1 day",
+      "DAYS": "Deleted in {{days}} days"
+    },
+    "SORT": {
+      "-created_at": "Newest first",
+      "created_at": "Oldest first",
+      "email": "Email, A to Z",
+      "-email": "Email, Z to A",
+      "purge_at": "Soonest to be deleted first"
+    },
+    "LIST": {
+      "TITLE": "Administrators",
+      "COUNT": "{{total}} Monkey administrators",
+      "COL_PERSON": "Administrator",
+      "COL_ROLE": "Role",
+      "COL_STATUS": "Status",
+      "COL_LAST_LOGIN": "Last sign-in",
+      "COL_INVITED_BY": "Invited by",
+      "COL_ACTIONS": "Actions",
+      "FILTERS_LABEL": "Administrator list filters",
+      "FILTER_STATUS": "Status",
+      "SORT_LABEL": "Order",
+      "LOAD_ERROR": "We could not load the administrators. Try again.",
+      "RETRY": "Retry",
+      "EMPTY": "There are no administrators to show yet",
+      "EMPTY_FILTERED": "No administrator has that status",
+      "YOU": "You",
+      "NEVER": "Has not signed in yet",
+      "PURGED": "Deleted administrator",
+      "INVITED_BY_CONSOLE": "Created from the console",
+      "ACTION_RESEND": "Resend invitation",
+      "ACTION_DEACTIVATE": "Deactivate",
+      "ACTION_REACTIVATE": "Reactivate",
+      "RESEND_ARIA": "Resend the invitation to {{email}}",
+      "DEACTIVATE_ARIA": "Deactivate {{email}}",
+      "REACTIVATE_ARIA": "Reactivate {{email}}"
+    },
+    "FORM": {
+      "NAME": "First name",
+      "LAST_NAME": "Last name",
+      "EMAIL": "Email",
+      "EMAIL_HINT": "They will get the activation code at this address. It must be unique across the whole platform.",
+      "ROLE": "Role",
+      "ROLE_HINT": "For now, only Monkey administrators can be invited.",
+      "REQUIRED": "This field is required.",
+      "INVALID_EMAIL": "Enter a valid email.",
+      "TOO_LONG": "It is too long."
+    },
+    "INVITE": {
+      "OPEN": "Invite administrator",
+      "TITLE": "Invite administrator",
+      "SUBTITLE": "We email them a code to activate their account, create a password and set up their second factor.",
+      "SUBMIT": "Send invitation",
+      "CONFIRM_TITLE": "Confirm the invitation",
+      "CONFIRM_DESCRIPTION": "We are about to invite {{email}} as a Monkey administrator. Enter the code from your authenticator app to confirm.",
+      "CONFIRM_SUBMIT": "Confirm and invite"
+    },
+    "RESULT": {
+      "SENT_TITLE": "Invitation sent",
+      "FAILED_TITLE": "The account was created, but the email did not go out",
+      "SENT_BODY": "We sent the activation code to {{email}}. The code is never shown here.",
+      "FAILED_BODY": "The account for {{email}} exists, but we could not send the email. Resend the invitation to generate a new code.",
+      "STATUS_SENT": "Email sent",
+      "STATUS_FAILED": "Email not sent",
+      "EXPIRES": "The code expires on {{date}}",
+      "RESEND": "Resend invitation",
+      "DONE": "Done"
+    },
+    "RESEND": {
+      "SUCCESS_TITLE": "Invitation resent",
+      "SUCCESS_MESSAGE": "We sent a new code to {{email}}; the previous one no longer works.",
+      "FAILED_TITLE": "The email did not go out",
+      "FAILED_MESSAGE": "We generated a new code for {{email}}, but the email did not go out. Try again.",
+      "ERROR_TITLE": "We could not resend the invitation"
+    },
+    "DEACTIVATE": {
+      "TITLE": "Deactivate {{name}}",
+      "DESCRIPTION": "You are about to deactivate the account of {{email}}. In 7 days this account will be permanently deleted. Until then you can reactivate it. What they did will keep appearing in the audit trail under their name. To confirm, enter the code from your authenticator app.",
+      "SUBMIT": "Confirm and deactivate",
+      "SUCCESS_TITLE": "Administrator deactivated",
+      "SUCCESS_MESSAGE": "{{name}} no longer has access. You can reactivate the account for 7 days.",
+      "ERROR_TITLE": "We could not deactivate the account"
+    },
+    "REACTIVATE": {
+      "TITLE": "Reactivate {{name}}",
+      "MESSAGE": "{{email}} gets access back. They will have to sign in again: their earlier sessions stay closed.",
+      "SUBMIT": "Reactivate",
+      "SUCCESS_TITLE": "Administrator reactivated",
+      "SUCCESS_MESSAGE": "{{name}} can sign in again.",
+      "ERROR_TITLE": "We could not reactivate the account"
+    },
+    "ERRORS": {
+      "CANNOT_DEACTIVATE_SELF": "You cannot deactivate your own account. Ask another administrator to do it.",
+      "LAST_ADMIN": "This is the only active administrator: Monkey cannot be left with none. Invite another one and activate them first.",
+      "ADMIN_ALREADY_INACTIVE": "That account is already deactivated. We refreshed the list.",
+      "ADMIN_NOT_INACTIVE": "That account is not deactivated, so there is nothing to reactivate. We refreshed the list.",
+      "EMAIL_TAKEN": "That email already has an account on the platform.",
+      "USER_NOT_ACTIVATED": "That account has not been activated yet. Resend the invitation or wait for its code to expire.",
+      "USER_ALREADY_ACTIVE": "That person already activated their account; there is no need to resend the invitation.",
+      "MFA_CODE_INVALID": "The code is not correct. Enter the one your app shows right now.",
+      "MFA_NOT_ENABLED": "You have not set up your second factor yet, and this action requires it.",
+      "ACCOUNT_LOCKED": "Your account is locked after too many attempts. Wait a few minutes and try again.",
+      "ACCOUNT_INACTIVE": "Your account was deactivated while the action was being processed.",
+      "VALIDATION_FAILED": "Check the data: some fields are not valid.",
+      "FORBIDDEN": "You do not have permission for this action.",
+      "NOT_FOUND": "That account no longer exists. We refreshed the list."
+    }
+  }
+}

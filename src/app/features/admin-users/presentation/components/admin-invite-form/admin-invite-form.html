@@ -1,0 +1,27 @@
+<form id="admin-invite-form" [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-5">
+  <div class="grid gap-5 md:grid-cols-2">
+    <app-field labelKey="ADMIN_USERS.FORM.NAME" forId="admin-name" [errorKey]="errorKey('name')">
+      <input id="admin-name" type="text" autocomplete="off" formControlName="name" class="mk-input" [attr.aria-invalid]="errorKey('name') ? 'true' : null" [attr.aria-describedby]="errorKey('name') ? 'admin-name-error' : null" />
+    </app-field>
+    <app-field labelKey="ADMIN_USERS.FORM.LAST_NAME" forId="admin-last-name" [errorKey]="errorKey('last_name')">
+      <input id="admin-last-name" type="text" autocomplete="off" formControlName="last_name" class="mk-input" [attr.aria-invalid]="errorKey('last_name') ? 'true' : null" [attr.aria-describedby]="errorKey('last_name') ? 'admin-last-name-error' : null" />
+    </app-field>
+  </div>
+
+  <div>
+    <app-field labelKey="ADMIN_USERS.FORM.EMAIL" forId="admin-email" hintKey="ADMIN_USERS.FORM.EMAIL_HINT" [errorKey]="errorKey('email')">
+      <input id="admin-email" type="email" autocomplete="off" formControlName="email" class="mk-input" [attr.aria-invalid]="errorKey('email') || fieldErrors()['email'] ? 'true' : null" />
+    </app-field>
+    @if (fieldErrors()['email']; as message) {
+      <p class="mt-1.5 text-xs text-bad-ink" role="alert" data-testid="admin-email-server-error">{{ message }}</p>
+    }
+  </div>
+
+  <app-field labelKey="ADMIN_USERS.FORM.ROLE" forId="admin-role" hintKey="ADMIN_USERS.FORM.ROLE_HINT">
+    <app-select inputId="admin-role" [options]="roleOptions" formControlName="role" />
+  </app-field>
+
+  @if (error(); as message) {
+    <p class="text-sm text-bad-ink" role="alert" data-testid="admin-invite-error">{{ message }}</p>
+  }
+</form>

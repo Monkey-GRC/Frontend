@@ -113,6 +113,8 @@
     "HOME": "Home",
     "COMPANIES": "Companies",
     "CATALOG": "Master catalog",
+    "ADMINS": "Administrators",
+    "ACTIVATE": "Activate account",
     "LOGIN": "Sign in",
     "MFA": "Two-step verification",
     "NOT_FOUND": "Page not found",

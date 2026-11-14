@@ -6,7 +6,8 @@
         },
         "HOME": "Inicio",
         "COMPANIES": "Empresas",
-        "CATALOG": "Catálogo maestro"
+        "CATALOG": "Catálogo maestro",
+        "ADMINS": "Administradores"
     },
     "SHELL": {
         "NAV": {

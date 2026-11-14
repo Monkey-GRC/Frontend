@@ -46,6 +46,16 @@ describe('authInterceptor', () => {
     expect(navigateA).not.toHaveBeenCalled();
   });
 
+  it('a 401 for a wrong second-factor code reaches the caller: no renewal, no retry, no navigation', () => {
+    const navigate = spyOn(router, 'navigate').and.resolveTo(true);
+    let status = 0;
+    http.post(`${api}/admins`, {}).subscribe({ error: (e) => (status = e.status) });
+    backend.expectOne(`${api}/admins`).flush({ error: { code: 'MFA_CODE_INVALID' } }, { status: 401, statusText: 'Unauthorized' });
+    backend.expectNone(`${api}/auth/refresh`);
+    expect(status).toBe(401);
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
   it('when the renewal fails but the retry works (another tab renewed) it resolves without leaving', () => {
     const navigate = spyOn(router, 'navigate').and.resolveTo(true);
     const clear = spyOn(auth, 'clearLocalSession').and.callThrough();

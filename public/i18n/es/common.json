@@ -113,6 +113,8 @@
     "HOME": "Inicio",
     "COMPANIES": "Empresas",
     "CATALOG": "Catálogo maestro",
+    "ADMINS": "Administradores",
+    "ACTIVATE": "Activar cuenta",
     "LOGIN": "Iniciar sesión",
     "MFA": "Verificación en dos pasos",
     "NOT_FOUND": "Página no encontrada",

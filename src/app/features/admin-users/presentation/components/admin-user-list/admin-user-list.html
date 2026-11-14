@@ -1,0 +1,59 @@
+<app-page-header [title]="'ADMIN_USERS.LIST.TITLE' | translate" [description]="'ADMIN_USERS.LIST.COUNT' | translate: { total: page().total }">
+  <div actions><ng-content select="[listActions]" /></div>
+</app-page-header>
+
+<app-table-toolbar ariaLabelKey="ADMIN_USERS.LIST.FILTERS_LABEL">
+  <app-table-filter filters labelKey="ADMIN_USERS.LIST.FILTER_STATUS" [options]="statusOptions" [value]="status()" (valueChange)="statusChange.emit($any($event))" data-testid="admin-filter-status" />
+  <app-table-filter filters labelKey="ADMIN_USERS.LIST.SORT_LABEL" [options]="sortOptions" [value]="sort() === '-created_at' ? '' : sort()" (valueChange)="onSort($event)" data-testid="admin-filter-sort" />
+</app-table-toolbar>
+
+@if (failed() && !loading()) {
+  <div class="mk-surface-state-bad p-4 text-ink" role="alert" data-testid="admin-list-error">
+    <p class="text-sm font-medium">{{ 'ADMIN_USERS.LIST.LOAD_ERROR' | translate }}</p>
+    <button type="button" class="mt-3 mk-btn-secondary" (click)="retry.emit()" data-testid="admin-list-retry">{{ 'ADMIN_USERS.LIST.RETRY' | translate }}</button>
+  </div>
+} @else {
+  <app-data-table captionKey="ADMIN_USERS.LIST.TITLE" [columns]="columns" [rows]="rows()" [rowKey]="rowKey" [loading]="loading()" [page]="page()" [pageSizes]="[]"
+    emptyIcon="" [emptyTitleKey]="status() ? 'ADMIN_USERS.LIST.EMPTY_FILTERED' : 'ADMIN_USERS.LIST.EMPTY'" (pageChange)="pageChange.emit($event)">
+
+    <ng-template appCell="person" let-admin>
+      <app-person-cell [name]="fullName(admin)" [secondary]="admin.email" [hint]="isSelf(admin) ? ('ADMIN_USERS.LIST.YOU' | translate) : null" />
+    </ng-template>
+
+    <ng-template appCell="role" let-admin>{{ 'ADMIN_USERS.ROLE.' + admin.role | translate }}</ng-template>
+
+    <ng-template appCell="status" let-admin><app-admin-status-badge [admin]="admin" /></ng-template>
+
+    <ng-template appCell="last_login" let-admin>
+      @if (admin.last_login_at) {{{ admin.last_login_at | localDate: 'short' : true }}} @else { <span class="text-ink-muted">{{ 'ADMIN_USERS.LIST.NEVER' | translate }}</span> }
+    </ng-template>
+
+    <ng-template appCell="invited_by" let-admin>
+      @if (admin.invited_by; as inviter) {
+        <span class="block text-ink">{{ inviter.name }} {{ inviter.last_name }}</span>
+        @if (inviter.purged) {
+          <span class="block text-xs text-ink-muted" data-testid="admin-inviter-purged">{{ 'ADMIN_USERS.LIST.PURGED' | translate }}</span>
+        }
+      } @else {
+        <span class="text-ink-faint">{{ 'ADMIN_USERS.LIST.INVITED_BY_CONSOLE' | translate }}</span>
+      }
+    </ng-template>
+
+    <ng-template appCell="actions" let-admin>
+      <span class="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
+        @if (admin.status === 'pending') {
+          <button type="button" (click)="resend.emit(admin)" [appBusy]="resendingId() === admin.id" data-testid="admin-resend" class="text-sm font-medium text-action hover:underline"
+            [attr.aria-label]="'ADMIN_USERS.LIST.RESEND_ARIA' | translate: { email: admin.email }">{{ 'ADMIN_USERS.LIST.ACTION_RESEND' | translate }}</button>
+        }
+        @if (admin.status === 'active' && !isSelf(admin)) {
+          <button type="button" (click)="deactivate.emit(admin)" data-testid="admin-deactivate" class="text-sm font-medium text-bad-ink hover:underline"
+            [attr.aria-label]="'ADMIN_USERS.LIST.DEACTIVATE_ARIA' | translate: { email: admin.email }">{{ 'ADMIN_USERS.LIST.ACTION_DEACTIVATE' | translate }}</button>
+        }
+        @if (admin.status === 'inactive') {
+          <button type="button" (click)="reactivate.emit(admin)" data-testid="admin-reactivate" class="text-sm font-medium text-action hover:underline"
+            [attr.aria-label]="'ADMIN_USERS.LIST.REACTIVATE_ARIA' | translate: { email: admin.email }">{{ 'ADMIN_USERS.LIST.ACTION_REACTIVATE' | translate }}</button>
+        }
+      </span>
+    </ng-template>
+  </app-data-table>
+}

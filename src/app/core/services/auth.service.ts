@@ -144,6 +144,19 @@ export class AuthService {
         return this.http.post<void>(`${this.API}/password/reset`, input).pipe(map(() => void 0));
     }
 
+    /** Activación de una cuenta invitada, paso 1: comprueba el código del correo sin gastarlo y devuelve el correo al que pertenece (autenticacion.md, D95). */
+    lookupActivation(code: string): Observable<{ email: string; expires_at: string }> {
+        return this.http.post<SuccessResponse<{ email: string; expires_at: string }>>(`${this.API}/activate/lookup`, { code }).pipe(unwrapData());
+    }
+
+    /** Paso 2: fija la contraseña. La cuenta queda sin sesión y con el desafío del segundo factor abierto (`mfa_setup`): la pantalla sigue en `/auth/mfa`. */
+    activateAccount(input: { code: string; email: string; password: string }): Observable<MfaStep> {
+        return this.http.post<SuccessResponse<MfaStep>>(`${this.API}/activate`, input).pipe(
+            unwrapData(),
+            tap((step) => this.pendingMfa.set(step)),
+        );
+    }
+
     private acceptSession(payload: AuthPayload): Observable<User> {
         const user = payload.user;
         if (user.role !== ADMIN_ROLE) {
