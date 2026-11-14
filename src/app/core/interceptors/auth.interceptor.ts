@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 
+// Un 401 por el código del segundo factor de una acción sensible NO es una sesión caducada: no se renueva, no se reintenta (gastaría otro intento) y no se cierra la sesión.
+const SECOND_FACTOR_CODES = ['MFA_CODE_INVALID', 'MFA_NOT_ENABLED'];
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const router = inject(Router);
     const authService = inject(AuthService);
@@ -26,6 +29,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(cloned).pipe(
         catchError((error: HttpErrorResponse) => {
             if (error.status !== 401 || isAuthEndpoint) return throwError(() => error);
+            if (SECOND_FACTOR_CODES.includes(error.error?.error?.code)) return throwError(() => error);
 
             // El access token dura 15 min: ante un 401 se intenta renovar y se reintenta UNA vez, pase lo que
             // pase con la renovación: si falló, otra pestaña pudo rotar el refresh token y el navegador ya tiene

@@ -36,6 +36,13 @@ export const routes: Routes = [
         canActivate: [roleGuard(['admin_monkey'])],
         pathMatch: 'full',
       },
+      {
+        path: 'admins',
+        title: 'PAGE_TITLE.ADMINS',
+        loadComponent: () => import('src/app/features/admin-users/presentation/views/admin-users/admin-users').then(m => m.AdminUsers),
+        canActivate: [roleGuard(['admin_monkey'])],
+        pathMatch: 'full',
+      },
     ]
   },
   // Ajustes (desde el menú de perfil): una pantalla completa FUERA del layout de la app (sin su menú ni su encabezado), con «Volver a la aplicación». Menú por función a la
@@ -78,6 +85,13 @@ export const routes: Routes = [
     canActivate: [guestGuard],
   },
   // Recuperar la contraseña (D101): se puede pedir con o sin sesión (Ajustes lo ofrece a quien ya entró) y el enlace del correo abre `auth/reset-password`, que también sirve con o sin sesión.
+  // Activar la cuenta de una invitación (MD-215, D117): el enlace del correo abre `auth/activate?code=…`; sin sesión.
+  {
+    path: 'auth/activate',
+    title: 'PAGE_TITLE.ACTIVATE',
+    loadComponent: () => import('src/app/features/auth/presentation/views/activate/activate').then(m => m.Activate),
+    canActivate: [guestGuard],
+  },
   {
     path: 'auth/forgot-password',
     title: 'PAGE_TITLE.FORGOT_PASSWORD',
