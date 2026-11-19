@@ -4,12 +4,13 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { AccessKeyStatus, Company } from '@shared/models/company.model';
-import { AttentionItem, AttentionReason, FrameworkCount, HomeMetrics, KeyBucket, RECENT_DAYS, computeHomeMetrics } from '@features/common/models/home-metrics.model';
+import { AttentionItem, AttentionReason, FrameworkCount, HomeMetrics, KeyBucket, computeHomeMetrics } from '@features/common/models/home-metrics.model';
 import { HomeMetricsService } from '@features/common/services/home-metrics.service';
 import { Card } from '@shared/presentation/components/card/card';
 import { DataTable, TableColumn } from '@shared/presentation/components/data-table/data-table';
 import { TableCell } from '@shared/presentation/components/data-table/data-table';
 import { Donut } from '@shared/presentation/components/donut/donut';
+import { MetricCard } from '@shared/presentation/components/metric-card/metric-card';
 import { EmptyState } from '@shared/presentation/components/empty-state/empty-state';
 import { PageHeader } from '@shared/presentation/components/page-header/page-header';
 import { Section } from '@shared/presentation/components/section/section';
@@ -49,7 +50,7 @@ const ATTENTION_LABEL: Record<AttentionReason, string> = {
 // cifras que se leen de un vistazo; debajo, el estado de las claves de acceso, lo que pide atención, las últimas altas y los marcos contratados.
 @Component({
     selector: 'app-home',
-    imports: [PageHeader, TranslateModule, RouterLink, Card, Section, Donut, EmptyState, DataTable, TableCell, StatusIndicator, Tag, Busy, Skeleton, SkeletonRegion],
+    imports: [PageHeader, TranslateModule, RouterLink, Card, Section, MetricCard, Donut, EmptyState, DataTable, TableCell, StatusIndicator, Tag, Busy, Skeleton, SkeletonRegion],
     templateUrl: './home.html',
     styleUrl: './home.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -88,7 +89,6 @@ export class Home implements OnInit {
     readonly attentionRowKey = (item: AttentionItem) => item.company.id;
     readonly recentRowKey = (c: Company) => c.id;
     readonly frameworkRowKey = (f: FrameworkCount) => f.code;
-    readonly recentDays = RECENT_DAYS;
     // Las cifras son parciales si hay más empresas que las que se alcanzaron a leer.
     readonly partial = computed(() => {
       const metrics = this.metrics();

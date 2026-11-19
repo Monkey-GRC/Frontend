@@ -11,7 +11,7 @@
 
     @case ('loading') {
       <app-skeleton-region class="space-y-4" data-testid="home-loading">
-        <div class="grid gap-4 *:min-w-0 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="mk-metric-grid">
           <app-skeleton shape="metric" />
           <app-skeleton shape="metric" />
           <app-skeleton shape="metric" />
@@ -50,42 +50,16 @@
             <p class="mk-surface-state-warn p-3 text-sm text-ink" role="status">{{ 'HOME.PARTIAL' | translate: { shown: m.total, total: total() } }}</p>
           }
 
-          <!-- Cifras de un vistazo: la primera es la destacada -->
-          <div class="grid gap-4 *:min-w-0 sm:grid-cols-2 xl:grid-cols-4">
-
-            <app-card [featured]="true" class="h-full">
-              <p class="text-sm font-medium text-white/90">{{ 'HOME.KPI.COMPANIES' | translate }}</p>
-              <p class="mt-2 text-[28px] font-semibold leading-none text-white">{{ total() }}</p>
-              <p class="mt-3 text-xs text-white/80">{{ 'HOME.KPI.NEW_RECENT' | translate: { count: m.createdRecently, days: recentDays } }}</p>
-            </app-card>
-
-            <app-card [tinted]="true" class="h-full">
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                  <p class="text-sm font-medium text-ink-muted">{{ 'HOME.KPI.ACTIVE' | translate }}</p>
-                  <p class="mt-2 text-[28px] font-semibold leading-none text-action">{{ m.active }}</p>
-                </div>
-                <app-donut [value]="share(m.active, m.total)" [text]="share(m.active, m.total) + '%'" [size]="56" [ariaLabel]="('HOME.KPI.ACTIVE' | translate) + ': ' + share(m.active, m.total) + '%'" />
-              </div>
-              <p class="mt-3 text-xs text-ink-faint">{{ 'HOME.KPI.ACTIVE_OF' | translate: { total: m.total, suspended: m.suspended } }}</p>
-            </app-card>
-
-            <app-card [tinted]="true" class="h-full">
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                  <p class="text-sm font-medium text-ink-muted">{{ 'HOME.KPI.ONBOARDING' | translate }}</p>
-                  <p class="mt-2 text-[28px] font-semibold leading-none text-action">{{ m.onboardingDone }}</p>
-                </div>
-                <app-donut [value]="share(m.onboardingDone, m.total)" [text]="share(m.onboardingDone, m.total) + '%'" [size]="56" [ariaLabel]="('HOME.KPI.ONBOARDING' | translate) + ': ' + share(m.onboardingDone, m.total) + '%'" />
-              </div>
-              <p class="mt-3 text-xs text-ink-faint">{{ 'HOME.KPI.ONBOARDING_OF' | translate: { done: m.onboardingDone, total: m.total } }}</p>
-            </app-card>
-
-            <app-card [tinted]="true" class="h-full">
-              <p class="text-sm font-medium text-ink-muted">{{ 'HOME.KPI.EXPIRED_KEYS' | translate }}</p>
-              <p class="mt-2 text-[28px] font-semibold leading-none text-action">{{ m.keys.expired }}</p>
-              <p class="mt-3 text-xs text-ink-faint">{{ 'HOME.KPI.PENDING_KEYS' | translate: { count: m.keys.pending } }}</p>
-            </app-card>
+          <!-- Cifras de un vistazo: todas iguales, con su icono en un círculo del color de la métrica -->
+          <div class="mk-metric-grid" data-metrics>
+            <app-metric-card icon="apartment" color="data-1" [label]="'HOME.KPI.COMPANIES' | translate" [value]="total()" />
+            <app-metric-card icon="task_alt" color="ok" [label]="'HOME.KPI.ACTIVE' | translate" [value]="m.active">
+              <app-donut metricDonut [value]="share(m.active, m.total)" [text]="share(m.active, m.total) + '%'" [size]="72" [ariaLabel]="('HOME.KPI.ACTIVE' | translate) + ': ' + share(m.active, m.total) + '%'" />
+            </app-metric-card>
+            <app-metric-card icon="checklist" color="data-3" [label]="'HOME.KPI.ONBOARDING' | translate" [value]="m.onboardingDone">
+              <app-donut metricDonut [value]="share(m.onboardingDone, m.total)" [text]="share(m.onboardingDone, m.total) + '%'" [size]="72" [ariaLabel]="('HOME.KPI.ONBOARDING' | translate) + ': ' + share(m.onboardingDone, m.total) + '%'" />
+            </app-metric-card>
+            <app-metric-card icon="key_off" color="bad" [label]="'HOME.KPI.EXPIRED_KEYS' | translate" [value]="m.keys.expired" />
           </div>
 
           <div class="grid gap-4 *:min-w-0 xl:grid-cols-2">
