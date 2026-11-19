@@ -14,13 +14,9 @@
     "COMPANY_COUNT_MANY": "{{count}} companies",
     "KPI": {
       "COMPANIES": "Registered companies",
-      "NEW_RECENT": "{{count}} new in the last {{days}} days",
       "ACTIVE": "Active companies",
-      "ACTIVE_OF": "of {{total}} · {{suspended}} suspended",
       "ONBOARDING": "Onboarding completed",
-      "ONBOARDING_OF": "{{done}} of {{total}} companies",
-      "EXPIRED_KEYS": "Expired keys",
-      "PENDING_KEYS": "{{count}} waiting to be used"
+      "EXPIRED_KEYS": "Expired keys"
     },
     "KEYS": {
       "TITLE": "Access keys",
