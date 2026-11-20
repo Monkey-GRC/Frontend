@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CatalogFilters, CatalogFramework, CatalogOrigin, CatalogTab, ControlScope, FormKind, Paginated } from '@features/catalog/models/catalog.model';
 import { CatalogOptionsService } from '@features/catalog/services/catalog-options.service';
@@ -15,6 +15,7 @@ import { TableFilter, TableFilterOption } from '@shared/presentation/components/
 import { TableToolbar } from '@shared/presentation/components/table-toolbar/table-toolbar';
 import { TabItem, Tabs } from '@shared/presentation/components/tabs/tabs';
 import { targetChecked } from '@shared/presentation/utils/event-target';
+import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
 
 const BADGES: CatalogColumn[] = [
   { key: 'origin', labelKey: 'CATALOG_MODULE.COL.ORIGIN', kind: 'origin' },
@@ -77,6 +78,8 @@ const NEW_KIND: Record<CatalogTab, FormKind> = { controls: 'control', risks: 'ri
 })
 export class Catalog implements OnInit, OnDestroy {
   private readonly catalog = inject(CatalogService);
+  private readonly translate = inject(TranslateService);
+  private readonly toast = inject(ToastService);
   readonly options = inject(CatalogOptionsService);
 
   protected readonly targetChecked = targetChecked;
@@ -236,6 +239,7 @@ export class Catalog implements OnInit, OnDestroy {
   onSaved(saved: unknown): void {
     const mode = this.form?.mode;
     this.form = null;
+    this.toast.showSuccess(this.translate.instant(mode === 'create' ? 'CATALOG_MODULE.NOTICE.CREATED' : 'CATALOG_MODULE.NOTICE.UPDATED'));
     this.reload(this.page);
     const id = (saved as { id?: string } | null)?.id;
     if (mode === 'create' && id) this.selected = { kind: this.detailKind, id };

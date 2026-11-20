@@ -6,6 +6,7 @@ import { INVITABLE_ROLES, InviteAdminData } from '@features/admin-users/models/a
 import { Field } from '@shared/presentation/components/field/field';
 import { Select, SelectOption } from '@shared/presentation/components/select/select';
 import { startWith } from 'rxjs';
+import { hasChanges } from '@shared/domain/utils/form-changes';
 
 // El formulario de invitar a un administrador: correo, nombre, apellido y rol (hoy solo admin_monkey, D117).
 // No llama al servidor ni pide el segundo factor: valida y emite `invited`; la vista abre el diálogo del código y envía, y le devuelve el error (`error`, `fieldErrors`). El botón de enviar vive en el pie del modal (`form="admin-invite-form"`).
@@ -34,19 +35,17 @@ export class AdminInviteForm {
   readonly submitted = signal(false);
   readonly roleOptions: SelectOption[] = INVITABLE_ROLES.map((value) => ({ value, labelKey: `ADMIN_USERS.ROLE.${value}` }));
 
+  private readonly initial = this.form.getRawValue();
   private readonly values = toSignal(this.form.valueChanges.pipe(startWith(this.form.getRawValue())), { initialValue: this.form.getRawValue() });
-  // Con datos escritos sin enviar, el modal no se cierra con Esc ni con un clic fuera.
-  readonly dirty = computed(() => {
-    const v = this.values();
-    return !!(v.email || v.name || v.last_name);
-  });
+  // MD-485 · Con algo escrito o elegido distinto de lo de partida, cerrar el modal pide confirmar antes de descartarlo (`guarded`).
+  readonly dirty = computed(() => hasChanges(this.initial, this.values()));
 
   protected errorKey(name: 'email' | 'name' | 'last_name'): string | null {
     const control = this.form.controls[name];
     if (!(this.submitted() || control.touched)) return null;
     if (control.hasError('required')) return 'ADMIN_USERS.FORM.REQUIRED';
     if (control.hasError('email')) return 'ADMIN_USERS.FORM.INVALID_EMAIL';
-    if (control.hasError('maxlength')) return 'ADMIN_USERS.FORM.TOO_LONG';
+    if (control.hasError('maxlength')) return name === 'email' ? 'ADMIN_USERS.FORM.TOO_LONG_EMAIL' : 'ADMIN_USERS.FORM.TOO_LONG';
     return null;
   }
 

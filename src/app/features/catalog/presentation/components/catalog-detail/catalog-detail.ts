@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges, input, output, inject } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { ApiError, CauseDetail, ControlDetail, EvidenceTemplateRow, FormKind, RiskDetail, TestDetail } from '@features/catalog/models/catalog.model';
 import { CatalogOptionsService } from '@features/catalog/services/catalog-options.service';
@@ -15,6 +15,8 @@ import { Badge } from '@shared/presentation/components/badge/badge';
 import { StatusIndicator } from '@shared/presentation/components/status-indicator/status-indicator';
 import { targetValue, targetChecked } from '@shared/presentation/utils/event-target';
 import { Select } from '@shared/presentation/components/select/select';
+import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
+import { hasChanges } from '@shared/domain/utils/form-changes';
 
 export type DetailKind = 'controls' | 'risks' | 'causes' | 'tests' | 'evidence-templates';
 type Detail = ControlDetail | RiskDetail | CauseDetail | TestDetail | EvidenceTemplateRow;
@@ -34,6 +36,18 @@ export interface EditRequest {
 
 // El detalle de un elemento del catálogo, en un panel a la derecha. Pide el elemento al abrirse y cuando cambia el que se muestra. Desde aquí se edita, se da de baja o se
 // reactiva, y se vincula o desvincula con lo relacionado (contracts/modules/monkey-admin-catalog.md). Dar de baja no borra; desvincular borra solo la relación.
+/** The toast that confirms each change of the detail (MD-485): concrete, one per kind of action. */
+const NOTICE_OF: Record<string, string> = {
+  deactivate: 'CATALOG_MODULE.NOTICE.DEACTIVATED',
+  reactivate: 'CATALOG_MODULE.NOTICE.REACTIVATED',
+  link: 'CATALOG_MODULE.NOTICE.LINKED',
+  unlink: 'CATALOG_MODULE.NOTICE.UNLINKED',
+  dimension: 'CATALOG_MODULE.NOTICE.DIMENSION_SAVED',
+};
+
+// Lo que trae una dimensión nueva antes de que la persona elija nada.
+const NEW_DIMENSION = { dimension: 'policy', type: 'manual', requires_probe: false, requires_ai: false, requires_compliance_confirmation: false };
+
 @Component({
   selector: 'app-catalog-detail',
   imports: [NgTemplateOutlet, TranslateModule, ItemPicker, SideDrawer, StatusIndicator, Select, Badge, Busy, BusyFields, Skeleton, SkeletonRegion],
@@ -42,6 +56,8 @@ export interface EditRequest {
 })
 export class CatalogDetail implements OnChanges {
   private readonly catalog = inject(CatalogService);
+  private readonly translate = inject(TranslateService);
+  private readonly toast = inject(ToastService);
   readonly options = inject(CatalogOptionsService);
 
   protected readonly targetValue = targetValue;
@@ -60,7 +76,7 @@ export class CatalogDetail implements OnChanges {
   slot: Slot | null = null;
   sequence = '';
   addingDimension = false;
-  dimension = { dimension: 'policy', type: 'manual', requires_probe: false, requires_ai: false, requires_compliance_confirmation: false };
+  dimension = { ...NEW_DIMENSION };
   confirmingDeactivate = false;
   busy = false;
   /** Which action is running (`deactivate`, `reactivate`, `dimension`, `link`, `unlink:<id>`), so only its button shows the busy state. */
@@ -208,6 +224,7 @@ export class CatalogDetail implements OnChanges {
     this.error = null;
     call.subscribe({
       next: () => {
+        this.toast.showSuccess(this.translate.instant(NOTICE_OF[action.split(':')[0]] ?? 'CATALOG_MODULE.NOTICE.UPDATED'));
         // Stays busy until the refreshed element arrives, so the panel never shows the old data as if it were current.
         this.resetEditing();
         this.load(() => {
@@ -225,10 +242,21 @@ export class CatalogDetail implements OnChanges {
     });
   }
 
+  cancelDimension(): void {
+    this.addingDimension = false;
+    this.dimension = { ...NEW_DIMENSION };
+  }
+
+  /** MD-485 · Una dimensión nueva con algo elegido o una posición escrita sin guardar: cerrar el panel pide confirmar antes de descartarlo. */
+  get guarded(): boolean {
+    return (this.addingDimension && hasChanges(NEW_DIMENSION, this.dimension)) || (this.slot !== null && !!this.sequence.trim());
+  }
+
   private resetEditing(): void {
     this.slot = null;
     this.sequence = '';
     this.addingDimension = false;
+    this.dimension = { ...NEW_DIMENSION };
     this.confirmingDeactivate = false;
     this.error = null;
   }

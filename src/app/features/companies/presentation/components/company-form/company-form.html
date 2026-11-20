@@ -52,7 +52,7 @@
         [disabled]="!isAvailable(f)"
         class="flex items-start gap-3 rounded-control border p-3.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-action/40 disabled:cursor-not-allowed disabled:bg-tint disabled:text-ink-faint"
         [ngClass]="isSelected(f.code) ? 'border-action bg-tint' : 'border-line bg-surface hover:bg-tint'">
-        <span class="material-symbols-outlined mt-0.5 text-xl" [ngClass]="isSelected(f.code) ? 'text-action' : 'text-ink-faint'" aria-hidden="true">
+        <span class="material-symbols-rounded mt-0.5 text-[20px]" [ngClass]="isSelected(f.code) ? 'text-action' : 'text-ink-faint'" aria-hidden="true">
           {{ !isAvailable(f) ? 'lock' : isSelected(f.code) ? 'check_circle' : 'radio_button_unchecked' }}
         </span>
         <span class="flex flex-col gap-1">
@@ -79,8 +79,10 @@
       }
     </div>
 
+    <!-- MD-485 · «Base de datos dedicada» se oculta hasta que exista (el valor sigue en falso, como lo envía el formulario). -->
+    @if (dedicatedAvailable) {
     <label class="flex cursor-pointer items-start gap-3 rounded-control border border-line bg-surface p-3.5 transition hover:bg-tint">
-      <input type="checkbox" formControlName="requires_dedicated_database" class="mt-1 h-4 w-4 accent-action" />
+      <input type="checkbox" formControlName="requires_dedicated_database" class="mk-checkbox mt-0.5" />
       <span class="flex flex-col gap-1">
         <span class="text-sm font-medium text-ink">
           {{ 'COMPANIES_MODULE.FORM.DEDICATED' | translate }}
@@ -95,6 +97,7 @@
     <div class="mk-surface-state-warn p-3 text-ink" role="note">
       <p class="text-xs">{{ 'COMPANIES_MODULE.FORM.DEDICATED_WARNING' | translate }}</p>
     </div>
+    }
     }
   </div>
 </form>

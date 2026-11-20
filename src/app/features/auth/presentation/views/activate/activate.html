@@ -1,17 +1,17 @@
 <app-auth-page-layout>
   <div class="flex flex-col flex-1">
-  <div class="relative w-full h-full min-h-screen lg:min-h-0 overflow-hidden flex items-center justify-center">
+  <div class="relative w-full min-h-dvh overflow-hidden flex items-center justify-center">
     <div class="w-full max-w-sm md:max-w-lg px-6 md:px-10 py-8 md:py-12">
       @if (dead()) {
         <div role="alert" data-testid="activate-dead" class="text-center">
-          <h1 class="mt-2 text-2xl font-semibold text-ink">{{ 'AUTH.ACTIVATE.DEAD_TITLE' | translate }}</h1>
+          <h1 class="mt-2 text-2xl font-semibold text-ink">{{ deadKey() + '.TITLE' | translate }}</h1>
           <p class="mt-3 text-sm text-ink-muted">{{ errorMessage() }}</p>
-          <p class="mt-3 text-sm text-ink-muted">{{ 'AUTH.ACTIVATE.DEAD_HELP' | translate }}</p>
+          <p class="mt-3 text-sm text-ink-muted">{{ deadKey() + '.HELP' | translate }}</p>
           <a routerLink="/auth/login" class="mt-6 mk-btn">{{ 'AUTH.ACTIVATE.GO_SIGNIN' | translate }}</a>
         </div>
       } @else if (stage() === 'code') {
         <form [appBusyFields]="loading()" (ngSubmit)="lookup()" novalidate>
-          <h1 class="text-2xl md:text-3xl font-semibold text-ink text-center">{{ 'AUTH.ACTIVATE.CODE_TITLE' | translate }}</h1>
+          <h1 class="text-2xl font-semibold text-ink text-center">{{ 'AUTH.ACTIVATE.CODE_TITLE' | translate }}</h1>
           <p class="mt-3 text-sm text-center text-ink-muted">{{ 'AUTH.ACTIVATE.CODE_HELP' | translate }}</p>
           <div class="mt-6 md:mt-8">
             <app-field labelKey="AUTH.ACTIVATE.CODE_LABEL" forId="activation-code" [errorKey]="codeControl.touched && codeControl.invalid ? 'AUTH.ACTIVATE.CODE_REQUIRED' : null">
@@ -29,7 +29,7 @@
         </form>
       } @else {
         <form [formGroup]="form" [appBusyFields]="loading()" (ngSubmit)="submit()" novalidate>
-          <h1 class="text-2xl md:text-3xl font-semibold text-ink text-center">{{ 'AUTH.ACTIVATE.PASSWORD_TITLE' | translate }}</h1>
+          <h1 class="text-2xl font-semibold text-ink text-center">{{ 'AUTH.ACTIVATE.PASSWORD_TITLE' | translate }}</h1>
           <p class="mt-3 text-sm text-center text-ink-muted">{{ 'AUTH.ACTIVATE.PASSWORD_HELP' | translate: { email: email() } }}</p>
           <div class="mt-6 md:mt-8 space-y-5">
             <app-new-password-fields [form]="form" [compact]="true" />

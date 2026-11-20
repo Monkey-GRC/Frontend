@@ -11,6 +11,7 @@ import {
   MIN_RETENTION_DAYS,
 } from '@shared/models/company.model';
 import { Select, SelectOption } from '@shared/presentation/components/select/select';
+import { hasChanges } from '@shared/domain/utils/form-changes';
 
 export interface ArchiveDetails {
   confirm_name: string;
@@ -39,6 +40,8 @@ export class CompanyArchiveForm implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly cdr = inject(ChangeDetectorRef);
 
+  // El valor de partida (tras cada `reset`): lo distinto de esto es lo que se perdería al cerrar.
+  private initial: unknown = null;
   readonly form = this.fb.nonNullable.group({
     confirm_name: ['', [Validators.required]],
     reason_code: ['non_payment' as DeactivationReason, [Validators.required]],
@@ -50,6 +53,7 @@ export class CompanyArchiveForm implements OnInit {
     effect(() => {
       this.company();
       this.form.reset({ confirm_name: '', reason_code: 'non_payment', reason: '', retention_days: DEFAULT_RETENTION_DAYS });
+      this.initial = this.form.getRawValue();
     });
   }
 
@@ -79,8 +83,9 @@ export class CompanyArchiveForm implements OnInit {
   }
 
   // Con datos escritos sin enviar: el modal que lo contiene no se cierra solo con Esc ni con un clic fuera.
+  // MD-485 · Lo escrito ya no es lo de partida: cerrar el modal pide confirmar antes de descartarlo (`guarded`).
   get dirty(): boolean {
-    return this.form.dirty;
+    return hasChanges(this.initial, this.form.getRawValue());
   }
 
   onSubmit(): void {

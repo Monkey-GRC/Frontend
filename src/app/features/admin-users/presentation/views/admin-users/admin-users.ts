@@ -11,7 +11,6 @@ import { AdminUserList } from '@features/admin-users/presentation/components/adm
 import { unwrapData } from '@shared/domain/utils/unwrap-response';
 import { ConfirmDialog } from '@shared/presentation/components/confirm-dialog/confirm-dialog';
 import { FormModal } from '@shared/presentation/components/form-modal/form-modal';
-import { Modal } from '@shared/presentation/components/modal/modal';
 import { PageInfo } from '@shared/presentation/components/data-table/table-page';
 import { SecondFactorAnswer, SecondFactorDialog } from '@shared/presentation/components/second-factor-dialog/second-factor-dialog';
 import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
@@ -26,7 +25,7 @@ const PAGE_SIZE = 25;
 // la tabla, el formulario y el aviso del envío son componentes aparte. El servidor decide siempre (último administrador, uno mismo…): aquí solo se explica su respuesta.
 @Component({
   selector: 'app-admin-users',
-  imports: [TranslatePipe, AdminUserList, AdminInviteForm, AdminInviteResult, FormModal, Modal, ConfirmDialog, SecondFactorDialog, Busy],
+  imports: [TranslatePipe, AdminUserList, AdminInviteForm, AdminInviteResult, FormModal, ConfirmDialog, SecondFactorDialog, Busy],
   templateUrl: './admin-users.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -54,6 +53,9 @@ export class AdminUsers implements OnInit {
   readonly inviteCodeError = signal<string | null>(null);
   readonly invited = signal<InvitedAdmin | null>(null);
   readonly resendingId = signal<string | null>(null);
+  // El aviso del resultado: si el correo no salió (lo dice su título y ofrece reenviarlo) y si se está reenviando (no se cierra a medio camino).
+  readonly inviteFailed = computed(() => this.invited()?.invitation.delivery_status === 'failed');
+  readonly resendingInvited = computed(() => !!this.invited() && this.resendingId() === this.invited()?.id);
   private readonly inviteForm = viewChild(AdminInviteForm);
   readonly inviteDirty = computed(() => this.inviteForm()?.dirty() ?? false);
 
@@ -162,6 +164,11 @@ export class AdminUsers implements OnInit {
       },
       error: (err: ServerError) => this.failWith('ADMIN_USERS.RESEND.ERROR_TITLE', err),
     });
+  }
+
+  closeInviteResult(): void {
+    if (this.resendingInvited()) return;
+    this.invited.set(null);
   }
 
   onResendFromResult(): void {

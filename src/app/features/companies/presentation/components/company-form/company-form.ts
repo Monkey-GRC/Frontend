@@ -7,6 +7,7 @@ import { CompanyService } from '@features/companies/services/company.service';
 import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
 import { unwrapData } from '@shared/domain/utils/unwrap-response';
 import { finalize } from 'rxjs';
+import { hasChanges } from '@shared/domain/utils/form-changes';
 
 @Component({
   selector: 'app-company-form',
@@ -29,6 +30,8 @@ export class CompanyForm implements OnInit {
   frameworks: FrameworkOption[] = [];
   selectedFrameworks: string[] = [];
   frameworksFailed = false;
+  // Los marcos que vienen elegidos de partida (el único disponible): elegir otros cuenta como un cambio.
+  private defaultFrameworks: string[] = [];
 
   ngOnInit(): void {
     this.companyService.initializeForm();
@@ -41,7 +44,8 @@ export class CompanyForm implements OnInit {
       next: (resp) => {
         this.frameworks = resp.data?.items ?? [];
         const available = this.frameworks.filter((f) => f.availability === 'available');
-        this.selectedFrameworks = available.length === 1 ? [available[0].code] : [];
+        this.defaultFrameworks = available.length === 1 ? [available[0].code] : [];
+        this.selectedFrameworks = [...this.defaultFrameworks];
         this.cdr.markForCheck();
       },
       error: () => {
@@ -54,6 +58,9 @@ export class CompanyForm implements OnInit {
   isAvailable(framework: FrameworkOption): boolean {
     return framework.availability === 'available';
   }
+
+  /** MD-485 · La base de datos dedicada aún no existe: la casilla no se muestra (Rod). Se vuelve a `true` cuando exista. */
+  readonly dedicatedAvailable = false;
 
   get requiresDedicated(): boolean {
     return !!this.companyService.form.get('requires_dedicated_database')?.value;
@@ -76,9 +83,14 @@ export class CompanyForm implements OnInit {
     return !!control && control.touched && control.hasError(key);
   }
 
-  // Con datos escritos sin enviar: el modal que lo contiene no se cierra solo con Esc ni con un clic fuera.
+  // MD-485 · Con algo escrito o elegido distinto de lo de partida, cerrar el modal pide confirmar antes de descartarlo (`guarded`).
   get dirty(): boolean {
-    return this.companyService.form.dirty;
+    return hasChanges(this.companyService.initialValue, this.companyService.form.getRawValue()) || hasChanges([...this.defaultFrameworks].sort(), [...this.selectedFrameworks].sort());
+  }
+
+  // Al volver a abrir el registro, los marcos vuelven a los de partida (lo descartado no reaparece).
+  restartFrameworks(): void {
+    this.selectedFrameworks = [...this.defaultFrameworks];
   }
 
   onSubmit(): void {

@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, effect, 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Company } from '@shared/models/company.model';
+import { hasChanges } from '@shared/domain/utils/form-changes';
 
 export interface ReactivateDetails {
   reason: string;
@@ -23,6 +24,8 @@ export class CompanyReactivateForm implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly cdr = inject(ChangeDetectorRef);
 
+  // El valor de partida (tras cada `reset`): lo distinto de esto es lo que se perdería al cerrar.
+  private initial: unknown = null;
   readonly form = this.fb.nonNullable.group({
     reason: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500)]],
   });
@@ -31,6 +34,7 @@ export class CompanyReactivateForm implements OnInit {
     effect(() => {
       this.company();
       this.form.reset({ reason: '' });
+      this.initial = this.form.getRawValue();
     });
   }
 
@@ -43,8 +47,9 @@ export class CompanyReactivateForm implements OnInit {
   }
 
   // Con datos escritos sin enviar: el modal que lo contiene no se cierra solo con Esc ni con un clic fuera.
+  // MD-485 · Lo escrito ya no es lo de partida: cerrar el modal pide confirmar antes de descartarlo (`guarded`).
   get dirty(): boolean {
-    return this.form.dirty;
+    return hasChanges(this.initial, this.form.getRawValue());
   }
 
   onSubmit(): void {

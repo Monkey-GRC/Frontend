@@ -25,6 +25,8 @@ export class CompanyService {
 
   apiUrl = environment.apiUrl + '/companies';
   form!: FormGroup;
+  // El valor con el que empieza el formulario de registro: lo distinto de esto es lo que se perdería al cerrar (MD-485).
+  initialValue: unknown = null;
   companies: Company[] = [];
   page = 1;
   pageSize = 25;
@@ -41,6 +43,7 @@ export class CompanyService {
       // D103 · Usuarios contratados: obligatorio, entero ≥ 1.
       max_users: [null as number | null, [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)]],
     });
+    this.initialValue = this.form.getRawValue();
   }
 
   // Todos los marcos que Monkey ofrece; solo los `available` se pueden contratar (D50).

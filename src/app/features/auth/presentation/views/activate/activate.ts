@@ -32,6 +32,7 @@ export class Activate {
   readonly errorMessage = signal<string | null>(null);
   // El código ya no sirve y no hay nada que reintentar con él (usado, vencido, demasiados intentos).
   readonly dead = signal(false);
+  readonly deadKey = signal('AUTH.ACTIVATE.DEAD.EXPIRED');
   readonly email = signal('');
 
   readonly codeControl = new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8)] });
@@ -93,7 +94,11 @@ export class Activate {
     this.loading.set(false);
     const code = apiErrorCode(error) ?? (error as { code?: string })?.code ?? null;
     const known = code && KNOWN_CODES.includes(code) ? `AUTH.ACTIVATE.ERRORS.${code}` : null;
-    if (code === 'ACTIVATION_CODE_ALREADY_USED' || code === 'ACTIVATION_CODE_EXPIRED' || code === 'ACTIVATION_CODE_RATE_LIMITED') this.dead.set(true);
+    const deadCause = code === 'ACTIVATION_CODE_ALREADY_USED' ? 'ALREADY_USED' : code === 'ACTIVATION_CODE_EXPIRED' ? 'EXPIRED' : code === 'ACTIVATION_CODE_RATE_LIMITED' || (error as { status?: number })?.status === 429 ? 'RATE_LIMITED' : null;
+    if (deadCause) {
+      this.deadKey.set(`AUTH.ACTIVATE.DEAD.${deadCause}`);
+      this.dead.set(true);
+    }
     this.errorMessage.set(known ? this.translate.instant(known) : apiErrorMessage(error, this.translate.instant('AUTH.ACTIVATE.ERROR_FALLBACK')));
   }
 }
