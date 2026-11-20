@@ -8,7 +8,7 @@
     "RETRY": "Retry",
     "PARTIAL": "Showing {{shown}} of {{total}} companies, so the figures below are partial.",
     "EMPTY_TITLE": "No companies registered yet",
-    "EMPTY_BODY": "When you register the first one, you'll see how it's going here.",
+    "EMPTY_BODY": "When you register the first one, you will see its keys and onboarding here.",
     "EMPTY_CTA": "Register a company",
     "COMPANY_COUNT_ONE": "{{count}} company",
     "COMPANY_COUNT_MANY": "{{count}} companies",
@@ -31,8 +31,8 @@
       "TITLE": "Needs attention",
       "EMPTY": "Nothing pending for now.",
       "KEY_EXPIRED": "Its access key expired without being used.",
-      "ONBOARDING_PENDING": "It activated its account, but hasn't told us about its company yet.",
-      "SUSPENDED": "It is suspended.",
+      "ONBOARDING_PENDING": "It activated its account but has not completed its company context yet.",
+      "SUSPENDED": "It is suspended: its users cannot sign in.",
       "MORE": "and {{count}} more"
     },
     "RECENT": {

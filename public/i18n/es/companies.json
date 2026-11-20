@@ -14,7 +14,7 @@
       "ONBOARDED": "Onboarding completado",
       "NOT_ONBOARDED": "Onboarding pendiente",
       "KEY_EXPIRES": "Clave vence",
-      "LOAD_ERROR": "No se cargaron las empresas",
+      "LOAD_ERROR": "No pudimos cargar las empresas. Recarga la página para reintentar.",
       "FILTER_LABEL": "Filtrar empresas",
       "FILTER_ACTIVE": "Activas",
       "FILTER_ARCHIVED": "Archivadas",
@@ -44,18 +44,18 @@
       "DEDICATED_HINT": "Solo si el cliente exige, por política propia, que sus datos vivan en una base separada. Si no, sus datos quedan aislados en la base compartida.",
       "DEDICATED_WARNING": "Esta decisión no se revierte sin migrar los datos. La base dedicada todavía no está disponible: por ahora el registro solo admite la base compartida.",
       "REQUIRED": "Este campo es obligatorio.",
-      "INVALID_EMAIL": "Ingresa un correo válido.",
+      "INVALID_EMAIL": "Escribe un correo válido.",
       "MAX_USERS": "Usuarios contratados",
-      "MAX_USERS_HINT": "Cuántas personas puede tener la empresa en Monkey. Cuentan las cuentas activas, pendientes y suspendidas, de cualquier rol; las desactivadas no. Se puede cambiar después.",
+      "MAX_USERS_HINT": "Cuentan las cuentas activas, pendientes y suspendidas de cualquier rol. Se puede cambiar después.",
       "MAX_USERS_INVALID": "Ingresa un número entero de 1 en adelante.",
       "SUBMIT": "Registrar",
       "CANCEL": "Cancelar",
-      "INCOMPLETE_TITLE": "Formulario incompleto",
-      "INCOMPLETE_MESSAGE": "Completa los campos obligatorios antes de continuar.",
-      "ERROR_TITLE": "No se pudo registrar la empresa",
+      "INCOMPLETE_TITLE": "Faltan campos obligatorios",
+      "INCOMPLETE_MESSAGE": "Completa los campos marcados para registrar la empresa.",
+      "ERROR_TITLE": "No pudimos registrar la empresa",
       "FRAMEWORKS": "Marco contratado",
       "FRAMEWORK_SOON": "próximamente",
-      "FRAMEWORKS_HINT": "Los marcos que se contratan para esta empresa. Hoy solo está disponible SOC 2; los demás se muestran como oferta y se habilitarán cuando estén construidos. Al declarar un servicio, el cliente verá todos, pero solo podrá elegir los que contrató.",
+      "FRAMEWORKS_HINT": "Hoy solo SOC 2 está disponible; los demás salen como próximamente. El cliente solo podrá elegir los contratados.",
       "FRAMEWORKS_ERROR": "No se cargaron los marcos disponibles.",
       "RETRY": "Reintentar"
     },
@@ -70,7 +70,7 @@
       "RESEND_SUCCESS_TITLE": "Clave enviada",
       "RESEND_SUCCESS_MESSAGE": "Enviamos una clave nueva a {{email}}. La anterior dejó de servir.",
       "RESEND_FAILED_TITLE": "El correo no salió",
-      "RESEND_ERROR_TITLE": "No se pudo reenviar la clave",
+      "RESEND_ERROR_TITLE": "No pudimos reenviar la clave",
       "RESEND_FAILED_MESSAGE": "No pudimos enviar la clave a {{email}}. La clave nueva ya existe: vuelve a pulsar «Reenviar clave»."
     },
     "KEY_STATUS": {
@@ -113,7 +113,7 @@
       "CANCEL": "Cancelar",
       "SUCCESS_TITLE": "Empresa archivada",
       "SUCCESS_MESSAGE": "{{name}} se borrará definitivamente el {{date}}.",
-      "ERROR_TITLE": "No se pudo archivar",
+      "ERROR_TITLE": "No pudimos archivar",
       "CONFIRM_MISMATCH": "La razón social no coincide."
     },
     "QUOTA": {
@@ -121,23 +121,23 @@
       "SUBTITLE": "Cuántas personas puede tener la empresa en Monkey.",
       "CURRENT": "{{name}} usa {{used}} de {{max}} usuarios.",
       "LABEL": "Usuarios contratados",
-      "HINT": "Cuentan las cuentas activas, pendientes y suspendidas, de cualquier rol; las desactivadas no. No puede ser menor que las cuentas que ya cuentan.",
-      "BELOW_CURRENT": "Debe ser al menos {{min}}: ya hay esa cantidad de cuentas que cuentan. Desactiva alguna primero si necesitas menos.",
-      "BELOW_CURRENT_SERVER": "El cupo no puede ser menor que las {{count}} cuentas que ya cuentan. Desactiva alguna primero.",
+      "HINT": "Cuentan las cuentas activas, pendientes y suspendidas. No puede ser menor que las que ya ocupan cupo.",
+      "BELOW_CURRENT": "Debe ser al menos {{min}}: ya hay {{min}} cuentas que ocupan cupo. Desactiva alguna si necesitas menos.",
+      "BELOW_CURRENT_SERVER": "El cupo no puede ser menor que las {{count}} cuentas que ya lo ocupan. Desactiva alguna primero.",
       "SUBMIT": "Guardar cupo",
       "SUCCESS_TITLE": "Cupo actualizado",
       "SUCCESS_MESSAGE": "{{name}} ahora tiene un cupo de {{max}} usuarios.",
-      "ERROR_TITLE": "No se pudo cambiar el cupo"
+      "ERROR_TITLE": "No pudimos cambiar el cupo"
     },
     "REACTIVATE": {
       "TITLE": "Reactivar empresa",
       "SUBTITLE": "Devuelve el acceso a sus usuarios y cancela el borrado.",
-      "INFO": "{{name}} se borraría el {{date}}. Al reactivarla, el plazo desaparece y sus usuarios deben iniciar sesión de nuevo.",
+      "INFO": "{{name}} se borraría el {{date}}. Al reactivarla se cancela el borrado y sus usuarios deben iniciar sesión de nuevo.",
       "REASON_LABEL": "Motivo de la reactivación",
       "SUBMIT": "Reactivar empresa",
       "SUCCESS_TITLE": "Empresa reactivada",
       "SUCCESS_MESSAGE": "{{name}} vuelve a estar activa.",
-      "ERROR_TITLE": "No se pudo reactivar"
+      "ERROR_TITLE": "No pudimos reactivar"
     }
   }
 }

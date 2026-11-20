@@ -6,12 +6,12 @@
     "TOAST": {
       "REGION": "Notices",
       "INFO": "Information",
-      "SUCCESS": "Success",
+      "SUCCESS": "Done",
       "WARNING": "Warning",
       "ERROR": "Error"
     },
     "NOT_FOUND": {
-      "TITLE": "ERROR",
+      "TITLE": "Page not found",
       "MESSAGE": "We can't find the page you are looking for.",
       "BACK_HOME": "Back to home",
       "COPYRIGHT": "© {{year}} Monkey"
@@ -25,10 +25,9 @@
       "NEXT": "Next page",
       "GO_TO_PAGE": "Go to page {{page}}",
       "OPEN_DETAIL": "Open details",
-      "ACTIONS": "Actions",
       "SELECT_ALL": "Select all",
       "SELECT_ROW": "Select {{name}}",
-      "EMPTY_TITLE": "Nothing to show yet",
+      "EMPTY_TITLE": "No results",
       "GROUP_COUNT": "Items: {{count}}",
       "GROUP_COLLAPSE": "Collapse group {{name}}",
       "GROUP_EXPAND": "Expand group {{name}}"
@@ -40,25 +39,19 @@
     },
     "SHOW_PASSWORD": "Show password",
     "HIDE_PASSWORD": "Hide password",
-    "CHANGE_LANGUAGE": "Change language",
-    "SEARCH_PLACEHOLDER": "Search or type a command...",
-    "LOGOUT": "Sign out",
     "ERRORS": {
-      "MISSING_DATA": "The server response has no data",
-      "AUTH_PROBLEM": "An authentication problem occurred. If the error persists, contact support.",
-      "UNPROCESSABLE": "Unprocessable entity",
-      "UNEXPECTED": "We couldn't complete the action. Try again.",
+      "MISSING_DATA": "We did not receive the data. Reload the page.",
+      "AUTH_PROBLEM": "We could not validate your session. Sign out and sign in again; if it happens again, contact Monkey.",
+      "UNPROCESSABLE": "Some data is not valid. Check the marked fields.",
+      "UNEXPECTED": "The operation did not complete and nothing was saved. Try again; if it happens again, contact Monkey.",
       "NETWORK": "We couldn't reach the server. Check your connection and try again.",
       "RATE_LIMIT": "Too many attempts. Wait a few minutes and try again.",
       "UNAVAILABLE": "The service is unavailable right now. Try again in a few minutes.",
-      "SERVER": "Something went wrong on our side. Try again; if it persists, contact support."
+      "SERVER": "Our server had an error and nothing was saved. Try again; if it happens again, contact Monkey."
     },
     "PASSWORD": {
       "NEW": "New password",
       "CONFIRM": "Confirm the new password",
-      "RULES": "At least 12 characters, with an uppercase letter, a lowercase letter, a number and a symbol.",
-      "REQUIRED": "The password is required.",
-      "WEAK": "The password does not meet the requirements.",
       "MISMATCH": "The passwords do not match.",
       "GUIDE": {
         "MIN_LENGTH": "At least 12 characters",
@@ -78,32 +71,23 @@
     },
     "SECOND_FACTOR": {
       "CODE_LABEL": "Code from your authenticator app",
-      "USE_RECOVERY": "I don’t have my phone: use a recovery code",
+      "USE_RECOVERY": "I don't have my phone: use a recovery code",
       "USE_APP": "Use the code from my app",
       "RECOVERY_LABEL": "Recovery code",
       "RECOVERY_PLACEHOLDER": "XXXXX-XXXXX"
     },
     "CANCEL": "Cancel",
-    "SETTINGS": "Settings",
-    "PROFILE": {
-      "OPEN": "Open your profile menu",
-      "LANGUAGE": "Language",
-      "DARK_MODE": "Dark mode"
-    },
-    "HELP": {
-      "OPEN": "Open the help menu",
-      "TITLE": "Help",
-      "SHORTCUTS": "Keyboard shortcuts",
-      "SHORTCUT_SEARCH": "Search or type a command",
-      "SHORTCUT_CLOSE": "Close menus and windows",
-      "CONTACT": "Contact support",
-      "CONTACT_HINT": "Tell us what you need"
-    },
     "SECOND_FACTOR_DIALOG": {
       "DESCRIPTION": "For security, enter the code from your authenticator app.",
       "CONFIRMING": "Confirming…"
     },
-    "CONFIRM": "Confirm"
+    "CONFIRM": "Confirm",
+    "DISCARD": {
+      "TITLE": "Discard your changes?",
+      "MESSAGE": "What you entered in this form has not been saved yet. If you leave now, it will be lost.",
+      "KEEP": "Keep editing",
+      "CONFIRM": "Discard changes"
+    }
   },
   "STEP_UP": {
     "TITLE": "Confirm with your code",

@@ -56,7 +56,8 @@
       "ROLE_HINT": "Hoy solo se invita a administradores de Monkey.",
       "REQUIRED": "Este campo es obligatorio.",
       "INVALID_EMAIL": "Escribe un correo válido.",
-      "TOO_LONG": "Es demasiado largo."
+      "TOO_LONG": "Usa como máximo 100 caracteres.",
+      "TOO_LONG_EMAIL": "Usa como máximo 254 caracteres."
     },
     "INVITE": {
       "OPEN": "Invitar administrador",
@@ -87,7 +88,7 @@
     },
     "DEACTIVATE": {
       "TITLE": "Desactivar a {{name}}",
-      "DESCRIPTION": "Vas a desactivar la cuenta de {{email}}. En 7 días se borrará esta cuenta de forma definitiva. Hasta entonces puedes reactivarla. Lo que hizo seguirá apareciendo en la auditoría con su nombre. Para confirmar, escribe el código de tu app de autenticación.",
+      "DESCRIPTION": "{{email}} pierde el acceso ahora y su cuenta se borra en 7 días; hasta entonces puedes reactivarla. Escribe el código de tu app de autenticación para confirmar.",
       "SUBMIT": "Confirmar y desactivar",
       "SUCCESS_TITLE": "Administrador desactivado",
       "SUCCESS_MESSAGE": "{{name}} ya no tiene acceso. Puedes reactivarlo durante 7 días.",
@@ -107,13 +108,13 @@
       "ADMIN_ALREADY_INACTIVE": "Esa cuenta ya está desactivada. Actualizamos la lista.",
       "ADMIN_NOT_INACTIVE": "Esa cuenta no está desactivada, así que no hay nada que reactivar. Actualizamos la lista.",
       "EMAIL_TAKEN": "Ese correo ya tiene una cuenta en la plataforma.",
-      "USER_NOT_ACTIVATED": "Esa cuenta aún no se activó. Reenvía la invitación o espera a que venza su código.",
+      "USER_NOT_ACTIVATED": "Esa cuenta aún no se activa. Reenvíale la invitación.",
       "USER_ALREADY_ACTIVE": "Esa persona ya activó su cuenta; no hace falta reenviar la invitación.",
       "MFA_CODE_INVALID": "El código no es correcto. Escribe el que muestra tu app ahora.",
-      "MFA_NOT_ENABLED": "Aún no configuraste tu segundo factor, y esta acción lo exige.",
+      "MFA_NOT_ENABLED": "Esta acción pide el segundo factor y aún no lo configuraste. Cierra sesión y vuelve a entrar para configurarlo.",
       "ACCOUNT_LOCKED": "Tu cuenta está bloqueada por demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
-      "ACCOUNT_INACTIVE": "Tu cuenta fue desactivada mientras se procesaba la acción.",
-      "VALIDATION_FAILED": "Revisa los datos: hay campos que no son válidos.",
+      "ACCOUNT_INACTIVE": "Tu cuenta se desactivó mientras se procesaba la acción. Pide a otro administrador que la reactive.",
+      "VALIDATION_FAILED": "Hay campos con errores: revisa los marcados.",
       "FORBIDDEN": "No tienes permiso para esta acción.",
       "NOT_FOUND": "Esa cuenta ya no existe. Actualizamos la lista."
     }
