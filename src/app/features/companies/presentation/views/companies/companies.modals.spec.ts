@@ -2,14 +2,14 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
-import { Company } from '@shared/models/company.model';
+import { Company, RegisteredCompany } from '@shared/models/company.model';
 import { CompanyService } from '@features/companies/services/company.service';
 import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
 import { Companies } from './companies';
 
 const COMPANY = { id: 'co-1', name: 'ACME', admin_email: 'a@acme.co', max_users: 10, users_count: 4, archive_until: '2026-12-01T00:00:00Z' } as Company;
 
-// Los formularios de Empresas viven en `app-modal`: Esc y el clic fuera no pierden un formulario sucio ni cierran mientras se envía, el botón no se puede pulsar dos veces,
+// Los formularios de Empresas viven en `app-form-modal`: Esc y el clic fuera no pierden un formulario sucio ni cierran mientras se envía, el botón no se puede pulsar dos veces,
 // archivar y reactivar siguen pidiendo el segundo factor, y el foco vuelve a quien abrió el modal.
 describe('Companies · formularios en modales', () => {
   let fixture: ComponentFixture<Companies>;
@@ -61,17 +61,37 @@ describe('Companies · formularios en modales', () => {
       http.match(() => true).forEach((r) => r.flush({ data: { items: [] } }));
     };
 
-    it('a form with data written is not closed by Escape or by a click outside, but Cancel closes it', async () => {
+    it('with data written, Escape, a click outside and Cancel ask before discarding: «Seguir editando» keeps it, «Descartar cambios» closes (MD-485)', async () => {
       await openForm();
       service.form.get('name')?.setValue('Nueva');
-      service.form.get('name')?.markAsDirty();
       await tick();
-      escape();
-      clickOutside();
-      await tick();
-      expect(page.isFormVisible).toBeTrue();
+      const confirm = () => document.querySelector<HTMLElement>('[role="alertdialog"]');
+      for (const close of [escape, clickOutside, () => q<HTMLButtonElement>('company-form-cancel')?.click()]) {
+        close();
+        await tick();
+        expect(page.isFormVisible).toBeTrue();
+        expect(confirm()).withContext('the confirmation opens').not.toBeNull();
+        confirm()!.querySelector<HTMLButtonElement>('[data-cancel]')!.click();
+        await tick();
+        expect(confirm()).toBeNull();
+        expect(page.isFormVisible).toBeTrue();
+        expect(service.form.get('name')?.value).toBe('Nueva');
+      }
       q<HTMLButtonElement>('company-form-cancel')?.click();
       await tick();
+      confirm()!.querySelector<HTMLButtonElement>('[data-confirm]')!.click();
+      await tick();
+      expect(page.isFormVisible).toBeFalse();
+    });
+
+    it('typing and erasing back is not a change: Cancel closes without asking', async () => {
+      await openForm();
+      service.form.get('name')?.setValue('Nueva');
+      service.form.get('name')?.setValue('');
+      await tick();
+      q<HTMLButtonElement>('company-form-cancel')?.click();
+      await tick();
+      expect(document.querySelector('[role="alertdialog"]')).toBeNull();
       expect(page.isFormVisible).toBeFalse();
     });
 
@@ -120,6 +140,35 @@ describe('Companies · formularios en modales', () => {
       expect(submit?.getAttribute('aria-busy')).toBe('true');
       expect(submit?.getAttribute('aria-disabled')).toBe('true');
       expect(submit?.hasAttribute('data-app-busy')).toBeTrue();
+    });
+  });
+
+  describe('aviso de la clave (D99)', () => {
+    const registered = (delivery: 'sent' | 'failed') =>
+      ({ ...COMPANY, isolation_strategy: 'shared', status: 'active', frameworks: [], access_key: { id: 'k1', status: 'active', expires_at: '2026-12-01T00:00:00Z', delivery_status: delivery } }) as unknown as RegisteredCompany;
+
+    it('when the e-mail went out, the title says so, there is nothing to resend and the footer button closes it', async () => {
+      page.registered = registered('sent');
+      await tick();
+      expect(q('company-key-dialog')?.querySelector('h2')?.textContent).toContain('COMPANIES_MODULE.KEY.TITLE');
+      expect(q('key-resend')).toBeNull();
+      q<HTMLButtonElement>('company-key-cancel')?.click();
+      await tick();
+      expect(page.registered).toBeNull();
+    });
+
+    it('when it failed, the title says so, resending is the footer action and the notice does not close while it resends', async () => {
+      page.registered = registered('failed');
+      await tick();
+      expect(q('company-key-dialog')?.querySelector('h2')?.textContent).toContain('COMPANIES_MODULE.KEY.FAILED_TITLE');
+      expect(q('key-resend')?.closest('footer')).not.toBeNull();
+      page.resendingKey = true;
+      await tick();
+      expect(q('key-resend')?.getAttribute('aria-busy')).toBe('true');
+      expect(q<HTMLButtonElement>('company-key-cancel')?.disabled).toBeTrue();
+      escape();
+      await tick();
+      expect(page.registered).not.toBeNull();
     });
   });
 

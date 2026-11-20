@@ -215,4 +215,19 @@ describe('CatalogDetail', () => {
         fixture.componentInstance.cancelPick();
         expect(fixture.componentInstance.slot).toBeNull();
     });
+
+    it('guards the drawer only with a new dimension that changed or a position written (MD-485)', () => {
+        setup('controls', CONTROL);
+        const detail = fixture.componentInstance;
+        expect(detail.guarded).toBeFalse();
+        detail.addingDimension = true;
+        expect(detail.guarded).toBeFalse();
+        detail.dimension = { ...detail.dimension, requires_ai: true };
+        expect(detail.guarded).toBeTrue();
+        detail.cancelDimension();
+        expect(detail.guarded).toBeFalse();
+        detail.startPick('template');
+        detail.sequence = '2';
+        expect(detail.guarded).toBeTrue();
+    });
 });
