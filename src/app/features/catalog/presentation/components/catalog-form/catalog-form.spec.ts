@@ -154,10 +154,11 @@ describe('CatalogForm', () => {
         expect(el().querySelector('[data-error="name"]')).toBeNull();
     });
 
-    it('lives in a modal: Escape does not throw away what was typed, Cancel still closes', () => {
+    it('lives in a modal: with something typed, Escape and Cancel ask before discarding it (MD-485)', () => {
         setup('control', 'create');
         let cancelled = 0;
         fixture.componentInstance.cancelled.subscribe(() => cancelled++);
+        const confirm = () => document.querySelector<HTMLElement>('[role="alertdialog"]');
         const escape = () => {
             document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
             fixture.detectChanges();
@@ -166,8 +167,16 @@ describe('CatalogForm', () => {
         expect(cancelled).toBe(1); // nothing typed yet: Escape closes
         type('name', 'Un control');
         escape();
-        expect(cancelled).toBe(1); // with data: Escape is ignored
+        expect(cancelled).toBe(1); // with data: it asks first
+        expect(confirm()).not.toBeNull();
+        confirm()!.querySelector<HTMLButtonElement>('[data-cancel]')!.click(); // «Seguir editando»
+        fixture.detectChanges();
+        expect(confirm()).toBeNull();
         el().querySelector<HTMLButtonElement>('[data-cancel]')!.click();
+        fixture.detectChanges();
+        expect(cancelled).toBe(1);
+        confirm()!.querySelector<HTMLButtonElement>('[data-confirm]')!.click(); // «Descartar cambios»
+        fixture.detectChanges();
         expect(cancelled).toBe(2);
     });
 });

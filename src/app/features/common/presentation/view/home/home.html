@@ -59,7 +59,7 @@
             <app-metric-card icon="checklist" color="data-3" [label]="'HOME.KPI.ONBOARDING' | translate" [value]="m.onboardingDone">
               <app-donut metricDonut [value]="share(m.onboardingDone, m.total)" [text]="share(m.onboardingDone, m.total) + '%'" [size]="72" [ariaLabel]="('HOME.KPI.ONBOARDING' | translate) + ': ' + share(m.onboardingDone, m.total) + '%'" />
             </app-metric-card>
-            <app-metric-card icon="key_off" color="bad" [label]="'HOME.KPI.EXPIRED_KEYS' | translate" [value]="m.keys.expired" />
+            <app-metric-card icon="key_off" color="warn" [label]="'HOME.KPI.EXPIRED_KEYS' | translate" [value]="m.keys.expired" />
           </div>
 
           <div class="grid gap-4 *:min-w-0 xl:grid-cols-2">

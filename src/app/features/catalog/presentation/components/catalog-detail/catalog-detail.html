@@ -26,11 +26,11 @@
 <ng-template #unlinkBtn let-slotName let-childId="id" let-name="name">
   <button type="button" (click)="unlinkFrom(slotName, childId)" [disabled]="busy && action !== 'unlink:' + childId" [appBusy]="action === 'unlink:' + childId" [attr.data-unlink]="childId"
     class="shrink-0 rounded-control p-0.5 text-ink-muted enabled:hover:bg-canvas enabled:hover:text-bad-ink disabled:cursor-not-allowed disabled:text-ink-faint" [attr.aria-label]="('CATALOG_MODULE.LINK.REMOVE' | translate) + ' ' + name">
-    <span class="material-symbols-outlined text-base" aria-hidden="true">link_off</span>
+    <span class="material-symbols-rounded text-[16px]" aria-hidden="true">link_off</span>
   </button>
 </ng-template>
 
-<app-side-drawer [open]="true" titleKey="CATALOG_MODULE.DETAIL.TITLE" size="lg" [dismissible]="!busy" (closed)="closed.emit()">
+<app-side-drawer [open]="true" titleKey="CATALOG_MODULE.DETAIL.TITLE" size="lg" [dismissible]="!busy" [guarded]="guarded" (closed)="closed.emit()">
   <div data-detail>
     @if (loading) {
     <app-skeleton-region class="flex flex-col gap-4" data-loading>
@@ -141,7 +141,7 @@
           <label class="flex items-center gap-2 text-xs text-ink sm:col-span-2"><input type="checkbox" class="mk-checkbox" [checked]="dimension.requires_compliance_confirmation" (change)="dimension.requires_compliance_confirmation = targetChecked($event)" />{{ 'CATALOG_MODULE.DETAIL.CONFIRMATION' | translate }}</label>
           <div class="flex items-center gap-3 sm:col-span-2">
             <button type="button" (click)="saveDimension()" [disabled]="busy && action !== 'dimension'" [appBusy]="action === 'dimension'" data-dim-save class="mk-btn">{{ 'CATALOG_MODULE.LINK.ADD' | translate }}</button>
-            <button type="button" (click)="addingDimension = false" class="text-sm font-medium text-ink-muted hover:underline">{{ 'CATALOG_MODULE.FORM.CANCEL' | translate }}</button>
+            <button type="button" (click)="cancelDimension()" class="text-sm font-medium text-ink-muted hover:underline">{{ 'CATALOG_MODULE.FORM.CANCEL' | translate }}</button>
           </div>
         </div>
         }

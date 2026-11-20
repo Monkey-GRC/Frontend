@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NavigationHistoryService } from '@core/services/navigation-history.service';
 import { SidebarService } from '@core/services/sidebar.service';
 import { AppHeaderComponent } from '@core/presentation/components/app-header/app-header.component';
@@ -15,7 +16,8 @@ import { BackdropComponent } from '../../components/backdrop/backdrop.component'
     RouterModule,
     AppHeaderComponent,
     AppSidebarComponent,
-    BackdropComponent
+    BackdropComponent,
+    TranslatePipe
   ],
   templateUrl: './app-layout.component.html',
 })
@@ -35,15 +37,5 @@ export class AppLayoutComponent {
     this.isMobileOpen$ = this.sidebarService.isMobileOpen$;
   }
 
-  get containerClasses() {
-    return [
-      'flex-1',
-      'transition-all',
-      'duration-300',
-      'ease-in-out',
-      (this.isExpanded$ || this.isHovered$) ? 'xl:ml-[290px]' : 'xl:ml-[90px]',
-      this.isMobileOpen$ ? 'ml-0' : ''
-    ];
-  }
 
 }

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, effect, 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Company } from '@shared/models/company.model';
+import { hasChanges } from '@shared/domain/utils/form-changes';
 
 // D103 · Cambiar el cupo de usuarios de una empresa. El botón de guardar vive en el diálogo; esta pieza expone `canSubmit` y `onSubmit()` como el resto de los formularios de
 // Monkey Admin. La vista hace la llamada y, si el servidor rechaza el cupo (409 MAX_USERS_BELOW_CURRENT), pasa el motivo en `error` para mostrarlo aquí dentro.
@@ -21,6 +22,8 @@ export class CompanyQuotaForm implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly cdr = inject(ChangeDetectorRef);
 
+  // El valor de partida (tras cada `reset`): lo distinto de esto es lo que se perdería al cerrar.
+  private initial: unknown = null;
   readonly form = this.fb.group({
     max_users: [null as number | null, [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)]],
   });
@@ -30,6 +33,7 @@ export class CompanyQuotaForm implements OnInit {
       const company = this.company();
       // Parte del cupo actual; una empresa anterior al cupo (sin tope) empieza vacía.
       this.form.reset({ max_users: company?.max_users ?? null });
+      this.initial = this.form.getRawValue();
     });
   }
 
@@ -57,8 +61,9 @@ export class CompanyQuotaForm implements OnInit {
   }
 
   // Con datos escritos sin enviar: el modal que lo contiene no se cierra solo con Esc ni con un clic fuera.
+  // MD-485 · Lo escrito ya no es lo de partida: cerrar el modal pide confirmar antes de descartarlo (`guarded`).
   get dirty(): boolean {
-    return this.form.dirty;
+    return hasChanges(this.initial, this.form.getRawValue());
   }
 
   onSubmit(): void {

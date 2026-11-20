@@ -14,21 +14,22 @@
   <button actions type="submit" form="admin-invite-form" class="mk-btn" [appBusy]="inviting()" data-testid="admin-invite-submit">{{ 'ADMIN_USERS.INVITE.SUBMIT' | translate }}</button>
 </app-form-modal>
 
-<!-- Estado del envío de la invitación (nunca el código) -->
 <!-- Invitar: con el formulario completo, el diálogo reutilizable pide el código del segundo factor -->
 <app-second-factor-dialog [open]="!!pendingInvite()" [allowRecovery]="false" [loading]="inviting()" [errorMessage]="inviteCodeError()"
   [title]="'ADMIN_USERS.INVITE.CONFIRM_TITLE' | translate"
   [description]="'ADMIN_USERS.INVITE.CONFIRM_DESCRIPTION' | translate: { email: pendingInvite()?.email ?? '' }"
   [confirmLabel]="'ADMIN_USERS.INVITE.CONFIRM_SUBMIT' | translate" (confirmed)="onInviteConfirmed($event)" (cancelled)="pendingInvite.set(null)" />
 
-<app-modal [open]="!!invited()" size="md" labelledBy="admin-invite-result-title" testId="admin-invite-result-modal" (dismissed)="invited.set(null)">
+<!-- Estado del envío de la invitación (nunca el código): «Listo» lo cierra; si el correo no salió, reenviarlo es la acción principal. -->
+<app-form-modal [open]="!!invited()" size="md" [titleKey]="inviteFailed() ? 'ADMIN_USERS.RESULT.FAILED_TITLE' : 'ADMIN_USERS.RESULT.SENT_TITLE'" testId="admin-invite-result-modal"
+  cancelLabelKey="ADMIN_USERS.RESULT.DONE" [dismissible]="!resendingInvited()" (closed)="closeInviteResult()">
   @if (invited(); as admin) {
-    <app-admin-invite-result [admin]="admin" [resending]="resendingId() === admin.id" (resend)="onResendFromResult()" />
+    <app-admin-invite-result [admin]="admin" />
   }
-  <div class="mt-5 flex justify-end">
-    <button type="button" class="mk-btn" (click)="invited.set(null)" data-testid="admin-invite-done">{{ 'ADMIN_USERS.RESULT.DONE' | translate }}</button>
-  </div>
-</app-modal>
+  @if (inviteFailed()) {
+    <button actions type="button" class="mk-btn" [appBusy]="resendingInvited()" (click)="onResendFromResult()" data-testid="admin-invite-resend">{{ 'ADMIN_USERS.RESULT.RESEND' | translate }}</button>
+  }
+</app-form-modal>
 
 <!-- Desactivar: el aviso de las consecuencias va en la descripción, junto al campo del código -->
 <app-second-factor-dialog [open]="!!deactivating()" [danger]="true" [allowRecovery]="false" [loading]="deactivateSending()" [errorMessage]="deactivateError()"

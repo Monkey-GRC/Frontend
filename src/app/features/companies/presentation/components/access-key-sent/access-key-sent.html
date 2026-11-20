@@ -1,19 +1,14 @@
-<div class="flex flex-col items-center gap-3 px-4 pb-4 pt-6 text-center">
+<!-- El título («Clave enviada» o «No se pudo enviar») y los botones van en el modal que lo envuelve (`app-form-modal` de Empresas). -->
+<div class="flex flex-col gap-2">
   @if (failed) {
-  <h2 id="company-key-title" class="text-lg font-semibold text-ink">{{ 'COMPANIES_MODULE.KEY.FAILED_TITLE' | translate }}</h2>
   <p class="text-sm text-ink" role="alert" data-testid="key-failed">
     {{ 'COMPANIES_MODULE.KEY.FAILED_BODY' | translate: { name: company().name, email: company().admin_email } }}
   </p>
-  <button type="button" (click)="resend.emit()" [appBusy]="sending()" data-testid="key-resend"
-    class="mk-btn-secondary">
-    {{ 'COMPANIES_MODULE.KEY.RESEND' | translate }}
-  </button>
   } @else {
-  <h2 id="company-key-title" class="text-lg font-semibold text-ink">{{ 'COMPANIES_MODULE.KEY.TITLE' | translate }}</h2>
   <p class="text-sm text-ink" data-testid="key-sent">
     {{ 'COMPANIES_MODULE.KEY.SENT' | translate: { name: company().name, email: company().admin_email } }}
   </p>
-  <p class="text-xs text-ink-muted">
+  <p class="text-xs text-ink-muted tabular-nums">
     {{ 'COMPANIES_MODULE.KEY.EXPIRES' | translate }} {{ company().access_key.expires_at | localDate: 'medium' : true }}
   </p>
   }

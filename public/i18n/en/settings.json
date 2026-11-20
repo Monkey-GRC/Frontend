@@ -1,25 +1,20 @@
 {
   "SETTINGS": {
-    "TITLE": "Settings",
-    "INTRO": "Your account configuration, by function.",
     "NAV_LABEL": "Settings sections",
     "SECTIONS": {
       "SECURITY": "Security"
     },
     "SECURITY": {
       "TITLE": "Security",
-      "INTRO": "Your password does not expire on a schedule: change it whenever you want, and right away if you suspect someone knows it.",
+      "INTRO": "How you sign in to Monkey and how you get back in if you lose your phone.",
       "PASSWORD": {
         "TITLE": "Password",
         "INTRO": "To change it you need your current password and a code from your authenticator app.",
         "CURRENT": "Current password",
-        "FORGOT_HINT": "Don’t remember it? Recover it by email",
+        "FORGOT_HINT": "Don't remember it? Recover it by email",
         "SUBMIT": "Change password",
-        "SAVING": "Saving…",
-        "DONE": "Done, your password was changed. We signed out your other sessions and notified you by email.",
+        "DONE": "Your password was changed. We signed out your other sessions and notified you by email.",
         "ERROR_FALLBACK": "We could not change the password. Try again.",
-        "VERIFY_TITLE": "Confirm it is you",
-        "NEW_TITLE": "Choose your new password",
         "CONFIRM_TITLE": "Confirm with your code",
         "CONFIRM_BODY": "Enter the code from your authenticator app to change your password.",
         "CONFIRM_ACTION": "Confirm and change",
@@ -42,16 +37,14 @@
         "TITLE": "Recovery codes",
         "INTRO": "They let you sign in if you lose the phone with your authenticator app. Each one works once. Generating new codes invalidates the previous ones.",
         "GENERATE": "Generate new codes",
-        "ASK_CODE": "Enter the current code from your authenticator app to confirm.",
         "CONFIRM": "Generate codes",
-        "GENERATING": "Generating…",
         "SHOWN_ONCE": "Save them now in a safe place: they will not be shown again.",
         "COPY": "Copy codes",
         "COPIED": "Copied",
         "SAVED": "I saved them",
         "CLOSE": "Close",
         "ERROR_FALLBACK": "We could not generate the codes. Try again.",
-        "IDLE_HELP": "Generating new codes invalidates the previous ones. They are shown only once: keep them somewhere safe.",
+        "IDLE_HELP": "They are shown only once: keep them somewhere safe.",
         "CONFIRM_TITLE": "Confirm with your code",
         "CONFIRM_BODY": "Enter the code from your authenticator app to generate new recovery codes."
       },

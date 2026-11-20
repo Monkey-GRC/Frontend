@@ -12,9 +12,8 @@ import { CompanyReactivateForm, ReactivateDetails } from '@features/companies/pr
 import { CompanyList } from '@features/companies/presentation/components/company-list/company-list';
 import { SecondFactorAnswer, SecondFactorDialog } from '@shared/presentation/components/second-factor-dialog/second-factor-dialog';
 import { unwrapData } from '@shared/domain/utils/unwrap-response';
-import { Modal } from '@shared/presentation/components/modal/modal';
+import { FormModal } from '@shared/presentation/components/form-modal/form-modal';
 import { Busy } from '@shared/presentation/directives/busy';
-import { BusyFields } from '@shared/presentation/directives/busy-fields';
 import { finalize } from 'rxjs';
 import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
 
@@ -30,9 +29,8 @@ import { ToastService } from '@shared/presentation/components/toast-container/to
     CompanyQuotaForm,
     SecondFactorDialog,
     AccessKeySent,
-    Modal,
+    FormModal,
     Busy,
-    BusyFields,
   ],
   templateUrl: './companies.html',
   changeDetection: ChangeDetectionStrategy.Default,
@@ -80,6 +78,7 @@ export class Companies implements OnInit {
 
   onOpenForm() {
     this.companyService.initializeForm();
+    this.companyForm?.restartFrameworks();
     this.isFormVisible = true;
   }
 
@@ -93,7 +92,13 @@ export class Companies implements OnInit {
     this.readCompanies(1);
   }
 
+  // D99 · El correo con la clave no salió: el aviso lo dice en su título y ofrece reenviarla.
+  get keyFailed(): boolean {
+    return this.registered?.access_key.delivery_status === 'failed';
+  }
+
   onCloseKey() {
+    if (this.resendingKey) return;
     this.registered = null;
   }
 

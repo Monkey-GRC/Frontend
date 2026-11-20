@@ -56,7 +56,8 @@
       "ROLE_HINT": "For now, only Monkey administrators can be invited.",
       "REQUIRED": "This field is required.",
       "INVALID_EMAIL": "Enter a valid email.",
-      "TOO_LONG": "It is too long."
+      "TOO_LONG": "Use at most 100 characters.",
+      "TOO_LONG_EMAIL": "Use at most 254 characters."
     },
     "INVITE": {
       "OPEN": "Invite administrator",
@@ -87,7 +88,7 @@
     },
     "DEACTIVATE": {
       "TITLE": "Deactivate {{name}}",
-      "DESCRIPTION": "You are about to deactivate the account of {{email}}. In 7 days this account will be permanently deleted. Until then you can reactivate it. What they did will keep appearing in the audit trail under their name. To confirm, enter the code from your authenticator app.",
+      "DESCRIPTION": "{{email}} loses access now and the account is deleted in 7 days; until then you can reactivate it. Enter the code from your authenticator app to confirm.",
       "SUBMIT": "Confirm and deactivate",
       "SUCCESS_TITLE": "Administrator deactivated",
       "SUCCESS_MESSAGE": "{{name}} no longer has access. You can reactivate the account for 7 days.",
@@ -107,13 +108,13 @@
       "ADMIN_ALREADY_INACTIVE": "That account is already deactivated. We refreshed the list.",
       "ADMIN_NOT_INACTIVE": "That account is not deactivated, so there is nothing to reactivate. We refreshed the list.",
       "EMAIL_TAKEN": "That email already has an account on the platform.",
-      "USER_NOT_ACTIVATED": "That account has not been activated yet. Resend the invitation or wait for its code to expire.",
+      "USER_NOT_ACTIVATED": "That account is not activated yet. Resend the invitation.",
       "USER_ALREADY_ACTIVE": "That person already activated their account; there is no need to resend the invitation.",
       "MFA_CODE_INVALID": "The code is not correct. Enter the one your app shows right now.",
-      "MFA_NOT_ENABLED": "You have not set up your second factor yet, and this action requires it.",
+      "MFA_NOT_ENABLED": "This action needs a second factor and you have not set it up. Sign out and sign in again to set it up.",
       "ACCOUNT_LOCKED": "Your account is locked after too many attempts. Wait a few minutes and try again.",
-      "ACCOUNT_INACTIVE": "Your account was deactivated while the action was being processed.",
-      "VALIDATION_FAILED": "Check the data: some fields are not valid.",
+      "ACCOUNT_INACTIVE": "Your account was deactivated while the action was being processed. Ask another administrator to reactivate it.",
+      "VALIDATION_FAILED": "Some fields have errors: check the marked ones.",
       "FORBIDDEN": "You do not have permission for this action.",
       "NOT_FOUND": "That account no longer exists. We refreshed the list."
     }

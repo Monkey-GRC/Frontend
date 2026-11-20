@@ -1,7 +1,7 @@
 {
   "CATALOG_MODULE": {
     "TITLE": "Catálogo maestro",
-    "INTRO": "Catálogo general de Monkey: controles, riesgos, causas, pruebas y evidencias requeridas.",
+    "INTRO": "Controles, riesgos, causas, pruebas y evidencias requeridas que reciben los servicios nuevos.",
     "FRAMEWORKS": "Marcos",
     "COUNTS": "{{requirements}} requisitos · {{controls}} controles · {{tests}} pruebas",
     "AVAILABILITY": {
@@ -15,17 +15,16 @@
       "TESTS": "Pruebas",
       "EVIDENCE": "Evidencias requeridas"
     },
-    "SHARED_NOTE": "Los riesgos, las causas, las pruebas y las evidencias son un conjunto compartido por todos los marcos: solo los controles cuelgan de un marco, por sus requisitos.",
+    "SHARED_NOTE": "Riesgos, causas, pruebas y evidencias son comunes a todos los marcos; solo los controles se vinculan a un marco, por sus requisitos.",
     "FILTER": {
       "SEARCH": "Buscar",
       "SEARCH_HINT": "Código o nombre",
       "SCOPE": "Controles de",
-      "NO_EVIDENCE": "Solo los que no tienen evidencia requerida",
-      "ALL": "Todos"
+      "NO_EVIDENCE": "Solo los que no tienen evidencia requerida"
     },
     "SCOPE": {
       "ALL": "Todo el catálogo",
-      "UNLINKED": "Sin requisito (no cuelgan de ningún marco)"
+      "UNLINKED": "Sin requisito (fuera de todo marco)"
     },
     "STATE": {
       "ACTIVE": "Activo",
@@ -72,20 +71,19 @@
       "LIMITATIONS": "Limitaciones"
     },
     "DETAIL": {
-      "TITLE": "Detalle",
-      "CLOSE": "Cerrar",
-      "LOAD_ERROR": "No se pudo cargar el detalle.",
+      "TITLE": "Detalle del elemento",
+      "LOAD_ERROR": "No pudimos cargar este elemento.",
       "DOMAIN": "Dominio",
       "SOURCE": "Fuente",
       "REQUIREMENTS": "Requisitos",
-      "NO_REQUIREMENTS": "No cuelga de ningún requisito de ningún marco.",
+      "NO_REQUIREMENTS": "No está vinculado a ningún requisito.",
       "DIMENSIONS": "Dimensiones",
       "PROBE": "sonda",
       "AI": "IA",
       "CONFIRMATION": "confirmación de cumplimiento",
       "TESTS": "Pruebas",
       "EVIDENCE": "Evidencia requerida",
-      "NO_EVIDENCE": "El comité no le pidió ninguna evidencia a este control.",
+      "NO_EVIDENCE": "Este control no pide evidencias.",
       "POLICIES": "Políticas",
       "EMPLOYEE_ACCEPTANCE": "requiere aceptación del empleado",
       "CAUSES": "Causas que mitiga",
@@ -94,14 +92,14 @@
       "CRITERION": "Criterio",
       "CATEGORY": "Categoría",
       "POTENTIAL_IMPACT": "Impacto potencial",
-      "INTERNAL_NOTE": "Textos internos del comité. Solo los ve Monkey: al cliente nunca le salen, ni el proveedor de la sonda.",
+      "INTERNAL_NOTE": "Textos internos del comité: solo los ve Monkey y nunca llegan al cliente.",
       "SHOWN_TO_CLIENT": "Lo que ve el cliente",
       "DISPLAY_NAME": "Nombre",
       "DISPLAY_DESCRIPTION": "Descripción",
       "COMMITTEE": "Textos del comité",
       "USED_BY": "La piden {{count}} controles"
     },
-    "LOAD_ERROR": "No se pudo cargar el catálogo.",
+    "LOAD_ERROR": "No pudimos cargar el catálogo.",
     "RETRY": "Reintentar",
     "EMPTY": "No hay resultados con esos filtros.",
     "TOTAL": "{{total}} resultados",
@@ -144,15 +142,15 @@
       },
       "REQUIRED": "Este campo es obligatorio.",
       "CODE_INVALID": "Usa letras, números, punto, guion o guion bajo, sin espacios.",
-      "CODE_AUTO": "Se asigna sola si lo dejas vacío",
+      "CODE_AUTO": "Se asigna solo si lo dejas vacío.",
       "CHOOSE": "Elige…",
       "LINES_HINT": "Uno por línea",
       "CANCEL": "Cancelar",
-      "CREATE_SUBMIT": "Agregar",
+      "CREATE_SUBMIT": "Agregar al catálogo",
       "SAVE": "Guardar cambios",
       "COMMITTEE": "Textos del comité (opcionales)",
       "COMMITTEE_HINT": "Internos: solo los ve Monkey; al cliente nunca le salen.",
-      "SUBTITLE": "Completa los datos del elemento del catálogo. Los campos con * son obligatorios."
+      "SUBTITLE": "Los campos con * son obligatorios."
     },
     "ACTIONS": {
       "EDIT": "Editar",
@@ -163,7 +161,7 @@
       "INACTIVE_HINT": "Está de baja: no se ofrece a los servicios nuevos. Las empresas que ya lo tienen conservan su copia."
     },
     "LINK": {
-      "ADD": "Agregar",
+      "ADD": "Vincular",
       "REMOVE": "Quitar el vínculo con",
       "POSITION": "Posición (opcional)",
       "TYPE": "Tipo",
@@ -173,8 +171,17 @@
     "PICKER": {
       "FRAMEWORK": "Marco",
       "REQUIREMENT": "Requisito",
-      "EMPTY": "No hay nada que ofrecer con esa búsqueda.",
+      "EMPTY": "Nada coincide con esa búsqueda.",
       "CAPTION": "Elementos para vincular"
+    },
+    "NOTICE": {
+      "CREATED": "Creamos el elemento del catálogo.",
+      "UPDATED": "Guardamos los cambios del elemento.",
+      "DEACTIVATED": "Desactivamos el elemento. Ya no se ofrece en vínculos nuevos.",
+      "REACTIVATED": "Reactivamos el elemento.",
+      "LINKED": "Agregamos el vínculo.",
+      "UNLINKED": "Quitamos el vínculo.",
+      "DIMENSION_SAVED": "Guardamos la dimensión del control."
     }
   }
 }

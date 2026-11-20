@@ -1,7 +1,7 @@
 {
   "CATALOG_MODULE": {
     "TITLE": "Master catalog",
-    "INTRO": "Monkey's general catalog: controls, risks, causes, tests and required evidence.",
+    "INTRO": "Controls, risks, causes, tests and required evidence that new services receive.",
     "FRAMEWORKS": "Frameworks",
     "COUNTS": "{{requirements}} requirements · {{controls}} controls · {{tests}} tests",
     "AVAILABILITY": {
@@ -15,17 +15,16 @@
       "TESTS": "Tests",
       "EVIDENCE": "Required evidence"
     },
-    "SHARED_NOTE": "Risks, causes, tests and evidence are one set shared by every framework: only controls hang from a framework, through its requirements.",
+    "SHARED_NOTE": "Risks, causes, tests and evidence are shared by all frameworks; only controls belong to a framework, through its requirements.",
     "FILTER": {
       "SEARCH": "Search",
       "SEARCH_HINT": "Code or name",
       "SCOPE": "Controls of",
-      "NO_EVIDENCE": "Only those with no required evidence",
-      "ALL": "All"
+      "NO_EVIDENCE": "Only those with no required evidence"
     },
     "SCOPE": {
       "ALL": "The whole catalog",
-      "UNLINKED": "Without a requirement (not in any framework)"
+      "UNLINKED": "Without a requirement (in no framework)"
     },
     "STATE": {
       "ACTIVE": "Active",
@@ -72,20 +71,19 @@
       "LIMITATIONS": "Limitations"
     },
     "DETAIL": {
-      "TITLE": "Detail",
-      "CLOSE": "Close",
-      "LOAD_ERROR": "The detail could not be loaded.",
+      "TITLE": "Item details",
+      "LOAD_ERROR": "We could not load this item.",
       "DOMAIN": "Domain",
       "SOURCE": "Source",
       "REQUIREMENTS": "Requirements",
-      "NO_REQUIREMENTS": "It hangs from no requirement of any framework.",
+      "NO_REQUIREMENTS": "Not linked to any requirement.",
       "DIMENSIONS": "Dimensions",
       "PROBE": "probe",
       "AI": "AI",
       "CONFIRMATION": "compliance confirmation",
       "TESTS": "Tests",
       "EVIDENCE": "Required evidence",
-      "NO_EVIDENCE": "The committee asked this control for no evidence.",
+      "NO_EVIDENCE": "This control requires no evidence.",
       "POLICIES": "Policies",
       "EMPLOYEE_ACCEPTANCE": "requires employee acceptance",
       "CAUSES": "Causes it mitigates",
@@ -94,14 +92,14 @@
       "CRITERION": "Criterion",
       "CATEGORY": "Category",
       "POTENTIAL_IMPACT": "Potential impact",
-      "INTERNAL_NOTE": "Internal committee texts. Only Monkey sees them: the client never does, nor the probe provider.",
+      "INTERNAL_NOTE": "Internal committee texts: only Monkey sees them; they never reach the client.",
       "SHOWN_TO_CLIENT": "What the client sees",
       "DISPLAY_NAME": "Name",
       "DISPLAY_DESCRIPTION": "Description",
       "COMMITTEE": "Committee texts",
       "USED_BY": "Asked for by {{count}} controls"
     },
-    "LOAD_ERROR": "The catalog could not be loaded.",
+    "LOAD_ERROR": "We could not load the catalog.",
     "RETRY": "Retry",
     "EMPTY": "No results with those filters.",
     "TOTAL": "{{total}} results",
@@ -144,15 +142,15 @@
       },
       "REQUIRED": "This field is required.",
       "CODE_INVALID": "Use letters, numbers, dot, hyphen or underscore, no spaces.",
-      "CODE_AUTO": "Assigned automatically if left empty",
+      "CODE_AUTO": "Assigned automatically if you leave it empty.",
       "CHOOSE": "Choose…",
       "LINES_HINT": "One per line",
       "CANCEL": "Cancel",
-      "CREATE_SUBMIT": "Add",
+      "CREATE_SUBMIT": "Add to catalog",
       "SAVE": "Save changes",
       "COMMITTEE": "Committee texts (optional)",
       "COMMITTEE_HINT": "Internal: only Monkey sees them; the client never does.",
-      "SUBTITLE": "Fill in the catalog item details. Fields marked * are required."
+      "SUBTITLE": "Fields marked * are required."
     },
     "ACTIONS": {
       "EDIT": "Edit",
@@ -163,7 +161,7 @@
       "INACTIVE_HINT": "It is retired: it is not offered to new services. Companies that already have it keep their copy."
     },
     "LINK": {
-      "ADD": "Add",
+      "ADD": "Link",
       "REMOVE": "Remove the link with",
       "POSITION": "Position (optional)",
       "TYPE": "Type",
@@ -173,8 +171,17 @@
     "PICKER": {
       "FRAMEWORK": "Framework",
       "REQUIREMENT": "Requirement",
-      "EMPTY": "Nothing to offer with that search.",
+      "EMPTY": "Nothing matches that search.",
       "CAPTION": "Items to link"
+    },
+    "NOTICE": {
+      "CREATED": "Catalog item created.",
+      "UPDATED": "Item changes saved.",
+      "DEACTIVATED": "Item deactivated. It is no longer offered for new links.",
+      "REACTIVATED": "Item reactivated.",
+      "LINKED": "Link added.",
+      "UNLINKED": "Link removed.",
+      "DIMENSION_SAVED": "Control dimension saved."
     }
   }
 }

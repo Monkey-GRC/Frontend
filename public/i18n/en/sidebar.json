@@ -1,7 +1,7 @@
 {
     "GRC_FRAMEWORK": {
         "MODULE_NAME": {
-            "GENERAL": "General",
+            "GENERAL": "Operations",
             "PARAMETRIZATION": "Parameterization"
         },
         "HOME": "Home",
@@ -18,7 +18,25 @@
             "LOGO_ALT": "Monkey logo"
         },
         "HEADER": {
-            "SEARCH_PLACEHOLDER": "Search or type a command..."
+            "SEARCH_PLACEHOLDER": "Search or type a command...",
+            "MORE": "More options",
+            "SETTINGS": "Settings",
+            "LOGOUT": "Sign out"
+        },
+        "SKIP_TO_CONTENT": "Skip to content",
+        "HELP": {
+            "OPEN": "Open the help menu",
+            "TITLE": "Help",
+            "SHORTCUTS": "Keyboard shortcuts",
+            "SHORTCUT_SEARCH": "Search or type a command",
+            "SHORTCUT_CLOSE": "Close menus and windows",
+            "CONTACT": "Contact Monkey",
+            "CONTACT_HINT": "Tell Monkey what you need"
+        },
+        "PROFILE": {
+            "OPEN": "Open your profile menu",
+            "LANGUAGE": "Language",
+            "DARK_MODE": "Dark mode"
         }
     }
 }
