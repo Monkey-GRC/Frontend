@@ -1,16 +1,19 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, NgClass, NgComponentOutlet } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HelpMenu } from '@core/presentation/components/app-header/help-menu/help-menu';
 import { ProfileMenu } from '@core/presentation/components/app-header/profile-menu/profile-menu';
 import { SidebarService } from '@core/services/sidebar.service';
+import { HEADER_WIDGETS } from '@core/presentation/components/app-header/header-widgets';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
-    CommonModule,
+    AsyncPipe,
+    NgClass,
+    NgComponentOutlet,
     RouterModule,
     HelpMenu,
     ProfileMenu,
@@ -20,6 +23,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class AppHeaderComponent implements AfterViewInit, OnDestroy {
   sidebarService = inject(SidebarService);
+  // Lo que otras capas piden mostrar en el encabezado (la plantilla es canónica): Admin no provee ninguno, así que queda vacío.
+  readonly widgets = inject(HEADER_WIDGETS, { optional: true }) ?? [];
 
   isApplicationMenuOpen = false;
   readonly isMobileOpen$;

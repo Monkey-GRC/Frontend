@@ -1,9 +1,11 @@
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { SidebarService } from '@core/services/sidebar.service';
+import { HEADER_WIDGETS } from '@core/presentation/components/app-header/header-widgets';
 import { AppHeaderComponent } from './app-header.component';
 
 // The button that fixes the menu open (design system, «Shell flotante»): a pin, outline and muted when released, filled and in the action colour when fixed.
@@ -59,5 +61,32 @@ describe('AppHeaderComponent · pin of the side menu', () => {
     let open = false;
     sidebar.isMobileOpen$.subscribe((v) => (open = v)).unsubscribe();
     expect(open).toBeTrue();
+  });
+});
+
+// The header template is canonical: Platform puts its notices bell in the widget slot; Admin provides none, so the slot stays empty.
+@Component({ selector: 'app-test-widget', template: '<span data-test-widget>widget</span>' })
+class TestWidget {}
+
+describe('AppHeaderComponent · widget slot', () => {
+  function create(widgets: unknown[] | null) {
+    const providers = [provideRouter([]), provideTranslateService(), provideHttpClient(), provideHttpClientTesting()];
+    const slot = (widgets ?? []).map((w) => ({ provide: HEADER_WIDGETS, useValue: w, multi: true }));
+    TestBed.configureTestingModule({ imports: [AppHeaderComponent], providers: [...providers, ...slot] });
+    const fixture = TestBed.createComponent(AppHeaderComponent);
+    fixture.detectChanges();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  it('shows nothing extra in Admin, which provides no widget', () => {
+    const host = create(null);
+    expect(host.querySelector('[data-test-widget]')).toBeNull();
+    expect(host.querySelector('app-help-menu')).not.toBeNull();
+  });
+
+  it('shows a provided widget before the help menu', () => {
+    const host = create([TestWidget]);
+    const widget = host.querySelector('[data-test-widget]')!;
+    expect(widget.compareDocumentPosition(host.querySelector('app-help-menu')!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });
