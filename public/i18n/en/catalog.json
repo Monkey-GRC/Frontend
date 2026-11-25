@@ -89,6 +89,7 @@
       "CAUSES": "Causes it mitigates",
       "RISKS": "Risks it originates",
       "CONTROLS": "Controls that mitigate it",
+      "TEST_CONTROLS": "Controls that use it",
       "CRITERION": "Criterion",
       "CATEGORY": "Category",
       "POTENTIAL_IMPACT": "Potential impact",
@@ -97,7 +98,25 @@
       "DISPLAY_NAME": "Name",
       "DISPLAY_DESCRIPTION": "Description",
       "COMMITTEE": "Committee texts",
-      "USED_BY": "Asked for by {{count}} controls"
+      "USED_BY": "Asked for by {{count}} controls",
+      "TABS": {
+        "SUMMARY": "Summary",
+        "REQUIREMENTS": "Requirements",
+        "TESTS": "Tests and evidence",
+        "CAUSES": "Causes",
+        "DESCRIPTION": "Description",
+        "ARIA": "Detail sections"
+      },
+      "TITLE_FALLBACK": {
+        "CONTROLS": "Control {{code}}",
+        "RISKS": "Risk {{code}}",
+        "CAUSES": "Cause {{code}}",
+        "TESTS": "Test {{code}}",
+        "EVIDENCE_TEMPLATES": "Required evidence {{code}}"
+      },
+      "CONTROLS_USING": "Controls that ask for it",
+      "SEARCH": "Search by code or text",
+      "NO_MATCH": "Nothing matches the search."
     },
     "LOAD_ERROR": "We could not load the catalog.",
     "RETRY": "Retry",
@@ -166,7 +185,8 @@
       "POSITION": "Position (optional)",
       "TYPE": "Type",
       "TEST_FROM_CONTROL": "A test is linked from the control that uses it.",
-      "TEMPLATE_FROM_CONTROL": "Required evidence is linked from the control that asks for it."
+      "TEMPLATE_FROM_CONTROL": "Required evidence is linked from the control that asks for it.",
+      "UNLINK": "Remove"
     },
     "PICKER": {
       "FRAMEWORK": "Framework",
@@ -182,6 +202,14 @@
       "LINKED": "Link added.",
       "UNLINKED": "Link removed.",
       "DIMENSION_SAVED": "Control dimension saved."
-    }
+    },
+    "FRAMEWORK": "Framework",
+    "FRAMEWORK_OPTION": "{{name}} · {{version}}",
+    "FRAMEWORK_GROUP": {
+      "AVAILABLE": "Available",
+      "COMING_SOON": "Coming soon"
+    },
+    "COMING_SOON_TITLE": "This framework is coming soon",
+    "COMING_SOON_BODY": "It has no controls in the catalog yet. Pick an available framework to see its controls; risks, causes and tests are shared by every framework."
   }
 }

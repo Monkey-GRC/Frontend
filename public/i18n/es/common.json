@@ -30,12 +30,15 @@
       "EMPTY_TITLE": "Sin resultados",
       "GROUP_COUNT": "Elementos: {{count}}",
       "GROUP_COLLAPSE": "Contraer grupo {{name}}",
-      "GROUP_EXPAND": "Desplegar grupo {{name}}"
+      "GROUP_EXPAND": "Desplegar grupo {{name}}",
+      "ACTIONS": "Acciones"
     },
     "SELECT": {
       "COUNT": "{{count}} seleccionados",
       "NO_OPTIONS": "No hay opciones",
-      "NONE": "Sin elegir"
+      "NONE": "Sin elegir",
+      "SEARCH": "Buscar",
+      "NO_MATCH": "Nada coincide con la búsqueda"
     },
     "SHOW_PASSWORD": "Mostrar contraseña",
     "HIDE_PASSWORD": "Ocultar contraseña",
@@ -87,6 +90,14 @@
       "MESSAGE": "Lo que escribiste en este formulario aún no se ha guardado. Si sales ahora, se pierde.",
       "KEEP": "Seguir editando",
       "CONFIRM": "Descartar cambios"
+    },
+    "SHOW_MORE": "Ver más",
+    "SHOW_LESS": "Ver menos",
+    "UNLINK": "Desvincular",
+    "READINESS": {
+      "LABEL": {
+        "NOT_MEASURED": "Sin medir"
+      }
     }
   },
   "STEP_UP": {
