@@ -157,15 +157,15 @@ describe('CatalogDetail', () => {
 
     it('removes a link with the id of the other side, never deleting the elements', () => {
         setup('controls', CONTROL);
-        click('[data-unlink="p1"]');
+        click('[data-unlink-row="p1"]');
         expect(api.unlink).toHaveBeenCalledWith('control', 'k1', 'points-of-focus', 'p1');
-        click('[data-unlink="t1"]');
+        click('[data-unlink-row="t1"]');
         expect(api.unlink).toHaveBeenCalledWith('control', 'k1', 'tests', 't1');
-        click('[data-unlink="e1"]');
+        click('[data-unlink-row="e1"]');
         expect(api.unlink).toHaveBeenCalledWith('control', 'k1', 'evidence-templates', 'e1');
-        click('[data-unlink="policy"]');
+        click('[data-unlink-row="policy"] [data-unlink]');
         expect(api.unlink).toHaveBeenCalledWith('control', 'k1', 'dimensions', 'policy');
-        click('[data-unlink="c1"]');
+        click('[data-unlink-row="c1"]');
         expect(api.unlink).toHaveBeenCalledWith('cause', 'c1', 'controls', 'k1');
         expect(api.deactivate).not.toHaveBeenCalled();
     });
@@ -175,7 +175,7 @@ describe('CatalogDetail', () => {
         click('[data-add="cause"]');
         fixture.componentInstance.onPicked({ id: 'c9', label: 'F009' });
         expect(api.link).toHaveBeenCalledWith('risk', 'r1', 'causes', { cause_id: 'c9' });
-        click('[data-unlink="c1"]');
+        click('[data-unlink-row="c1"]');
         expect(api.unlink).toHaveBeenCalledWith('risk', 'r1', 'causes', 'c1');
     });
 
@@ -187,9 +187,9 @@ describe('CatalogDetail', () => {
         click('[data-add="control"]');
         fixture.componentInstance.onPicked({ id: 'k9', label: 'CTL-9' });
         expect(api.link).toHaveBeenCalledWith('cause', 'c1', 'controls', { control_id: 'k9' });
-        click('[data-unlink="r1"]');
+        click('[data-unlink-row="r1"]');
         expect(api.unlink).toHaveBeenCalledWith('risk', 'r1', 'causes', 'c1');
-        click('[data-unlink="k1"]');
+        click('[data-unlink-row="k1"]');
         expect(api.unlink).toHaveBeenCalledWith('cause', 'c1', 'controls', 'k1');
     });
 
@@ -216,7 +216,7 @@ describe('CatalogDetail', () => {
         expect(fixture.componentInstance.slot).toBeNull();
     });
 
-    it('guards the drawer only with a new dimension that changed or a position written (MD-485)', () => {
+    it('guards the detail only with a new dimension that changed or a position written (MD-485)', () => {
         setup('controls', CONTROL);
         const detail = fixture.componentInstance;
         expect(detail.guarded).toBeFalse();
@@ -230,4 +230,90 @@ describe('CatalogDetail', () => {
         detail.sequence = '2';
         expect(detail.guarded).toBeTrue();
     });
+
+    it('opens in the wide detail modal: the name, the code and the state in the fixed header, and «Cerrar», «Dar de baja» and «Editar» in the footer (MD-499)', () => {
+        setup('risks', RISK);
+        const dialog = el().querySelector('[role="dialog"]')!;
+        expect(el().querySelector('#' + dialog.getAttribute('aria-labelledby'))!.textContent).toContain('Riesgo');
+        const header = dialog.querySelector('header')!;
+        expect(header.querySelector('[data-code]')!.textContent).toContain('R011');
+        expect(header.querySelector('[data-state]')).not.toBeNull();
+        const footer = dialog.querySelector('footer')!;
+        expect(footer.querySelector('[data-edit]')).not.toBeNull();
+        expect(footer.querySelector('[data-deactivate]')).not.toBeNull();
+        expect(footer.querySelector('[data-detail-close]')).not.toBeNull();
+        expect(dialog.querySelector('[role="tablist"]')).toBeNull();
+    });
+
+    it('splits a control into tabs with their counts, one visible at a time', () => {
+        setup('controls', CONTROL);
+        const tabs = Array.from(el().querySelectorAll<HTMLElement>('[role="dialog"] [role="tab"]'));
+        expect(tabs.map((t) => t.id)).toEqual(['detail-tab-summary', 'detail-tab-requirements', 'detail-tab-tests', 'detail-tab-causes']);
+        expect(tabs[1].querySelector('[data-tab-count]')!.textContent).toBe('1');
+        const panel = (id: string) => el().querySelector<HTMLElement>(`[data-tab="${id}"]`)!;
+        expect(panel('summary').hidden).toBeFalse();
+        expect(panel('causes').hidden).toBeTrue();
+        tabs[3].click();
+        fixture.detectChanges();
+        expect(panel('summary').hidden).toBeTrue();
+        expect(panel('causes').hidden).toBeFalse();
+    });
+
+    it('shows the new element from scratch when another kind is opened on the same panel (a control to a cause)', () => {
+        setup('controls', CONTROL);
+        expect(el().querySelector('[role="tablist"]')).not.toBeNull();
+        const answer = new Subject<object>();
+        api.cause.and.returnValue(answer as never);
+        fixture.componentRef.setInput('kind', 'causes');
+        fixture.componentRef.setInput('itemId', 'c1');
+        fixture.detectChanges();
+        expect(fixture.componentInstance.detail()).toBeNull();
+        expect(fixture.componentInstance.loading).toBeTrue();
+        expect(fixture.componentInstance.tabs).toEqual([]);
+        expect(el().querySelector('[role="tablist"]')).toBeNull();
+        answer.next(CAUSE);
+        fixture.detectChanges();
+        expect(fixture.componentInstance.loading).toBeFalse();
+        expect(el().querySelector('[data-detail]')).not.toBeNull();
+        expect(el().textContent).toContain('F001');
+    });
+
+    it('drops the answer of a request that was left behind by another one', () => {
+        setup('controls', CONTROL);
+        const first = new Subject<object>();
+        const second = new Subject<object>();
+        api.risk.and.returnValue(first as never);
+        fixture.componentRef.setInput('kind', 'risks');
+        fixture.componentRef.setInput('itemId', 'r1');
+        fixture.detectChanges();
+        api.cause.and.returnValue(second as never);
+        fixture.componentRef.setInput('kind', 'causes');
+        fixture.componentRef.setInput('itemId', 'c1');
+        fixture.detectChanges();
+        first.next(RISK);
+        fixture.detectChanges();
+        expect(fixture.componentInstance.detail()).toBeNull();
+        expect(fixture.componentInstance.loading).toBeTrue();
+        second.next(CAUSE);
+        fixture.detectChanges();
+        expect(fixture.componentInstance.detail()).toEqual(CAUSE as never);
+    });
+
+    it('does not let a late error of an old request mark the current element as failed', () => {
+        setup('controls', CONTROL);
+        const first = new Subject<object>();
+        api.risk.and.returnValue(first as never);
+        fixture.componentRef.setInput('kind', 'risks');
+        fixture.componentRef.setInput('itemId', 'r1');
+        fixture.detectChanges();
+        api.cause.and.returnValue(of(CAUSE) as never);
+        fixture.componentRef.setInput('kind', 'causes');
+        fixture.componentRef.setInput('itemId', 'c1');
+        fixture.detectChanges();
+        first.error(new Error('late'));
+        fixture.detectChanges();
+        expect(fixture.componentInstance.failed).toBeFalse();
+        expect(fixture.componentInstance.detail()).toEqual(CAUSE as never);
+    });
 });
+

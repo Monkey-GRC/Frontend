@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { Router, provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
-import { of, throwError } from 'rxjs';
+import { NEVER, of, throwError } from 'rxjs';
 import { CatalogFramework } from '@features/catalog/models/catalog.model';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { provideOptionsStub } from '@features/catalog/testing/catalog-options';
@@ -17,7 +18,7 @@ describe('Catalog (Monkey Admin)', () => {
     let api: jasmine.SpyObj<CatalogService>;
     let fixture: ComponentFixture<Catalog>;
 
-    function setup(frameworks = [SOC2, ISO]): void {
+    function configure(frameworks = [SOC2, ISO]): void {
         api = jasmine.createSpyObj<CatalogService>('CatalogService', ['frameworks', 'controls', 'risks', 'causes', 'tests', 'evidenceTemplates', 'control', 'risk', 'cause', 'test', 'evidenceTemplate', 'create', 'update', 'framework', 'pointsOfFocus']);
         api.frameworks.and.returnValue(of(frameworks));
         api.controls.and.returnValue(page([CONTROL], 1));
@@ -25,9 +26,19 @@ describe('Catalog (Monkey Admin)', () => {
         api.causes.and.returnValue(page([]));
         api.tests.and.returnValue(page([]));
         api.evidenceTemplates.and.returnValue(page([]));
-        TestBed.configureTestingModule({ imports: [Catalog], providers: [provideTranslateService(), provideOptionsStub(), { provide: CatalogService, useValue: api }] });
+        api.control.and.returnValue(NEVER);
+        api.risk.and.returnValue(NEVER);
+        TestBed.configureTestingModule({ imports: [Catalog], providers: [provideTranslateService(), provideRouter([]), provideOptionsStub(), { provide: CatalogService, useValue: api }] });
+    }
+
+    function create(): void {
         fixture = TestBed.createComponent(Catalog);
         fixture.detectChanges();
+    }
+
+    function setup(frameworks = [SOC2, ISO]): void {
+        configure(frameworks);
+        create();
     }
 
     const el = () => fixture.nativeElement as HTMLElement;
@@ -39,21 +50,42 @@ describe('Catalog (Monkey Admin)', () => {
     it('opens on the controls of the first available framework', () => {
         setup();
         expect(api.controls).toHaveBeenCalledWith(jasmine.objectContaining({ page: 1, framework_id: 'f1' }));
-        expect(el().querySelector('[data-framework="soc2"]')!.getAttribute('aria-pressed')).toBe('true');
+        expect(el().querySelector('[data-framework-select]')!.textContent).toContain('CATALOG_MODULE.FRAMEWORK_OPTION');
+        expect(el().querySelector('[data-framework="soc2"]')).not.toBeNull();
         expect(text()).toContain('CAP-1');
     });
 
-    it('lists every framework with its counts, also the ones that are not available yet', () => {
+    it('shows the framework picked in one strip, with its state and its counts', () => {
         setup();
-        expect(el().querySelectorAll('[data-frameworks] li').length).toBe(2);
-        expect(el().querySelector('[data-framework="iso27001"]')).not.toBeNull();
+        const strip = el().querySelector('[data-frameworks]')!;
+        expect(strip.querySelector('[data-framework-select]')).not.toBeNull();
+        expect(strip.querySelector('[data-framework-counts]')!.textContent).toContain('CATALOG_MODULE.COUNTS');
     });
 
-    it('asks for the controls of another framework when one is picked', () => {
-        setup();
-        el().querySelector<HTMLButtonElement>('[data-framework="iso27001"]')!.click();
+    it('groups the frameworks in a searchable select: the available ones first, then those coming soon', () => {
+        setup([ISO, SOC2]);
+        const options = fixture.componentInstance.frameworkOptions;
+        expect(options.map((o) => o.value)).toEqual(['f1', 'f2']);
+        expect(options.map((o) => o.group)).toEqual(['CATALOG_MODULE.FRAMEWORK_GROUP.AVAILABLE', 'CATALOG_MODULE.FRAMEWORK_GROUP.COMING_SOON']);
+        expect(options.every((o) => o.labelKey === 'CATALOG_MODULE.FRAMEWORK_OPTION')).toBeTrue();
+        el().querySelector<HTMLButtonElement>('[data-framework-select] [data-select-trigger]')!.click();
         fixture.detectChanges();
-        expect(api.controls).toHaveBeenCalledWith(jasmine.objectContaining({ framework_id: 'f2' }));
+        expect(document.body.querySelector('[data-select-search]')).not.toBeNull();
+        expect(Array.from(document.body.querySelectorAll('[data-select-group]')).map((g) => g.textContent!.trim())).toEqual([
+            'CATALOG_MODULE.FRAMEWORK_GROUP.AVAILABLE',
+            'CATALOG_MODULE.FRAMEWORK_GROUP.COMING_SOON',
+        ]);
+        el().querySelector<HTMLButtonElement>('[data-framework-select] [data-select-trigger]')!.click();
+        fixture.detectChanges();
+    });
+
+    it('a framework that is coming soon shows its own empty state and asks for nothing', () => {
+        setup();
+        api.controls.calls.reset();
+        fixture.componentInstance.pickFramework('f2');
+        fixture.detectChanges();
+        expect(api.controls).not.toHaveBeenCalled();
+        expect(el().querySelector('[data-coming-soon]')).not.toBeNull();
     });
 
     it('asks for the controls without a requirement (CPL-1) without a framework', () => {
@@ -131,7 +163,7 @@ describe('Catalog (Monkey Admin)', () => {
         expect(api.control).toHaveBeenCalledWith('c1');
         expect(el().querySelector('[data-detail]')).not.toBeNull();
         expect(el().querySelector('[data-unlinked]')).not.toBeNull();
-        el().querySelector<HTMLButtonElement>('app-catalog-detail button[aria-label="COMMON.CLOSE"]')!.click();
+        el().querySelector<HTMLButtonElement>('app-catalog-detail [data-detail-close]')!.click();
         fixture.detectChanges();
         expect(el().querySelector('[data-detail]')).toBeNull();
     });
@@ -212,5 +244,53 @@ describe('Catalog (Monkey Admin)', () => {
         setup([]);
         expect(api.controls).not.toHaveBeenCalled();
         expect(el().querySelector('[data-frameworks]')).toBeNull();
+    });
+
+    describe('the list and the open element come from the address', () => {
+        const go = async (queryParams: Record<string, string | null>) => {
+            await TestBed.inject(Router).navigate([], { queryParams });
+            fixture.detectChanges();
+        };
+
+        it('opens the element of the list in the address when the page is loaded with it', async () => {
+            configure();
+            await TestBed.inject(Router).navigateByUrl('/?lista=risks&abrir=r1&tab=causes');
+            create();
+            expect(fixture.componentInstance.tab).toBe('risks');
+            expect(fixture.componentInstance.selected).toEqual({ kind: 'risks', id: 'r1' });
+            expect(fixture.componentInstance.detailTab).toBe('causes');
+            expect(api.risks).toHaveBeenCalledTimes(1);
+            expect(api.controls).not.toHaveBeenCalled();
+            expect(api.risk).toHaveBeenCalledWith('r1');
+        });
+
+        it('on «Atrás» from another type goes back to the list and the element of before, not the old list with the new id', async () => {
+            setup();
+            await go({ abrir: 'c1' });
+            expect(fixture.componentInstance.selected).toEqual({ kind: 'controls', id: 'c1' });
+
+            await go({ lista: 'risks', abrir: 'r1' });
+            expect(fixture.componentInstance.tab).toBe('risks');
+            expect(fixture.componentInstance.selected).toEqual({ kind: 'risks', id: 'r1' });
+            expect(api.risks).toHaveBeenCalledTimes(1);
+
+            api.controls.calls.reset();
+            api.control.calls.reset();
+            await go({ lista: null, abrir: 'c1' });
+            expect(fixture.componentInstance.tab).toBe('controls');
+            expect(fixture.componentInstance.selected).toEqual({ kind: 'controls', id: 'c1' });
+            expect(api.controls).toHaveBeenCalledTimes(1);
+            expect(api.control).toHaveBeenCalledWith('c1');
+            expect(api.risk).toHaveBeenCalledTimes(1);
+        });
+
+        it('closes the detail and follows the tab of the detail when the address drops them', async () => {
+            setup();
+            await go({ abrir: 'c1', tab: 'tests' });
+            expect(fixture.componentInstance.detailTab).toBe('tests');
+            await go({ abrir: null, tab: null });
+            expect(fixture.componentInstance.selected).toBeNull();
+            expect(fixture.componentInstance.detailTab).toBeNull();
+        });
     });
 });
