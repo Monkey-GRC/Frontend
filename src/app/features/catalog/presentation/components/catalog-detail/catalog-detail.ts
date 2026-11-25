@@ -1,13 +1,18 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnChanges, SimpleChanges, computed, input, output, inject, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { ApiError, CauseDetail, ControlDetail, EvidenceTemplateRow, FormKind, RiskDetail, TestDetail } from '@features/catalog/models/catalog.model';
+import { ApiError, CatalogItemRef, CauseDetail, ControlDetail, EvidenceTemplateRow, FormKind, RiskDetail, TestDetail } from '@features/catalog/models/catalog.model';
 import { CatalogOptionsService } from '@features/catalog/services/catalog-options.service';
 import { CatalogService } from '@features/catalog/services/catalog.service';
 import { ItemPicker, Pick, PickKind } from '@features/catalog/presentation/components/item-picker/item-picker';
 import { OptionName } from '@features/catalog/models/catalog.model';
-import { SideDrawer } from '@shared/presentation/components/side-drawer/side-drawer';
+import { DetailModal } from '@shared/presentation/components/detail-modal/detail-modal';
+import { DataTable, TableCell, TableColumn } from '@shared/presentation/components/data-table/data-table';
+import { ClientList, includesText } from '@shared/domain/utils/client-list';
+import { LinkRow } from '@shared/presentation/components/link-row/link-row';
+import { SearchField } from '@shared/presentation/components/search-field/search-field';
+import { TabItem } from '@shared/presentation/components/tabs/tabs';
 import { Busy } from '@shared/presentation/directives/busy';
 import { BusyFields } from '@shared/presentation/directives/busy-fields';
 import { Skeleton, SkeletonRegion } from '@shared/presentation/components/skeleton/skeleton';
@@ -25,6 +30,10 @@ type Detail = ControlDetail | RiskDetail | CauseDetail | TestDetail | EvidenceTe
 export type Slot = 'pof' | 'test' | 'template' | 'cause' | 'risk' | 'control';
 
 const FORM_KIND: Record<DetailKind, FormKind> = { controls: 'control', risks: 'risk', causes: 'cause', tests: 'test', 'evidence-templates': 'template' };
+/** Las pestañas del detalle de un control (MD-499); los demás elementos son cortos y van sin pestañas. */
+const CONTROL_TABS = ['summary', 'requirements', 'tests', 'causes'] as const;
+type ControlTab = (typeof CONTROL_TABS)[number];
+
 const PICK_KIND: Record<Slot, PickKind> = { pof: 'pof', test: 'test', template: 'template', cause: 'cause', risk: 'risk', control: 'control' };
 
 /** Lo que la vista necesita para abrir el formulario de edición con los valores actuales. */
@@ -34,7 +43,7 @@ export interface EditRequest {
   initial: Record<string, unknown>;
 }
 
-// El detalle de un elemento del catálogo, en un panel a la derecha. Pide el elemento al abrirse y cuando cambia el que se muestra. Desde aquí se edita, se da de baja o se
+// El detalle de un elemento del catálogo, en el modal de detalle ancho (MD-499; con pestañas si es un control, y la pestaña abierta en `?tab=`; la evidencia requerida, corta, en el modal compacto). Pide el elemento al abrirse y cuando cambia el que se muestra. Desde aquí se edita, se da de baja o se
 // reactiva, y se vincula o desvincula con lo relacionado (contracts/modules/monkey-admin-catalog.md). Dar de baja no borra; desvincular borra solo la relación.
 /** The toast that confirms each change of the detail (MD-485): concrete, one per kind of action. */
 const NOTICE_OF: Record<string, string> = {
@@ -50,7 +59,7 @@ const NEW_DIMENSION = { dimension: 'policy', type: 'manual', requires_probe: fal
 
 @Component({
   selector: 'app-catalog-detail',
-  imports: [NgTemplateOutlet, TranslateModule, ItemPicker, SideDrawer, StatusIndicator, Select, Badge, Busy, BusyFields, Skeleton, SkeletonRegion],
+  imports: [NgTemplateOutlet, TranslateModule, ItemPicker, DetailModal, DataTable, TableCell, LinkRow, SearchField, StatusIndicator, Select, Badge, Busy, BusyFields, Skeleton, SkeletonRegion],
   templateUrl: './catalog-detail.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -64,13 +73,18 @@ export class CatalogDetail implements OnChanges {
   protected readonly targetChecked = targetChecked;
   readonly kind = input.required<DetailKind>();
   readonly itemId = input.required<string>();
+  /** La pestaña pedida por la dirección (`?tab=`) en el detalle de un control; si no existe, Resumen. */
+  readonly requestedTab = input<string | null>(null);
+  readonly tabChange = output<string>();
   readonly closed = output<void>();
   /** Algo cambió (se editó, se dio de baja o se vinculó): la lista de atrás se vuelve a pedir. */
   readonly changed = output<void>();
   readonly editRequested = output<EditRequest>();
 
-  detail: Detail | null = null;
+  /** El detalle abierto: `null` mientras carga o si falló. */
+  readonly detail = signal<Detail | null>(null);
   loading = true;
+  private loadSeq = 0;
   failed = false;
 
   slot: Slot | null = null;
@@ -83,24 +97,110 @@ export class CatalogDetail implements OnChanges {
   action: string | null = null;
   error: string | null = null;
 
+  /** Las pestañas del control abierto, con cuántos elementos tiene cada una; vacías para los demás tipos o mientras carga. */
+  tabs: TabItem[] = [];
+  private tab: ControlTab = 'summary';
+
+  /** El elemento ya cargado, para la cabecera: `null` mientras carga o si falló. */
+  get ready(): Detail | null {
+    return this.loading || this.failed ? null : this.detail();
+  }
+
+  get activeTab(): ControlTab {
+    return this.tabs.some((t) => t.id === this.tab) ? this.tab : 'summary';
+  }
+
+  selectTab(id: string): void {
+    const tab = CONTROL_TABS.find((t) => t === id);
+    if (!tab) return;
+    this.tab = tab;
+    this.tabChange.emit(tab);
+  }
+
+  // Las listas largas del detalle, cada una con su buscador y su paginación (MD-499); son `computed` sobre `detail`, así que se rehacen al recargar.
+  private readonly control = computed((): ControlDetail | null => (this.kind() === 'controls' && this.detail() ? (this.detail() as ControlDetail) : null));
+  private readonly refMatch = (x: { code: string; name: string | null }, q: string) => includesText(q, x.code, x.name);
+  readonly pofList = new ClientList(computed(() => this.control()?.points_of_focus ?? []), (p, q) => includesText(q, `${p.requirement_code}#${p.number}`, p.description));
+  readonly testList = new ClientList(computed(() => this.control()?.tests ?? []), (t, q) => includesText(q, t.code, t.display_name, this.label('dimension', t.dimension)));
+  readonly templateList = new ClientList(computed(() => this.control()?.evidence_templates ?? []), (e, q) => includesText(q, e.code, e.description));
+  readonly causeList = new ClientList<CatalogItemRef>(computed(() => this.control()?.causes ?? []), this.refMatch);
+  readonly riskCauseList = new ClientList<CatalogItemRef>(computed(() => (this.kind() === 'risks' && this.detail() ? (this.detail() as RiskDetail).causes : [])), this.refMatch);
+  readonly causeRiskList = new ClientList<CatalogItemRef>(computed(() => (this.kind() === 'causes' && this.detail() ? (this.detail() as CauseDetail).risks : [])), this.refMatch);
+  readonly causeControlList = new ClientList<CatalogItemRef>(computed(() => (this.kind() === 'causes' && this.detail() ? (this.detail() as CauseDetail).controls : [])), this.refMatch);
+  private readonly allLists = [this.pofList, this.testList, this.templateList, this.causeList, this.riskCauseList, this.causeRiskList, this.causeControlList];
+
+  protected readonly idOf = (x: { id: string }): string => x.id;
+  protected readonly refLabel = (x: { code: string; name: string | null }): string => [x.code, x.name].filter(Boolean).join(' ');
+  protected readonly pofColumns: TableColumn<ControlDetail['points_of_focus'][number]>[] = [
+    { key: 'code', headerKey: 'CATALOG_MODULE.DETAIL.REQUIREMENTS', class: 'w-40' },
+    { key: 'title', headerKey: 'CATALOG_MODULE.COL.DESCRIPTION' },
+    { key: 'actions', headerKey: 'COMMON.TABLE.ACTIONS', align: 'right', srOnlyHeader: true },
+  ];
+  protected readonly testColumns: TableColumn<ControlDetail['tests'][number]>[] = [
+    { key: 'code', headerKey: 'CATALOG_MODULE.COL.CODE', class: 'w-32' },
+    { key: 'title', headerKey: 'CATALOG_MODULE.COL.NAME' },
+    { key: 'dimension', headerKey: 'CATALOG_MODULE.COL.DIMENSION', class: 'w-44' },
+    { key: 'actions', headerKey: 'COMMON.TABLE.ACTIONS', align: 'right', srOnlyHeader: true },
+  ];
+  protected readonly templateColumns: TableColumn<ControlDetail['evidence_templates'][number]>[] = [
+    { key: 'code', headerKey: 'CATALOG_MODULE.COL.CODE', class: 'w-32' },
+    { key: 'title', headerKey: 'CATALOG_MODULE.COL.DESCRIPTION' },
+    { key: 'actions', headerKey: 'COMMON.TABLE.ACTIONS', align: 'right', srOnlyHeader: true },
+  ];
+  protected readonly refColumns: TableColumn<CatalogItemRef>[] = [
+    { key: 'code', headerKey: 'CATALOG_MODULE.COL.CODE', class: 'w-32' },
+    { key: 'title', headerKey: 'CATALOG_MODULE.COL.NAME' },
+    { key: 'actions', headerKey: 'COMMON.TABLE.ACTIONS', align: 'right', srOnlyHeader: true },
+  ];
+
+  headingOf(d: Detail | null): string | null {
+    return d ? this.titleOf(d) || this.translate.instant(this.fallbackTitleKey(), { code: d.code }) : null;
+  }
+
+  /** Una fila de causas, riesgos o controles vinculados abre ese elemento en su lista. */
+  readonly openRequested = output<{ kind: DetailKind; id: string }>();
+
+  openRef(kind: DetailKind, id: string): void {
+    this.openRequested.emit({ kind, id });
+  }
+
+  /** Lo que pide una dimensión (sonda, IA, confirmación), en una línea; vacío si no pide nada. */
+  dimensionFlags(d: ControlDetail['dimensions'][number]): string | null {
+    const flags = [d.requires_probe && 'CATALOG_MODULE.DETAIL.PROBE', d.requires_ai && 'CATALOG_MODULE.DETAIL.AI', d.requires_compliance_confirmation && 'CATALOG_MODULE.DETAIL.CONFIRMATION']
+      .filter((k): k is string => !!k)
+      .map((k) => this.translate.instant(k));
+    return flags.length ? flags.join(' · ') : null;
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['kind'] || changes['itemId']) {
       this.options.load(['dimension', 'control_type', 'risk_criterion', 'failure_category', 'catalog_origin']).subscribe();
       this.resetEditing();
+      // Otro elemento (a veces de otro tipo): nada del anterior se queda en pantalla mientras llega el nuevo.
+      this.detail.set(null);
+      this.tabs = [];
+      this.tab = 'summary';
+      this.allLists.forEach((l) => l.reset());
       this.load();
     }
+    if (changes['requestedTab']) this.tab = CONTROL_TABS.find((t) => t === this.requestedTab()) ?? 'summary';
   }
 
+  /** Pide el elemento; la respuesta de una petición que ya quedó atrás (se abrió otro o se volvió a pedir) se descarta, pero `done` corre siempre. */
   load(done?: () => void): void {
-    this.loading = this.detail === null;
+    const seq = ++this.loadSeq;
+    this.loading = this.detail() === null;
     this.failed = false;
     this.request().subscribe({
       next: (detail) => {
-        this.detail = detail;
+        if (seq !== this.loadSeq) return done?.();
+        this.detail.set(detail);
+        this.tabs = this.tabsOf(detail);
         this.loading = false;
         done?.();
       },
       error: () => {
+        if (seq !== this.loadSeq) return done?.();
         this.failed = true;
         this.loading = false;
         done?.();
@@ -116,8 +216,8 @@ export class CatalogDetail implements OnChanges {
   // ---- editar y dar de baja -------------------------------------------------------------------------------------------------------------------
 
   edit(): void {
-    if (!this.detail) return;
-    const d = this.detail as unknown as Record<string, unknown>;
+    if (!this.detail()) return;
+    const d = this.detail() as unknown as Record<string, unknown>;
     const committee = (d['committee'] ?? {}) as Record<string, unknown>;
     this.editRequested.emit({ kind: FORM_KIND[this.kind()], id: this.itemId(), initial: { ...d, ...committee } });
   }
@@ -153,7 +253,7 @@ export class CatalogDetail implements OnChanges {
 
   /** Lo que ya está vinculado en el espacio abierto: el selector no lo ofrece de nuevo. */
   excluded(): string[] {
-    const d = this.detail as unknown as Record<string, { id: string; code?: string; requirement_code?: string; number?: number }[]>;
+    const d = this.detail() as unknown as Record<string, { id: string; code?: string; requirement_code?: string; number?: number }[]>;
     switch (this.slot) {
       case 'pof':
         return d['points_of_focus'].map((p) => `${p.requirement_code}#${p.number}`);
@@ -174,7 +274,7 @@ export class CatalogDetail implements OnChanges {
 
   /** Una prueba solo se vincula a un control que tenga su dimensión: se ofrecen únicamente las de las dimensiones del control. */
   controlDimensions(): string[] | null {
-    return this.kind() === 'controls' ? (this.detail as ControlDetail).dimensions.map((d) => d.dimension) : null;
+    return this.kind() === 'controls' ? (this.detail() as ControlDetail).dimensions.map((d) => d.dimension) : null;
   }
 
   onPicked(pick: Pick): void {
@@ -261,6 +361,17 @@ export class CatalogDetail implements OnChanges {
     this.error = null;
   }
 
+  private tabsOf(detail: Detail): TabItem[] {
+    if (this.kind() !== 'controls') return [];
+    const c = detail as ControlDetail;
+    return [
+      { id: 'summary', labelKey: 'CATALOG_MODULE.DETAIL.TABS.SUMMARY' },
+      { id: 'requirements', labelKey: 'CATALOG_MODULE.DETAIL.TABS.REQUIREMENTS', count: c.points_of_focus.length },
+      { id: 'tests', labelKey: 'CATALOG_MODULE.DETAIL.TABS.TESTS' },
+      { id: 'causes', labelKey: 'CATALOG_MODULE.DETAIL.TABS.CAUSES', count: c.causes.length },
+    ];
+  }
+
   /** Los campos del comité de una prueba, en el orden en que se leen. Las listas (`step_by_step`…) salen como lista. */
   // The template reads the detail by kind: each `@case` gets the type that `kind()` promises (never `$any`).
   protected asControl(d: Detail): ControlDetail { return d as ControlDetail; }
@@ -269,10 +380,14 @@ export class CatalogDetail implements OnChanges {
   protected asEvidenceTemplate(d: Detail): EvidenceTemplateRow { return d as EvidenceTemplateRow; }
   protected asTest(d: Detail): TestDetail { return d as TestDetail; }
 
-  /** The heading of the detail: risks, causes and controls carry a `name`; the rest only a `description`. */
+  /** The heading of the detail: its `name` when it has one. A required evidence has none, and a v2 cause may come without it (MD-499): then the title is
+   *  «<kind> <code>» (`fallbackTitleKey`) and the description is shown once, in the body. */
   protected titleOf(d: Detail): string {
-    const named = d as { name?: string; description?: string };
-    return named.name ?? named.description ?? '';
+    return (d as { name?: string | null }).name ?? '';
+  }
+
+  protected fallbackTitleKey(): string {
+    return `CATALOG_MODULE.DETAIL.TITLE_FALLBACK.${this.kind().toUpperCase().replace('-', '_')}`;
   }
 
   committeeFields(test: TestDetail): { key: string; value: unknown; list: boolean }[] {

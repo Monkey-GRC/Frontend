@@ -11,6 +11,7 @@ import { CompanyForm } from '@features/companies/presentation/components/company
 import { CompanyReactivateForm, ReactivateDetails } from '@features/companies/presentation/components/company-reactivate-form/company-reactivate-form';
 import { CompanyList } from '@features/companies/presentation/components/company-list/company-list';
 import { SecondFactorAnswer, SecondFactorDialog } from '@shared/presentation/components/second-factor-dialog/second-factor-dialog';
+import { formatLocalDate } from '@shared/domain/utils/date-format';
 import { unwrapData } from '@shared/domain/utils/unwrap-response';
 import { FormModal } from '@shared/presentation/components/form-modal/form-modal';
 import { Busy } from '@shared/presentation/directives/busy';
@@ -210,7 +211,7 @@ export class Companies implements OnInit {
           this.translate.instant(`COMPANIES_MODULE.${key}.SUCCESS_TITLE`),
           this.translate.instant(`COMPANIES_MODULE.${key}.SUCCESS_MESSAGE`, {
             name: archived.name,
-            date: archived.archive_until ? new Intl.DateTimeFormat(this.language.current(), { dateStyle: 'medium' }).format(new Date(archived.archive_until)) : '',
+            date: formatLocalDate(archived.archive_until, this.language.current()),
           }),
         );
         this.closeStepUp();

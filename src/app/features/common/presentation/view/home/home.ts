@@ -13,6 +13,7 @@ import { Donut } from '@shared/presentation/components/donut/donut';
 import { MetricCard } from '@shared/presentation/components/metric-card/metric-card';
 import { EmptyState } from '@shared/presentation/components/empty-state/empty-state';
 import { PageHeader } from '@shared/presentation/components/page-header/page-header';
+import { formatLocalDate } from '@shared/domain/utils/date-format';
 import { Section } from '@shared/presentation/components/section/section';
 import { StatusIndicator, StatusTone } from '@shared/presentation/components/status-indicator/status-indicator';
 import { Busy } from '@shared/presentation/directives/busy';
@@ -142,7 +143,7 @@ export class Home implements OnInit {
     }
 
     date(value: string): string {
-        return new Date(value).toLocaleDateString(this.lang(), { day: 'numeric', month: 'short', year: 'numeric' });
+        return formatLocalDate(value, this.lang()) || value;
     }
 
     time(value: Date): string {

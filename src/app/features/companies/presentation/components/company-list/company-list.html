@@ -55,15 +55,15 @@
   </ng-template>
 
   <ng-template appCell="actions" let-company>
-    <span class="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
+    <span class="flex flex-wrap items-center justify-end gap-2">
       @if (company.status === 'deactivated') {
-      <button type="button" (click)="reactivate.emit(company)" data-testid="company-reactivate" class="text-sm font-medium text-action hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_REACTIVATE' | translate }}</button>
+      <button type="button" (click)="reactivate.emit(company)" data-testid="company-reactivate" class="mk-btn-secondary-sm">{{ 'COMPANIES_MODULE.LIST.ACTION_REACTIVATE' | translate }}</button>
       } @else {
-      <button type="button" (click)="changeQuota.emit(company)" data-testid="company-change-quota" class="text-sm font-medium text-action hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_QUOTA' | translate }}</button>
+      <button type="button" (click)="changeQuota.emit(company)" data-testid="company-change-quota" class="mk-btn-secondary-sm">{{ 'COMPANIES_MODULE.LIST.ACTION_QUOTA' | translate }}</button>
       @if (canResendKey(company)) {
-      <button type="button" (click)="resendKey.emit(company)" [appBusy]="resendingId() === company.id" data-testid="company-resend-key" class="text-sm font-medium text-action hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_RESEND_KEY' | translate }}</button>
+      <button type="button" (click)="resendKey.emit(company)" [appBusy]="resendingId() === company.id" data-testid="company-resend-key" class="mk-btn-secondary-sm">{{ 'COMPANIES_MODULE.LIST.ACTION_RESEND_KEY' | translate }}</button>
       }
-      <button type="button" (click)="archive.emit(company)" data-testid="company-archive" class="text-sm font-medium text-bad-ink hover:underline">{{ 'COMPANIES_MODULE.LIST.ACTION_ARCHIVE' | translate }}</button>
+      <button type="button" (click)="archive.emit(company)" data-testid="company-archive" class="mk-btn-danger-sm">{{ 'COMPANIES_MODULE.LIST.ACTION_ARCHIVE' | translate }}</button>
       }
     </span>
   </ng-template>

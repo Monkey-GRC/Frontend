@@ -4,7 +4,7 @@ import { AdminSort, AdminStatus, AdminUser, ADMIN_STATUS_FILTERS } from '@featur
 import { AdminStatusBadge } from '@features/admin-users/presentation/components/admin-status-badge/admin-status-badge';
 import { Busy } from '@shared/presentation/directives/busy';
 import { DataTable, TableCell, TableColumn } from '@shared/presentation/components/data-table/data-table';
-import { PageInfo } from '@shared/presentation/components/data-table/table-page';
+import { PageInfo } from '@shared/domain/models/page-info.model';
 import { PageHeader } from '@shared/presentation/components/page-header/page-header';
 import { PersonCell } from '@shared/presentation/components/person-cell/person-cell';
 import { TableFilter } from '@shared/presentation/components/table-filter/table-filter';

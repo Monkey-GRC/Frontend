@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CatalogFilters, CatalogFramework, CatalogOrigin, CatalogTab, ControlScope, FormKind, Paginated } from '@features/catalog/models/catalog.model';
@@ -10,6 +11,7 @@ import { CatalogForm } from '@features/catalog/presentation/components/catalog-f
 import { Skeleton, SkeletonRegion } from '@shared/presentation/components/skeleton/skeleton';
 import { EmptyState } from '@shared/presentation/components/empty-state/empty-state';
 import { PageHeader } from '@shared/presentation/components/page-header/page-header';
+import { Select, SelectOption } from '@shared/presentation/components/select/select';
 import { StatusIndicator } from '@shared/presentation/components/status-indicator/status-indicator';
 import { TableFilter, TableFilterOption } from '@shared/presentation/components/table-filter/table-filter';
 import { TableToolbar } from '@shared/presentation/components/table-toolbar/table-toolbar';
@@ -69,10 +71,11 @@ const NEW_KIND: Record<CatalogTab, FormKind> = { controls: 'control', risks: 'ri
 
 // Catálogo maestro (contracts/modules/monkey-admin-catalog.md): los marcos, y sus controles, riesgos, causas, pruebas y evidencias requeridas. Solo lectura.
 // Solo los controles cuelgan de un marco; riesgos, causas y pruebas son un pool compartido, así que el marco elegido solo acota la pestaña de controles.
+// El marco elegido (`?marco=soc2`), la lista (`?lista=`) y el elemento abierto con su pestaña (`?abrir=<id>&tab=`) van en la dirección, para compartir la vista; el detalle se abre sobre la lista.
 // Desde aquí se agrega un elemento nuevo (botón «Nuevo»); editar, dar de baja y vincular se hace desde su detalle.
 @Component({
   selector: 'app-catalog',
-  imports: [PageHeader, TranslateModule, CatalogTable, CatalogDetail, CatalogForm, Skeleton, SkeletonRegion, EmptyState, StatusIndicator, TableFilter, TableToolbar, Tabs],
+  imports: [PageHeader, TranslateModule, CatalogTable, CatalogDetail, CatalogForm, Skeleton, SkeletonRegion, EmptyState, StatusIndicator, TableFilter, TableToolbar, Tabs, Select],
   templateUrl: './catalog.html',
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -80,6 +83,8 @@ export class Catalog implements OnInit, OnDestroy {
   private readonly catalog = inject(CatalogService);
   private readonly translate = inject(TranslateService);
   private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   readonly options = inject(CatalogOptionsService);
 
   protected readonly targetChecked = targetChecked;
@@ -119,7 +124,11 @@ export class Catalog implements OnInit, OnDestroy {
 
   private readonly typing = new Subject<string>();
   private subscription?: Subscription;
+  private urlSubscription?: Subscription;
+  /** La pestaña del detalle abierto (`?tab=`). */
+  detailTab: string | null = null;
   private request = 0;
+  private frameworksLoaded = false;
 
   ngOnInit(): void {
     this.options.load(['dimension', 'control_type', 'risk_criterion', 'failure_category', 'catalog_origin']).subscribe();
@@ -128,10 +137,25 @@ export class Catalog implements OnInit, OnDestroy {
       this.search = text;
       this.reload(1);
     });
+    // La lista, el elemento abierto y su pestaña salen de la dirección (`?lista=&abrir=<id>&tab=`): se puede compartir, y «Atrás» vuelve al elemento y a la lista de antes.
+    this.urlSubscription = this.route.queryParamMap.subscribe((q) => {
+      const tab = this.tabs.find((t) => t.key === q.get('lista'))?.key ?? 'controls';
+      if (tab !== this.tab) {
+        this.tab = tab;
+        // Antes de tener los marcos, la primera lista la pide su respuesta.
+        if (this.frameworksLoaded) this.reload(1);
+      }
+      const id = q.get('abrir');
+      this.selected = id ? { kind: tab, id } : null;
+      this.detailTab = q.get('tab');
+    });
+    const wantedFramework = this.route.snapshot.queryParamMap.get('marco')?.toLowerCase();
     this.catalog.frameworks().subscribe({
       next: (list) => {
         this.frameworks = list;
-        this.frameworkId = (list.find((f) => f.availability === 'available') ?? list[0])?.id ?? null;
+        this.frameworksLoaded = true;
+        // El marco de la dirección; si no hay o no existe, el primero disponible.
+        this.frameworkId = (list.find((f) => f.code.toLowerCase() === wantedFramework) ?? list.find((f) => f.availability === 'available') ?? list[0])?.id ?? null;
         this.reload(1);
       },
       error: () => this.fail(),
@@ -140,6 +164,7 @@ export class Catalog implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+    this.urlSubscription?.unsubscribe();
   }
 
   get columns(): CatalogColumn[] {
@@ -183,13 +208,44 @@ export class Catalog implements OnInit, OnDestroy {
     if (tab === this.tab) return;
     this.tab = tab;
     this.selected = null;
+    this.syncUrl(true);
     this.reload(1);
   }
 
   pickFramework(id: string): void {
     this.frameworkId = id;
     this.scope = 'framework';
+    this.syncUrl();
     this.reload(1);
+  }
+
+  /** Los marcos para el selector, en dos grupos: los disponibles y, al final, los que llegan pronto; cada uno con su versión. */
+  get frameworkOptions(): SelectOption[] {
+    const rank = (f: CatalogFramework) => (f.availability === 'available' ? 0 : 1);
+    return [...this.frameworks]
+      .sort((a, b) => rank(a) - rank(b))
+      .map((f) => ({
+        value: f.id,
+        labelKey: 'CATALOG_MODULE.FRAMEWORK_OPTION',
+        labelParams: { name: f.name, version: f.version },
+        group: f.availability === 'available' ? 'CATALOG_MODULE.FRAMEWORK_GROUP.AVAILABLE' : 'CATALOG_MODULE.FRAMEWORK_GROUP.COMING_SOON',
+      }));
+  }
+
+  /** El marco elegido todavía no tiene catálogo: la pestaña de controles dice que llega pronto, en vez de una lista vacía sin explicación. */
+  get comingSoon(): boolean {
+    return this.tab === 'controls' && this.scope === 'framework' && this.currentFramework?.availability === 'coming_soon';
+  }
+
+  /** Pone el marco y la lista en la dirección; cambiar de lista cierra el detalle abierto. */
+  private syncUrl(closeDetail = false): void {
+    const code = this.currentFramework?.code.toLowerCase() ?? null;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { marco: code, lista: this.tab === 'controls' ? null : this.tab, ...(closeDetail ? { abrir: null, tab: null } : {}) },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   setScope(value: string): void {
@@ -222,7 +278,30 @@ export class Catalog implements OnInit, OnDestroy {
   }
 
   open(row: CatalogRow): void {
-    this.selected = { kind: this.detailKind, id: row.id };
+    this.show(this.detailKind, row.id);
+  }
+
+  /** Abre un elemento (también el de una lista vinculada de otro tipo, que cambia de pestaña) poniéndolo en la dirección. */
+  show(kind: DetailKind, id: string): void {
+    if (kind !== this.tab) {
+      this.tab = kind;
+      this.reload(1);
+    }
+    this.selected = { kind, id };
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { lista: kind === 'controls' ? null : kind, abrir: id, tab: null },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  closeDetail(): void {
+    this.selected = null;
+    this.router.navigate([], { relativeTo: this.route, queryParams: { abrir: null, tab: null }, queryParamsHandling: 'merge', replaceUrl: true });
+  }
+
+  setDetailTab(tab: string): void {
+    this.router.navigate([], { relativeTo: this.route, queryParams: { tab: tab === 'summary' ? null : tab }, queryParamsHandling: 'merge', replaceUrl: true });
   }
 
   // ---- agregar y editar ----------------------------------------------------------------------------------------------------------------------
@@ -242,7 +321,7 @@ export class Catalog implements OnInit, OnDestroy {
     this.toast.showSuccess(this.translate.instant(mode === 'create' ? 'CATALOG_MODULE.NOTICE.CREATED' : 'CATALOG_MODULE.NOTICE.UPDATED'));
     this.reload(this.page);
     const id = (saved as { id?: string } | null)?.id;
-    if (mode === 'create' && id) this.selected = { kind: this.detailKind, id };
+    if (mode === 'create' && id) this.show(this.detailKind, id);
     else this.detailPanel?.refresh();
   }
 
@@ -252,7 +331,7 @@ export class Catalog implements OnInit, OnDestroy {
     this.failed = false;
     const token = ++this.request;
     const filters = this.filters();
-    const call = this.call(filters);
+    const call = this.comingSoon ? null : this.call(filters);
     if (!call) {
       this.rows = [];
       this.total = 0;

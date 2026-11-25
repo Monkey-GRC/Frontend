@@ -89,6 +89,7 @@
       "CAUSES": "Causas que mitiga",
       "RISKS": "Riesgos que origina",
       "CONTROLS": "Controles que la mitigan",
+      "TEST_CONTROLS": "Controles que la usan",
       "CRITERION": "Criterio",
       "CATEGORY": "Categoría",
       "POTENTIAL_IMPACT": "Impacto potencial",
@@ -97,7 +98,25 @@
       "DISPLAY_NAME": "Nombre",
       "DISPLAY_DESCRIPTION": "Descripción",
       "COMMITTEE": "Textos del comité",
-      "USED_BY": "La piden {{count}} controles"
+      "USED_BY": "La piden {{count}} controles",
+      "TABS": {
+        "SUMMARY": "Resumen",
+        "REQUIREMENTS": "Requisitos",
+        "TESTS": "Pruebas y evidencias",
+        "CAUSES": "Causas",
+        "DESCRIPTION": "Descripción",
+        "ARIA": "Secciones del detalle"
+      },
+      "TITLE_FALLBACK": {
+        "CONTROLS": "Control {{code}}",
+        "RISKS": "Riesgo {{code}}",
+        "CAUSES": "Causa {{code}}",
+        "TESTS": "Prueba {{code}}",
+        "EVIDENCE_TEMPLATES": "Evidencia requerida {{code}}"
+      },
+      "CONTROLS_USING": "Controles que la piden",
+      "SEARCH": "Buscar por código o texto",
+      "NO_MATCH": "Nada coincide con la búsqueda."
     },
     "LOAD_ERROR": "No pudimos cargar el catálogo.",
     "RETRY": "Reintentar",
@@ -166,7 +185,8 @@
       "POSITION": "Posición (opcional)",
       "TYPE": "Tipo",
       "TEST_FROM_CONTROL": "Una prueba se vincula desde el control que la usa.",
-      "TEMPLATE_FROM_CONTROL": "Una evidencia requerida se vincula desde el control que la pide."
+      "TEMPLATE_FROM_CONTROL": "Una evidencia requerida se vincula desde el control que la pide.",
+      "UNLINK": "Quitar"
     },
     "PICKER": {
       "FRAMEWORK": "Marco",
@@ -182,6 +202,14 @@
       "LINKED": "Agregamos el vínculo.",
       "UNLINKED": "Quitamos el vínculo.",
       "DIMENSION_SAVED": "Guardamos la dimensión del control."
-    }
+    },
+    "FRAMEWORK": "Marco",
+    "FRAMEWORK_OPTION": "{{name}} · {{version}}",
+    "FRAMEWORK_GROUP": {
+      "AVAILABLE": "Disponibles",
+      "COMING_SOON": "Próximamente"
+    },
+    "COMING_SOON_TITLE": "Este marco llega pronto",
+    "COMING_SOON_BODY": "Todavía no tiene controles en el catálogo. Elige un marco disponible para ver sus controles; los riesgos, causas y pruebas son de todos los marcos."
   }
 }
