@@ -104,7 +104,7 @@
 
             <!-- Altas recientes -->
             <app-section class="h-full xl:col-span-2" titleKey="HOME.RECENT.TITLE">
-              <a actions routerLink="/companies" class="text-sm font-medium text-action hover:underline">{{ 'HOME.RECENT.VIEW_ALL' | translate }}</a>
+              <a actions routerLink="/companies" class="mk-link underline text-sm">{{ 'HOME.RECENT.VIEW_ALL' | translate }}</a>
               <app-data-table captionKey="HOME.RECENT.TITLE" [columns]="recentColumns" [rows]="m.recent" [rowKey]="recentRowKey" emptyIcon="">
                 <ng-template appCell="name" let-c><span class="font-medium">{{ c.name }}</span></ng-template>
                 <ng-template appCell="date" let-c>{{ date(c.created_at) }}</ng-template>

@@ -4,33 +4,21 @@
     <button actions type="button" (click)="startCreate()" data-new class="mk-btn">{{ ('CATALOG_MODULE.FORM.NEW.' + newKind.toUpperCase()) | translate }}</button>
   </app-page-header>
 
-  <!-- Marcos: solo acotan la pestaña de controles; los riesgos, causas y pruebas son de todos -->
+  <!-- El marco: un selector compacto en una sola franja (MD-499). Solo acota la pestaña de controles; los riesgos, causas y pruebas son de todos. El elegido va en la dirección (`?marco=`). -->
   @if (loading && !frameworks.length && !failed) {
-  <app-skeleton-region class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" data-frameworks-loading>
-    <app-skeleton shape="card" />
-    <app-skeleton shape="card" />
-    <app-skeleton shape="card" />
+  <app-skeleton-region class="flex flex-col gap-2" data-frameworks-loading>
+    <app-skeleton shape="line" width="22rem" />
+    <app-skeleton shape="line" width="16rem" />
   </app-skeleton-region>
   } @else if (frameworks.length) {
-  <section [attr.aria-label]="'CATALOG_MODULE.FRAMEWORKS' | translate">
-    <ul class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" data-frameworks>
-      @for (f of frameworks; track f.id) {
-      <li>
-        <button type="button" (click)="pickFramework(f.id)" [attr.aria-pressed]="f.id === frameworkId" [attr.data-framework]="f.code"
-          class="flex h-full w-full flex-col items-start gap-1 p-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-action/40"
-          [class]="f.id === frameworkId ? 'mk-surface-tinted ring-1 ring-action' : 'mk-surface hover:bg-tint'">
-          <span class="flex w-full items-center justify-between gap-2">
-            <span class="font-semibold text-ink">{{ f.name }}</span>
-            <app-status-indicator [tone]="f.availability === 'available' ? 'ok' : 'neutral'" [labelKey]="'CATALOG_MODULE.AVAILABILITY.' + f.availability" />
-          </span>
-          <span class="text-xs text-ink-muted">{{ f.code }} · {{ f.version }}</span>
-          <span class="mt-auto pt-1 text-xs text-ink-muted">
-            {{ 'CATALOG_MODULE.COUNTS' | translate: { requirements: f.counts.requirements, controls: f.counts.controls, tests: f.counts.tests } }}
-          </span>
-        </button>
-      </li>
-      }
-    </ul>
+  <section [attr.aria-label]="'CATALOG_MODULE.FRAMEWORKS' | translate" class="flex flex-wrap items-center gap-x-3 gap-y-2" data-frameworks>
+    <label for="framework-select" class="text-sm font-medium text-ink">{{ 'CATALOG_MODULE.FRAMEWORK' | translate }}</label>
+    <app-select inputId="framework-select" class="w-80 max-w-full" data-framework-select searchable [options]="frameworkOptions" [value]="frameworkId ?? ''" (valueChange)="pickFramework($event)" />
+    @if (currentFramework; as f) {
+    <app-status-indicator [tone]="f.availability === 'available' ? 'ok' : 'neutral'" [labelKey]="'CATALOG_MODULE.AVAILABILITY.' + f.availability" [attr.data-framework]="f.code" />
+    <span class="text-ink-faint" aria-hidden="true">·</span>
+    <p class="text-sm text-ink-muted" data-framework-counts>{{ 'CATALOG_MODULE.COUNTS' | translate: { requirements: f.counts.requirements, controls: f.counts.controls, tests: f.counts.tests } }}</p>
+    }
   </section>
   }
 
@@ -59,7 +47,9 @@
   </app-table-toolbar>
 
   <!-- Resultado -->
-  @if (loading) {
+  @if (comingSoon && !loading) {
+  <app-empty-state data-coming-soon icon="" titleKey="CATALOG_MODULE.COMING_SOON_TITLE" descriptionKey="CATALOG_MODULE.COMING_SOON_BODY" />
+  } @else if (loading) {
   <app-skeleton-region class="space-y-4" data-loading>
     <app-skeleton shape="line" width="8rem" />
     <app-catalog-table [columns]="columns" [rows]="[]" [loading]="true" [captionKey]="captionKey" [clickable]="false" />
@@ -79,7 +69,7 @@
 </div>
 
 @if (selected; as s) {
-<app-catalog-detail [kind]="s.kind" [itemId]="s.id" (closed)="selected = null" (changed)="reload(page)" (editRequested)="startEdit($event)" />
+<app-catalog-detail [kind]="s.kind" [itemId]="s.id" [requestedTab]="detailTab" (tabChange)="setDetailTab($event)" (closed)="closeDetail()" (openRequested)="show($event.kind, $event.id)" (changed)="reload(page)" (editRequested)="startEdit($event)" />
 }
 
 @if (form; as f) {

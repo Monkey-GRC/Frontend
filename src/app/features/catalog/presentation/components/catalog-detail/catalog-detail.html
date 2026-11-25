@@ -1,11 +1,29 @@
+<!-- «Quitar»: el botón de texto de cada fila vinculada (desvincular borra solo la relación) -->
+<ng-template #unlinkBtn let-id let-slotName="slot" let-code="code">
+  <button type="button" (click)="unlinkFrom(slotName, id)" [disabled]="busy && action !== 'unlink:' + id" [appBusy]="action === 'unlink:' + id" [attr.data-unlink-row]="id"
+    [attr.aria-label]="('CATALOG_MODULE.LINK.REMOVE' | translate) + ' ' + code" class="mk-btn-danger-sm">
+    <span class="material-symbols-rounded text-[16px]" aria-hidden="true">link_off</span>{{ 'CATALOG_MODULE.LINK.UNLINK' | translate }}
+  </button>
+</ng-template>
+
+<!-- Una lista de referencias (código y nombre) con «Quitar»; la fila abre la página del elemento -->
+<ng-template #refTable let-list="list" let-caption="caption" let-slotName="slot" let-route="route">
+  <app-data-table [captionKey]="caption" [compact]="true" [columns]="refColumns" [rows]="list.rows()" [rowKey]="idOf" [page]="list.info()" [pageSizes]="[10, 25]"
+    [clickable]="true" [rowLabel]="refLabel" emptyIcon="" emptyTitleKey="CATALOG_MODULE.DETAIL.NO_MATCH" (pageChange)="list.goTo($event)" (pageSizeChange)="list.resize($event)" (rowClick)="openRef(route, $event.id)" data-list="refs">
+    <ng-template appCell="code" let-x><app-badge kind="code" size="sm">{{ x.code }}</app-badge></ng-template>
+    <ng-template appCell="title" let-x>{{ x.name }}</ng-template>
+    <ng-template appCell="actions" let-x><ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: x.id, slot: slotName, code: x.code }" /></ng-template>
+  </app-data-table>
+</ng-template>
+
 <!-- Encabezado de una sección: su título y, si se puede agregar algo, el botón para hacerlo -->
 <ng-template #head let-title let-count="count" let-slotName="slot">
-  <div class="mb-2 flex items-center justify-between gap-3">
-    <h4 class="font-semibold text-ink">{{ title | translate }}@if (count !== null && count !== undefined) { ({{ count }}) }</h4>
+  <div class="mb-3 flex min-h-9 items-center justify-between gap-3 border-b border-line pb-2">
+    <h3 class="min-w-0 text-base font-semibold text-ink">{{ title | translate }}@if (count !== null && count !== undefined) {<span class="ml-1.5 font-normal tabular-nums text-ink-faint">{{ count }}</span>}</h3>
     @if (slotName && slot !== slotName) {
     <button type="button" (click)="startPick(slotName)" [disabled]="busy" [attr.data-add]="slotName"
-      class="text-xs font-medium text-action enabled:hover:underline disabled:cursor-not-allowed disabled:text-ink-faint">
-      {{ 'CATALOG_MODULE.LINK.ADD' | translate }}
+      class="mk-btn-secondary-sm shrink-0">
+      <span class="material-symbols-rounded text-[16px]" aria-hidden="true">add_link</span>{{ 'CATALOG_MODULE.LINK.ADD' | translate }}
     </button>
     }
   </div>
@@ -22,112 +40,116 @@
   }
 </ng-template>
 
-<!-- El botón de quitar un vínculo: borra solo la relación, nunca el elemento -->
-<ng-template #unlinkBtn let-slotName let-childId="id" let-name="name">
-  <button type="button" (click)="unlinkFrom(slotName, childId)" [disabled]="busy && action !== 'unlink:' + childId" [appBusy]="action === 'unlink:' + childId" [attr.data-unlink]="childId"
-    class="shrink-0 rounded-control p-0.5 text-ink-muted enabled:hover:bg-canvas enabled:hover:text-bad-ink disabled:cursor-not-allowed disabled:text-ink-faint" [attr.aria-label]="('CATALOG_MODULE.LINK.REMOVE' | translate) + ' ' + name">
-    <span class="material-symbols-rounded text-[16px]" aria-hidden="true">link_off</span>
-  </button>
+
+<!-- Título de una sección sin vínculos que agregar: el mismo encabezado, con su línea fina debajo -->
+<ng-template #plainHead let-title let-count="count">
+  <div class="mb-3 flex min-h-9 items-center border-b border-line pb-2">
+    <h3 class="min-w-0 text-base font-semibold text-ink">{{ title | translate }}@if (count !== null && count !== undefined) {<span class="ml-1.5 font-normal tabular-nums text-ink-faint">{{ count }}</span>}</h3>
+  </div>
 </ng-template>
 
-<app-side-drawer [open]="true" titleKey="CATALOG_MODULE.DETAIL.TITLE" size="lg" [dismissible]="!busy" [guarded]="guarded" (closed)="closed.emit()">
-  <div data-detail>
-    @if (loading) {
-    <app-skeleton-region class="flex flex-col gap-4" data-loading>
-      <div class="space-y-2">
-        <app-skeleton shape="badge" />
-        <app-skeleton shape="title" width="60%" />
-        <app-skeleton shape="line" width="30%" />
-      </div>
-      <app-skeleton shape="card" />
-      <app-skeleton shape="card" />
-    </app-skeleton-region>
-    } @else if (failed) {
-    <div class="py-10 text-center" data-error>
-      <p class="text-sm text-ink">{{ 'CATALOG_MODULE.DETAIL.LOAD_ERROR' | translate }}</p>
-      <button type="button" (click)="load()" class="mk-btn mt-3">{{ 'CATALOG_MODULE.RETRY' | translate }}</button>
+<!-- El detalle en el panel lateral ancho (MD-499): cabecera fija con el nombre, el código, el origen y el estado; pie con «Cerrar» y las acciones (dar de baja o reactivar,
+     editar). Un control, que es largo, lleva pestañas (la abierta va en `?tab=`); lo demás es corto. Las pestañas se ocultan, no se destruyen: un vínculo a medio elegir no
+     se pierde al cambiar. La evidencia requerida, corta, va en el modal compacto. -->
+<app-detail-modal titleKey="CATALOG_MODULE.DETAIL.TITLE" [heading]="headingOf(ready)" [tabs]="tabs" [activeTab]="activeTab" tabsLabelKey="CATALOG_MODULE.DETAIL.TABS.ARIA"
+  [variant]="kind() === 'evidence-templates' ? 'compact' : 'drawer-narrow'" [loading]="loading" [loadingTabs]="kind() === 'controls' ? 4 : 0" [dismissible]="!busy" [guarded]="guarded"
+  testId="catalog-detail" (activeTabChange)="selectTab($event)" (closed)="closed.emit()">
+  @if (ready; as d) {
+  <div meta class="flex flex-col gap-2">
+    <div class="flex flex-wrap items-center gap-2">
+      <span data-code><app-badge kind="code">{{ d.code }}</app-badge></span>
+      <span class="text-xs text-ink-muted">{{ label('catalog_origin', d.origin) }}</span>
+      <app-status-indicator data-state [tone]="d.is_active ? 'ok' : 'neutral'" [labelKey]="d.is_active ? 'CATALOG_MODULE.STATE.ACTIVE' : 'CATALOG_MODULE.STATE.INACTIVE'" />
     </div>
-    } @else if (detail) {
-    <div class="flex flex-col gap-4 text-sm text-ink">
+    @if (d.is_active === false) {
+    <p class="text-xs text-ink-muted">{{ 'CATALOG_MODULE.ACTIONS.INACTIVE_HINT' | translate }}</p>
+    }
+  </div>
+  }
+  <!-- Dar de baja (con su confirmación en línea) o reactivar: lo destructivo va aparte, a la izquierda del pie. Un bloque por ranura: Angular proyecta solo un raíz único. -->
+  @if (ready; as d) {
+  <div footerStart class="flex flex-wrap items-center gap-3">
+    @if (!d.is_active) {
+    <button type="button" (click)="reactivate()" [disabled]="busy && action !== 'reactivate'" [appBusy]="action === 'reactivate'" data-reactivate class="mk-btn-secondary">
+      {{ 'CATALOG_MODULE.ACTIONS.REACTIVATE' | translate }}
+    </button>
+    } @else if (!confirmingDeactivate) {
+    <button type="button" (click)="askDeactivate()" [disabled]="busy" data-deactivate class="mk-btn-danger-outline">
+      <span class="material-symbols-rounded text-[20px]" aria-hidden="true">block</span>
+      {{ 'CATALOG_MODULE.ACTIONS.DEACTIVATE' | translate }}
+    </button>
+    } @else {
+    <span class="mk-surface-state-bad inline-flex flex-wrap items-center gap-3 px-3 py-1.5 text-sm text-ink" data-confirm>
+      {{ 'CATALOG_MODULE.ACTIONS.DEACTIVATE_CONFIRM' | translate }}
+      <button type="button" (click)="confirmingDeactivate = false" [disabled]="busy" class="mk-btn-secondary-sm">{{ 'CATALOG_MODULE.FORM.CANCEL' | translate }}</button>
+      <button type="button" (click)="deactivate()" [disabled]="busy && action !== 'deactivate'" [appBusy]="action === 'deactivate'" data-confirm-yes class="mk-btn-danger-sm">{{ 'CATALOG_MODULE.ACTIONS.YES' | translate }}</button>
+    </span>
+    }
+  </div>
+  }
+  @if (ready) {
+  <button actions type="button" (click)="edit()" [disabled]="busy" data-edit class="mk-btn-secondary">
+    <span class="material-symbols-rounded text-[20px]" aria-hidden="true">edit</span>{{ 'CATALOG_MODULE.ACTIONS.EDIT' | translate }}
+  </button>
+  }
 
-      <!-- Cabecera común: código, nombre, origen y estado, y las acciones sobre el elemento -->
-      <div>
-        <p data-code><app-badge kind="code">{{ detail.code }}</app-badge></p>
-        <h3 class="text-xl font-semibold text-ink">{{ titleOf(detail) }}</h3>
-        <div class="mt-2 flex flex-wrap items-center gap-2">
-          <span class="text-xs text-ink-muted">{{ label('catalog_origin', detail.origin) }}</span>
-          <app-status-indicator data-state [tone]="detail.is_active ? 'ok' : 'neutral'" [labelKey]="detail.is_active ? 'CATALOG_MODULE.STATE.ACTIVE' : 'CATALOG_MODULE.STATE.INACTIVE'" />
-        </div>
+<div data-detail>
+  @if (loading) {
+  <!-- D116 · La forma del detalle: dos columnas de secciones (título con su línea y sus filas). -->
+  <app-skeleton-region class="flex flex-col gap-8" data-loading>
+    <div class="flex flex-col gap-8"><app-skeleton shape="section" [lines]="4" width="25%" /><app-skeleton shape="section" [lines]="2" width="20%" /></div>
+    <div class="flex flex-col gap-8"><app-skeleton shape="section" [lines]="3" width="30%" /></div>
+  </app-skeleton-region>
+  } @else if (failed) {
+  <div class="py-10 text-center" data-error>
+    <p class="text-sm text-ink">{{ 'CATALOG_MODULE.DETAIL.LOAD_ERROR' | translate }}</p>
+    <button type="button" (click)="load()" class="mk-btn mt-3">{{ 'CATALOG_MODULE.RETRY' | translate }}</button>
+  </div>
+  } @else if (detail(); as item) {
+  <div class="text-sm text-ink">
 
-        <div class="mt-3 flex flex-wrap items-center gap-4">
-          <button type="button" (click)="edit()" [disabled]="busy" data-edit class="text-sm font-medium text-action enabled:hover:underline disabled:cursor-not-allowed disabled:text-ink-faint">
-            {{ 'CATALOG_MODULE.ACTIONS.EDIT' | translate }}
-          </button>
-          @if (detail.is_active) {
-            @if (!confirmingDeactivate) {
-            <button type="button" (click)="askDeactivate()" [disabled]="busy" data-deactivate class="text-sm font-medium text-bad-ink enabled:hover:underline disabled:cursor-not-allowed disabled:text-ink-faint">
-              {{ 'CATALOG_MODULE.ACTIONS.DEACTIVATE' | translate }}
-            </button>
-            } @else {
-            <span class="mk-surface-state-bad inline-flex items-center gap-3 px-3 py-1.5 text-xs text-ink" data-confirm>
-              {{ 'CATALOG_MODULE.ACTIONS.DEACTIVATE_CONFIRM' | translate }}
-              <button type="button" (click)="deactivate()" [disabled]="busy && action !== 'deactivate'" [appBusy]="action === 'deactivate'" data-confirm-yes class="font-semibold underline">{{ 'CATALOG_MODULE.ACTIONS.YES' | translate }}</button>
-              <button type="button" (click)="confirmingDeactivate = false" [disabled]="busy" class="underline">{{ 'CATALOG_MODULE.FORM.CANCEL' | translate }}</button>
-            </span>
+    @if (error) {
+    <div class="mk-surface-state-bad mb-5 p-3 text-sm text-ink" role="alert" data-action-error>
+      <span>{{ error }}</span>
+    </div>
+    }
+
+    @switch (kind()) {
+
+    @case ('controls') {
+    @let c = asControl(item);
+    <!-- Resumen: qué es y de dónde sale (y sus políticas), a la izquierda; dónde se comprueba (dimensiones), a la derecha -->
+    <div [hidden]="activeTab !== 'summary'" data-tab="summary" class="flex flex-col gap-8">
+      <div class="flex min-w-0 flex-col gap-8">
+        <section>
+          <ng-container *ngTemplateOutlet="plainHead; context: { $implicit: 'CATALOG_MODULE.DETAIL.TABS.DESCRIPTION' }" />
+          <p class="max-w-prose whitespace-pre-line text-pretty leading-relaxed">{{ c.description }}</p>
+          <p class="mt-2 text-xs text-ink-muted">{{ 'CATALOG_MODULE.DETAIL.DOMAIN' | translate }}: {{ c.domain }}@if (c.source_ref) { · {{ 'CATALOG_MODULE.DETAIL.SOURCE' | translate }}: {{ c.source_ref }} }</p>
+        </section>
+
+        @if (c.policies.length) {
+        <section>
+          <ng-container *ngTemplateOutlet="plainHead; context: { $implicit: 'CATALOG_MODULE.DETAIL.POLICIES', count: c.policies.length }" />
+          <ul class="flex flex-col gap-1.5">
+            @for (p of c.policies; track p.name) {
+            <li>{{ p.name }}@if (p.requires_employee_acceptance) { · {{ 'CATALOG_MODULE.DETAIL.EMPLOYEE_ACCEPTANCE' | translate }} }</li>
             }
-          } @else {
-          <button type="button" (click)="reactivate()" [disabled]="busy && action !== 'reactivate'" [appBusy]="action === 'reactivate'" data-reactivate class="text-sm font-medium text-action enabled:hover:underline disabled:cursor-not-allowed disabled:text-ink-faint">
-            {{ 'CATALOG_MODULE.ACTIONS.REACTIVATE' | translate }}
-          </button>
-          }
-        </div>
-        @if (detail.is_active === false) {
-        <p class="mt-2 text-xs text-ink-muted">{{ 'CATALOG_MODULE.ACTIONS.INACTIVE_HINT' | translate }}</p>
+          </ul>
+        </section>
         }
       </div>
 
-      @if (error) {
-      <div class="mk-surface-state-bad p-3 text-sm text-ink" role="alert" data-action-error>
-        <span>{{ error }}</span>
-      </div>
-      }
-
-      @switch (kind()) {
-
-      @case ('controls') {
-      @let c = asControl(detail);
-      <section>
-        <p class="whitespace-pre-line">{{ c.description }}</p>
-        <p class="mt-2 text-xs text-ink-muted">{{ 'CATALOG_MODULE.DETAIL.DOMAIN' | translate }}: {{ c.domain }}@if (c.source_ref) { · {{ 'CATALOG_MODULE.DETAIL.SOURCE' | translate }}: {{ c.source_ref }} }</p>
-      </section>
-
-      <section>
-        <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.REQUIREMENTS', count: c.points_of_focus.length, slot: 'pof' }" />
-        @if (c.points_of_focus.length === 0) {
-        <p class="text-ink-muted" data-unlinked>{{ 'CATALOG_MODULE.DETAIL.NO_REQUIREMENTS' | translate }}</p>
-        } @else {
-        <ul class="flex flex-col gap-1.5">
-          @for (p of c.points_of_focus; track p.id) {
-          <li class="flex items-start justify-between gap-2">
-            <span><app-badge kind="code" size="sm">{{ p.requirement_code }}#{{ p.number }}</app-badge> <span class="text-ink-muted">{{ p.description }}</span></span>
-            <ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: 'pof', id: p.id, name: p.requirement_code + '#' + p.number }" />
-          </li>
-          }
-        </ul>
-        }
-      </section>
-
-      <section>
-        <div class="mb-2 flex items-center justify-between gap-3">
-          <h4 class="font-semibold text-ink">{{ 'CATALOG_MODULE.DETAIL.DIMENSIONS' | translate }}</h4>
+      <section class="min-w-0">
+        <div class="mb-3 flex min-h-9 items-center justify-between gap-3 border-b border-line pb-2">
+          <h3 class="text-base font-semibold text-ink">{{ 'CATALOG_MODULE.DETAIL.DIMENSIONS' | translate }}<span class="ml-1.5 font-normal tabular-nums text-ink-faint">{{ c.dimensions.length }}</span></h3>
           @if (!addingDimension) {
-          <button type="button" (click)="addingDimension = true" [disabled]="busy" data-add="dimension" class="text-xs font-medium text-action enabled:hover:underline disabled:cursor-not-allowed disabled:text-ink-faint">
-            {{ 'CATALOG_MODULE.LINK.ADD' | translate }}
+          <button type="button" (click)="addingDimension = true" [disabled]="busy" data-add="dimension" class="mk-btn-secondary-sm">
+            <span class="material-symbols-rounded text-[16px]" aria-hidden="true">add</span>{{ 'CATALOG_MODULE.LINK.ADD' | translate }}
           </button>
           }
         </div>
         @if (addingDimension) {
-        <div class="mb-3 grid gap-3 border-y border-line py-3 sm:grid-cols-2" data-dimension-form [appBusyFields]="action === 'dimension'">
+        <div class="mb-3 grid gap-3 border-b border-line pb-3 sm:grid-cols-2" data-dimension-form [appBusyFields]="action === 'dimension'">
           <div class="flex flex-col gap-1 text-xs font-medium text-ink">
             <label for="dim-dimension">{{ 'CATALOG_MODULE.COL.DIMENSION' | translate }}</label>
             <app-select inputId="dim-dimension" data-dim-dimension [options]="options.options('dimension')" [value]="dimension.dimension" (valueChange)="dimension.dimension = $event" />
@@ -140,170 +162,196 @@
           <label class="flex items-center gap-2 text-xs text-ink"><input type="checkbox" class="mk-checkbox" [checked]="dimension.requires_ai" (change)="dimension.requires_ai = targetChecked($event)" />{{ 'CATALOG_MODULE.DETAIL.AI' | translate }}</label>
           <label class="flex items-center gap-2 text-xs text-ink sm:col-span-2"><input type="checkbox" class="mk-checkbox" [checked]="dimension.requires_compliance_confirmation" (change)="dimension.requires_compliance_confirmation = targetChecked($event)" />{{ 'CATALOG_MODULE.DETAIL.CONFIRMATION' | translate }}</label>
           <div class="flex items-center gap-3 sm:col-span-2">
-            <button type="button" (click)="saveDimension()" [disabled]="busy && action !== 'dimension'" [appBusy]="action === 'dimension'" data-dim-save class="mk-btn">{{ 'CATALOG_MODULE.LINK.ADD' | translate }}</button>
-            <button type="button" (click)="cancelDimension()" class="text-sm font-medium text-ink-muted hover:underline">{{ 'CATALOG_MODULE.FORM.CANCEL' | translate }}</button>
+            <button type="button" (click)="saveDimension()" [disabled]="busy && action !== 'dimension'" [appBusy]="action === 'dimension'" data-dim-save class="mk-btn-sm">{{ 'CATALOG_MODULE.LINK.ADD' | translate }}</button>
+            <button type="button" (click)="cancelDimension()" class="mk-btn-secondary-sm">{{ 'CATALOG_MODULE.FORM.CANCEL' | translate }}</button>
           </div>
         </div>
         }
         @if (c.dimensions.length === 0) {
         <p class="text-ink-muted">—</p>
         } @else {
-        <ul class="flex flex-col gap-1.5">
+        <div role="list" class="divide-y divide-line">
           @for (d of c.dimensions; track d.dimension) {
-          <li class="flex items-start justify-between gap-2">
-            <span>
-              <span class="font-medium">{{ label('dimension', d.dimension) }}</span> <app-badge kind="attribute" size="sm" [value]="d.type">{{ label('control_type', d.type) }}</app-badge>
-              @if (d.requires_probe) { · {{ 'CATALOG_MODULE.DETAIL.PROBE' | translate }} }
-              @if (d.requires_ai) { · {{ 'CATALOG_MODULE.DETAIL.AI' | translate }} }
-              @if (d.requires_compliance_confirmation) { · {{ 'CATALOG_MODULE.DETAIL.CONFIRMATION' | translate }} }
-            </span>
-            <ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: 'dimension', id: d.dimension, name: label('dimension', d.dimension) }" />
-          </li>
+          <app-link-row [title]="label('dimension', d.dimension)" [description]="dimensionFlags(d)" [unlinkable]="true" unlinkKey="CATALOG_MODULE.LINK.UNLINK" [unlinkLabel]="('CATALOG_MODULE.LINK.REMOVE' | translate) + ' ' + label('dimension', d.dimension)"
+            [disabled]="busy && action !== 'unlink:' + d.dimension" [busy]="action === 'unlink:' + d.dimension" [attr.data-unlink-row]="d.dimension" (unlink)="unlinkFrom('dimension', d.dimension)">
+            <app-badge meta kind="attribute" size="sm" [value]="d.type">{{ label('control_type', d.type) }}</app-badge>
+          </app-link-row>
           }
-        </ul>
+        </div>
         }
       </section>
+    </div>
 
-      <section>
+    <!-- Requisitos: los puntos de enfoque del marco que el control cubre -->
+    <section [hidden]="activeTab !== 'requirements'" data-tab="requirements">
+      <!-- El conteo va en la pestaña: aquí, un buscador arriba del título y a todo el ancho (MD-499). -->
+      @if (c.points_of_focus.length > 0) {
+      <app-search-field class="mb-4 block w-full" inputId="catalog-pof-search" placeholderKey="CATALOG_MODULE.DETAIL.SEARCH" [value]="pofList.query()" (valueChange)="pofList.search($event)" data-list-search />
+      }
+      <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.REQUIREMENTS', slot: 'pof' }" />
+      @if (c.points_of_focus.length === 0) {
+      <p class="text-ink-muted" data-unlinked>{{ 'CATALOG_MODULE.DETAIL.NO_REQUIREMENTS' | translate }}</p>
+      } @else {
+      <app-data-table captionKey="CATALOG_MODULE.DETAIL.REQUIREMENTS" [compact]="true" [columns]="pofColumns" [rows]="pofList.rows()" [rowKey]="idOf" [page]="pofList.info()"
+        [pageSizes]="[10, 25]" emptyIcon="" emptyTitleKey="CATALOG_MODULE.DETAIL.NO_MATCH" (pageChange)="pofList.goTo($event)" (pageSizeChange)="pofList.resize($event)" data-list="pof">
+        <ng-template appCell="code" let-p><app-badge kind="code" size="sm">{{ p.requirement_code }}#{{ p.number }}</app-badge></ng-template>
+        <ng-template appCell="title" let-p>{{ p.description }}</ng-template>
+        <ng-template appCell="actions" let-p><ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: p.id, slot: 'pof', code: p.requirement_code + '#' + p.number }" /></ng-template>
+      </app-data-table>
+      }
+    </section>
+
+    <!-- Pruebas y evidencias: las pruebas que lo verifican y, debajo, la evidencia que pide; cada lista a todo el ancho para que nada se corte -->
+    <div [hidden]="activeTab !== 'tests'" data-tab="tests" class="flex flex-col gap-8">
+      <section class="min-w-0">
+        @if (c.tests.length > 0) {
+        <app-search-field class="mb-4 block w-full" inputId="catalog-tests-search" placeholderKey="CATALOG_MODULE.DETAIL.SEARCH" [value]="testList.query()" (valueChange)="testList.search($event)" data-list-search />
+        }
         <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.TESTS', count: c.tests.length, slot: 'test' }" />
         @if (c.tests.length === 0) {
         <p class="text-ink-muted">—</p>
         } @else {
-        <ul class="flex flex-col gap-1.5">
-          @for (t of c.tests; track t.id) {
-          <li class="flex items-start justify-between gap-2">
-            <span><app-badge kind="code" size="sm">{{ t.code }}</app-badge> · {{ t.display_name ?? '—' }} <app-badge kind="attribute" size="sm" [value]="t.dimension">{{ label('dimension', t.dimension) }}</app-badge></span>
-            <ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: 'test', id: t.id, name: t.code }" />
-          </li>
-          }
-        </ul>
+        <app-data-table captionKey="CATALOG_MODULE.DETAIL.TESTS" [compact]="true" [columns]="testColumns" [rows]="testList.rows()" [rowKey]="idOf" [page]="testList.info()"
+          [pageSizes]="[10, 25]" emptyIcon="" emptyTitleKey="CATALOG_MODULE.DETAIL.NO_MATCH" (pageChange)="testList.goTo($event)" (pageSizeChange)="testList.resize($event)" data-list="tests">
+          <ng-template appCell="code" let-t><app-badge kind="code" size="sm">{{ t.code }}</app-badge></ng-template>
+          <ng-template appCell="title" let-t>{{ t.display_name }}</ng-template>
+          <ng-template appCell="dimension" let-t><app-badge kind="attribute" size="sm" [value]="t.dimension">{{ label('dimension', t.dimension) }}</app-badge></ng-template>
+          <ng-template appCell="actions" let-t><ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: t.id, slot: 'test', code: t.code }" /></ng-template>
+        </app-data-table>
         }
       </section>
 
-      <section>
+      <section class="min-w-0">
+        @if (c.evidence_templates.length > 0) {
+        <app-search-field class="mb-4 block w-full" inputId="catalog-templates-search" placeholderKey="CATALOG_MODULE.DETAIL.SEARCH" [value]="templateList.query()" (valueChange)="templateList.search($event)" data-list-search />
+        }
         <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.EVIDENCE', count: c.evidence_templates.length, slot: 'template' }" />
         @if (c.evidence_templates.length === 0) {
         <p class="text-ink-muted" data-no-evidence>{{ 'CATALOG_MODULE.DETAIL.NO_EVIDENCE' | translate }}</p>
         } @else {
-        <ol class="flex flex-col gap-1.5">
-          @for (e of c.evidence_templates; track e.id) {
-          <li class="flex items-start justify-between gap-2">
-            <span><app-badge kind="code" size="sm">{{ e.sequence }}. {{ e.code }}</app-badge> · {{ e.description }}</span>
-            <ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: 'template', id: e.id, name: e.code }" />
-          </li>
-          }
-        </ol>
+        <app-data-table captionKey="CATALOG_MODULE.DETAIL.EVIDENCE" [compact]="true" [columns]="templateColumns" [rows]="templateList.rows()" [rowKey]="idOf" [page]="templateList.info()"
+          [pageSizes]="[10, 25]" emptyIcon="" emptyTitleKey="CATALOG_MODULE.DETAIL.NO_MATCH" (pageChange)="templateList.goTo($event)" (pageSizeChange)="templateList.resize($event)" data-list="templates">
+          <ng-template appCell="code" let-e><app-badge kind="code" size="sm">{{ e.sequence }}. {{ e.code }}</app-badge></ng-template>
+          <ng-template appCell="title" let-e>{{ e.description }}</ng-template>
+          <ng-template appCell="actions" let-e><ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: e.id, slot: 'template', code: e.code }" /></ng-template>
+        </app-data-table>
         }
       </section>
+    </div>
 
-      @if (c.policies.length) {
-      <section>
-        <h4 class="mb-2 font-semibold text-ink">{{ 'CATALOG_MODULE.DETAIL.POLICIES' | translate }}</h4>
-        <ul class="flex flex-col gap-1.5">
-          @for (p of c.policies; track p.name) {
-          <li>{{ p.name }}@if (p.requires_employee_acceptance) { · {{ 'CATALOG_MODULE.DETAIL.EMPLOYEE_ACCEPTANCE' | translate }} }</li>
-          }
-        </ul>
-      </section>
+    <!-- Causas que mitiga -->
+    <section [hidden]="activeTab !== 'causes'" data-tab="causes">
+      @if (c.causes.length > 0) {
+      <app-search-field class="mb-4 block w-full" inputId="catalog-causes-search" placeholderKey="CATALOG_MODULE.DETAIL.SEARCH" [value]="causeList.query()" (valueChange)="causeList.search($event)" data-list-search />
       }
+      <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.CAUSES', slot: 'cause' }" />
+      @if (c.causes.length === 0) { <p class="text-ink-muted">—</p> } @else {
+      <ng-container *ngTemplateOutlet="refTable; context: { list: causeList, caption: 'CATALOG_MODULE.DETAIL.CAUSES', slot: 'cause', route: 'causes' }" />
+      }
+    </section>
+    }
 
-      <section>
-        <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.CAUSES', count: c.causes.length, slot: 'cause' }" />
-        @if (c.causes.length === 0) { <p class="text-ink-muted">—</p> }
-        <ul class="flex flex-col gap-1.5">
-          @for (k of c.causes; track k.id) {
-          <li class="flex items-start justify-between gap-2">
-            <span><app-badge kind="code" size="sm">{{ k.code }}</app-badge> · {{ k.name }}</span>
-            <ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: 'cause', id: k.id, name: k.code }" />
-          </li>
-          }
-        </ul>
-      </section>
-      }
-
-      @case ('risks') {
-      @let r = asRisk(detail);
-      <section>
-        <p class="whitespace-pre-line">{{ r.description }}</p>
-        <p class="mt-2 text-xs text-ink-muted">{{ 'CATALOG_MODULE.DETAIL.CRITERION' | translate }}: {{ label('risk_criterion', r.trust_criterion) }}</p>
-      </section>
-      @if (list(r.potential_impact).length) {
-      <section>
-        <h4 class="mb-2 font-semibold text-ink">{{ 'CATALOG_MODULE.DETAIL.POTENTIAL_IMPACT' | translate }}</h4>
-        <ul class="list-disc pl-5">
-          @for (i of list(r.potential_impact); track i) { <li>{{ i }}</li> }
-        </ul>
-      </section>
-      }
-      <section>
+    @case ('risks') {
+    @let r = asRisk(item);
+    <div class="flex flex-col gap-8">
+      <div class="flex min-w-0 flex-col gap-8">
+        <section>
+          <ng-container *ngTemplateOutlet="plainHead; context: { $implicit: 'CATALOG_MODULE.DETAIL.TABS.DESCRIPTION' }" />
+          <p class="max-w-prose whitespace-pre-line text-pretty leading-relaxed">{{ r.description }}</p>
+          <p class="mt-2 text-xs text-ink-muted">{{ 'CATALOG_MODULE.DETAIL.CRITERION' | translate }}: {{ label('risk_criterion', r.trust_criterion) }}</p>
+        </section>
+        @if (list(r.potential_impact).length) {
+        <section>
+          <ng-container *ngTemplateOutlet="plainHead; context: { $implicit: 'CATALOG_MODULE.DETAIL.POTENTIAL_IMPACT' }" />
+          <ul class="list-disc pl-5">
+            @for (i of list(r.potential_impact); track i) { <li>{{ i }}</li> }
+          </ul>
+        </section>
+        }
+      </div>
+      <section class="min-w-0">
+        @if (r.causes.length > 0) {
+        <app-search-field class="mb-4 block w-full" inputId="catalog-risk-causes-search" placeholderKey="CATALOG_MODULE.DETAIL.SEARCH" [value]="riskCauseList.query()" (valueChange)="riskCauseList.search($event)" data-list-search />
+        }
         <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.CAUSES', count: r.causes.length, slot: 'cause' }" />
-        @if (r.causes.length === 0) { <p class="text-ink-muted">—</p> }
-        <ul class="flex flex-col gap-1.5">
-          @for (k of r.causes; track k.id) {
-          <li class="flex items-start justify-between gap-2">
-            <span><app-badge kind="code" size="sm">{{ k.code }}</app-badge> · {{ k.name }}</span>
-            <ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: 'cause', id: k.id, name: k.code }" />
-          </li>
-          }
-        </ul>
+        @if (r.causes.length === 0) { <p class="text-ink-muted">—</p> } @else {
+        <ng-container *ngTemplateOutlet="refTable; context: { list: riskCauseList, caption: 'CATALOG_MODULE.DETAIL.CAUSES', slot: 'cause', route: 'causes' }" />
+        }
       </section>
-      }
+    </div>
+    }
 
-      @case ('causes') {
-      @let k = asCause(detail);
-      <section>
-        <p class="whitespace-pre-line">{{ k.description }}</p>
+    @case ('causes') {
+    @let k = asCause(item);
+    <div class="flex flex-col gap-8">
+      <section class="min-w-0">
+        <ng-container *ngTemplateOutlet="plainHead; context: { $implicit: 'CATALOG_MODULE.DETAIL.TABS.DESCRIPTION' }" />
+        <p class="max-w-prose whitespace-pre-line text-pretty leading-relaxed">{{ k.description }}</p>
+        @if (k.failure_category) {
         <p class="mt-2 text-xs text-ink-muted">{{ 'CATALOG_MODULE.DETAIL.CATEGORY' | translate }}: {{ label('failure_category', k.failure_category) }}</p>
+        }
       </section>
-      <section>
-        <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.RISKS', count: k.risks.length, slot: 'risk' }" />
-        @if (k.risks.length === 0) { <p class="text-ink-muted">—</p> }
-        <ul class="flex flex-col gap-1.5">
-          @for (x of k.risks; track x.id) {
-          <li class="flex items-start justify-between gap-2">
-            <span><app-badge kind="code" size="sm">{{ x.code }}</app-badge> · {{ x.name }}</span>
-            <ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: 'risk', id: x.id, name: x.code }" />
-          </li>
+      <div class="flex min-w-0 flex-col gap-8">
+        <section>
+          @if (k.risks.length > 0) {
+          <app-search-field class="mb-4 block w-full" inputId="catalog-cause-risks-search" placeholderKey="CATALOG_MODULE.DETAIL.SEARCH" [value]="causeRiskList.query()" (valueChange)="causeRiskList.search($event)" data-list-search />
           }
-        </ul>
-      </section>
-      <section>
-        <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.CONTROLS', count: k.controls.length, slot: 'control' }" />
-        @if (k.controls.length === 0) { <p class="text-ink-muted">—</p> }
-        <ul class="flex flex-col gap-1.5">
-          @for (x of k.controls; track x.id) {
-          <li class="flex items-start justify-between gap-2">
-            <span><app-badge kind="code" size="sm">{{ x.code }}</app-badge> · {{ x.name }}</span>
-            <ng-container *ngTemplateOutlet="unlinkBtn; context: { $implicit: 'control', id: x.id, name: x.code }" />
-          </li>
+          <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.RISKS', count: k.risks.length, slot: 'risk' }" />
+          @if (k.risks.length === 0) { <p class="text-ink-muted">—</p> } @else {
+          <ng-container *ngTemplateOutlet="refTable; context: { list: causeRiskList, caption: 'CATALOG_MODULE.DETAIL.RISKS', slot: 'risk', route: 'risks' }" />
           }
-        </ul>
-      </section>
-      }
+        </section>
+        <section>
+          @if (k.controls.length > 0) {
+          <app-search-field class="mb-4 block w-full" inputId="catalog-cause-controls-search" placeholderKey="CATALOG_MODULE.DETAIL.SEARCH" [value]="causeControlList.query()" (valueChange)="causeControlList.search($event)" data-list-search />
+          }
+          <ng-container *ngTemplateOutlet="head; context: { $implicit: 'CATALOG_MODULE.DETAIL.CONTROLS', count: k.controls.length, slot: 'control' }" />
+          @if (k.controls.length === 0) { <p class="text-ink-muted">—</p> } @else {
+          <ng-container *ngTemplateOutlet="refTable; context: { list: causeControlList, caption: 'CATALOG_MODULE.DETAIL.CONTROLS', slot: 'control', route: 'controls' }" />
+          }
+        </section>
+      </div>
+    </div>
+    }
 
-      @case ('evidence-templates') {
-      @let e = asEvidenceTemplate(detail);
+    @case ('evidence-templates') {
+    @let e = asEvidenceTemplate(item);
+    <div class="flex flex-col gap-6">
       <section>
-        <p class="whitespace-pre-line">{{ e.description }}</p>
-        <p class="mt-2 text-xs text-ink-muted">{{ label('dimension', e.dimension) }} · {{ 'CATALOG_MODULE.DETAIL.USED_BY' | translate: { count: e.controls_count } }}</p>
-        <p class="mt-2 text-xs text-ink-muted">{{ 'CATALOG_MODULE.LINK.TEMPLATE_FROM_CONTROL' | translate }}</p>
+        <ng-container *ngTemplateOutlet="plainHead; context: { $implicit: 'CATALOG_MODULE.DETAIL.TABS.DESCRIPTION' }" />
+        <p class="whitespace-pre-line text-pretty leading-relaxed">{{ e.description }}</p>
       </section>
-      }
+      <dl class="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+        <div><dt class="text-xs font-medium text-ink-faint">{{ 'CATALOG_MODULE.COL.DIMENSION' | translate }}</dt><dd class="mt-1">{{ label('dimension', e.dimension) }}</dd></div>
+        <div><dt class="text-xs font-medium text-ink-faint">{{ 'CATALOG_MODULE.DETAIL.CONTROLS_USING' | translate }}</dt><dd class="mt-1 tabular-nums">{{ 'CATALOG_MODULE.DETAIL.USED_BY' | translate: { count: e.controls_count } }}</dd></div>
+      </dl>
+      <p class="mk-surface-tinted p-3 text-xs text-ink">{{ 'CATALOG_MODULE.LINK.TEMPLATE_FROM_CONTROL' | translate }}</p>
+    </div>
+    }
 
-      @case ('tests') {
-      @let t = asTest(detail);
-      <p class="mk-surface-state-warn p-3 text-xs text-ink" data-internal-note>{{ 'CATALOG_MODULE.DETAIL.INTERNAL_NOTE' | translate }}
-      </p>
-      <section>
-        <p class="text-xs text-ink-muted">{{ label('dimension', t.dimension) }}</p>
-        <h4 class="mt-2 font-semibold text-ink">{{ 'CATALOG_MODULE.DETAIL.SHOWN_TO_CLIENT' | translate }}</h4>
-        <dl class="mt-1 grid gap-2">
-          <div><dt class="text-xs text-ink-muted">{{ 'CATALOG_MODULE.DETAIL.DISPLAY_NAME' | translate }}</dt><dd>{{ t.display_name ?? '—' }}</dd></div>
-          <div><dt class="text-xs text-ink-muted">{{ 'CATALOG_MODULE.DETAIL.DISPLAY_DESCRIPTION' | translate }}</dt><dd>{{ t.display_description ?? '—' }}</dd></div>
-        </dl>
-      </section>
-      <section>
-        <h4 class="mb-2 font-semibold text-ink">{{ 'CATALOG_MODULE.DETAIL.COMMITTEE' | translate }}</h4>
+    @case ('tests') {
+    @let t = asTest(item);
+    <div class="flex flex-col gap-8">
+      <div class="flex min-w-0 flex-col gap-8">
+        <section>
+          <ng-container *ngTemplateOutlet="plainHead; context: { $implicit: 'CATALOG_MODULE.DETAIL.SHOWN_TO_CLIENT' }" />
+          <p class="text-xs text-ink-muted">{{ label('dimension', t.dimension) }}</p>
+          <dl class="mt-2 grid gap-2">
+            <div><dt class="text-xs text-ink-muted">{{ 'CATALOG_MODULE.DETAIL.DISPLAY_NAME' | translate }}</dt><dd>{{ t.display_name ?? '—' }}</dd></div>
+            <div><dt class="text-xs text-ink-muted">{{ 'CATALOG_MODULE.DETAIL.DISPLAY_DESCRIPTION' | translate }}</dt><dd class="max-w-prose text-pretty">{{ t.display_description ?? '—' }}</dd></div>
+          </dl>
+        </section>
+        <section>
+          <ng-container *ngTemplateOutlet="plainHead; context: { $implicit: 'CATALOG_MODULE.DETAIL.TEST_CONTROLS', count: t.controls.length }" />
+          <p class="mb-1 text-xs text-ink-muted">{{ 'CATALOG_MODULE.LINK.TEST_FROM_CONTROL' | translate }}</p>
+          <ul class="flex flex-col gap-1.5">
+            @for (x of t.controls; track x.id) { <li><app-badge kind="code" size="sm">{{ x.code }}</app-badge> · {{ x.name }}</li> }
+          </ul>
+        </section>
+      </div>
+      <section class="min-w-0">
+        <ng-container *ngTemplateOutlet="plainHead; context: { $implicit: 'CATALOG_MODULE.DETAIL.COMMITTEE' }" />
+        <p class="mk-surface-state-warn mb-3 p-3 text-xs text-ink" data-internal-note>{{ 'CATALOG_MODULE.DETAIL.INTERNAL_NOTE' | translate }}</p>
         <dl class="grid gap-3" data-committee>
           @for (f of committeeFields(t); track f.key) {
           <div>
@@ -317,17 +365,11 @@
           }
         </dl>
       </section>
-      <section>
-        <h4 class="mb-2 font-semibold text-ink">{{ 'CATALOG_MODULE.DETAIL.CONTROLS' | translate }} ({{ t.controls.length }})</h4>
-        <p class="mb-1 text-xs text-ink-muted">{{ 'CATALOG_MODULE.LINK.TEST_FROM_CONTROL' | translate }}</p>
-        <ul class="flex flex-col gap-1.5">
-          @for (x of t.controls; track x.id) { <li><app-badge kind="code" size="sm">{{ x.code }}</app-badge> · {{ x.name }}</li> }
-        </ul>
-      </section>
-      }
-
-      }
     </div>
     }
+
+    }
   </div>
-</app-side-drawer>
+  }
+</div>
+</app-detail-modal>

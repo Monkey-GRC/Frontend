@@ -5,7 +5,7 @@ import { AccessKeyStatus, Company, CompanyStatus } from '@shared/models/company.
 import { CompanyService } from '@features/companies/services/company.service';
 import { Busy } from '@shared/presentation/directives/busy';
 import { DataTable, TableCell, TableColumn } from '@shared/presentation/components/data-table/data-table';
-import { PageInfo } from '@shared/presentation/components/data-table/table-page';
+import { PageInfo } from '@shared/domain/models/page-info.model';
 import { PageHeader } from '@shared/presentation/components/page-header/page-header';
 import { StatusIndicator, StatusTone } from '@shared/presentation/components/status-indicator/status-indicator';
 import { TabItem, Tabs } from '@shared/presentation/components/tabs/tabs';

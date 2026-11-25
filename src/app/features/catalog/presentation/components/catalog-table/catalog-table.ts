@@ -3,7 +3,7 @@ import { CatalogOptionsService } from '@features/catalog/services/catalog-option
 import { OptionName } from '@features/catalog/models/catalog.model';
 import { CATALOG_PAGE_SIZE } from '@features/catalog/services/catalog.service';
 import { DataTable, TableCell, TableColumn } from '@shared/presentation/components/data-table/data-table';
-import { PageInfo } from '@shared/presentation/components/data-table/table-page';
+import { PageInfo } from '@shared/domain/models/page-info.model';
 import { StatusIndicator, StatusTone } from '@shared/presentation/components/status-indicator/status-indicator';
 import { Badge } from '@shared/presentation/components/badge/badge';
 import { Tag } from '@shared/presentation/components/tag/tag';
@@ -54,7 +54,8 @@ export class CatalogTable {
       key: column.key,
       headerKey: column.labelKey,
       align: column.kind === 'count' ? 'right' : 'left',
-      skeleton: column.kind === 'code' || column.kind === 'active' || this.isBadge(column) ? 'badge' : 'text',
+      // D116 · la forma real: una lista son varios distintivos; un código, un estado o un valor, uno.
+      skeleton: column.kind === 'list' ? 'badges' : column.kind === 'code' || column.kind === 'active' || this.isBadge(column) ? 'badge' : 'text',
       value: column.kind === 'code' || column.kind === 'active' || this.isBadge(column) ? undefined : (row: CatalogRow) => this.text(row, column),
     })),
   );

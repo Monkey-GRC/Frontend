@@ -24,7 +24,7 @@
           }
           <button type="submit" [appBusy]="loading()" [busyLabel]="'AUTH.ACTIVATE.CHECKING' | translate" class="mt-6 mk-btn">{{ 'AUTH.ACTIVATE.CONTINUE' | translate }}</button>
           <p class="mt-6 text-center text-sm">
-            <a routerLink="/auth/login" class="font-medium text-action hover:underline">{{ 'AUTH.FORGOT.BACK' | translate }}</a>
+            <a routerLink="/auth/login" class="mk-link underline">{{ 'AUTH.FORGOT.BACK' | translate }}</a>
           </p>
         </form>
       } @else {

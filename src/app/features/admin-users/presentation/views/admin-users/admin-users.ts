@@ -11,7 +11,7 @@ import { AdminUserList } from '@features/admin-users/presentation/components/adm
 import { unwrapData } from '@shared/domain/utils/unwrap-response';
 import { ConfirmDialog } from '@shared/presentation/components/confirm-dialog/confirm-dialog';
 import { FormModal } from '@shared/presentation/components/form-modal/form-modal';
-import { PageInfo } from '@shared/presentation/components/data-table/table-page';
+import { PageInfo } from '@shared/domain/models/page-info.model';
 import { SecondFactorAnswer, SecondFactorDialog } from '@shared/presentation/components/second-factor-dialog/second-factor-dialog';
 import { ToastService } from '@shared/presentation/components/toast-container/toast.service';
 import { Busy } from '@shared/presentation/directives/busy';
