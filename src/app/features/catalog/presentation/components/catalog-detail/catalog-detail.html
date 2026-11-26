@@ -87,7 +87,8 @@
     }
   </div>
   }
-  @if (ready) {
+  <!-- Mientras se confirma la baja no se ofrece «Editar»: la confirmación ocupa el pie sola. -->
+  @if (ready && !confirmingDeactivate) {
   <button actions type="button" (click)="edit()" [disabled]="busy" data-edit class="mk-btn-secondary">
     <span class="material-symbols-rounded text-[20px]" aria-hidden="true">edit</span>{{ 'CATALOG_MODULE.ACTIONS.EDIT' | translate }}
   </button>
