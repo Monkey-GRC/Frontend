@@ -1,6 +1,7 @@
 {
   "COMMON": {
     "LOADING": "Loading",
+    "SLOW_LOAD": "This may take a few seconds.",
     "LANGUAGE_SWITCHING": "Switching language…",
     "CLOSE": "Close",
     "TOAST": {
